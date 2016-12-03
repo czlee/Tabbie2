@@ -1,9 +1,13 @@
--- MySQL dump 10.13  Distrib 5.7.9, for osx10.9 (x86_64)
 --
--- Host: localhost    Database: tabbie
--- ------------------------------------------------------
--- Server version	5.1.73-log
+-- Generated from mysql2pgsql.perl
+-- http://gborg.postgresql.org/project/mysql2psql/
+-- (c) 2001 - 2007 Jose M. Duarte, Joseph Speigle
+--
 
+-- warnings are printed for drop tables if they do not exist
+-- please see http://archives.postgresql.org/pgsql-novice/2004-10/msg00158.php
+
+-- ##############################################################
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -14,937 +18,5124 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `adjudicator`
---
-
-DROP TABLE IF EXISTS `adjudicator`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `adjudicator` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `tournament_id` int(10) unsigned NOT NULL,
-  `user_id` int(10) unsigned NOT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT '1',
-  `breaking` tinyint(4) NOT NULL DEFAULT '0',
-  `strength` tinyint(4) DEFAULT NULL,
-  `society_id` int(10) unsigned NOT NULL,
-  `can_chair` tinyint(1) NOT NULL DEFAULT '1',
-  `are_watched` tinyint(1) NOT NULL DEFAULT '0',
-  `checkedin` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `fk_adjudicator_username1_idx` (`user_id`),
-  KEY `fk_adjudicator_tournament1_idx` (`tournament_id`),
-  KEY `fk_adjudicator_society1_idx` (`society_id`),
-  CONSTRAINT `fk_adjudicator_society1` FOREIGN KEY (`society_id`) REFERENCES `society` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_adjudicator_tournament1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_adjudicator_username1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4303 DEFAULT CHARSET=utf8;
+-- MySQL dump 10.13  Distrib 5.7.9, for osx10.9 (x86_64)
+--
+-- Host: localhost    Database: tabbie
+-- ------------------------------------------------------
+-- Server version	5.1.73-log
+
+
+--
+-- Table structure for table adjudicator
+--
+
+DROP TABLE IF EXISTS "adjudicator" CASCADE;
+DROP SEQUENCE IF EXISTS "adjudicator_id_seq" CASCADE ;
+
+CREATE SEQUENCE "adjudicator_id_seq"  START WITH 4303 ;
+
+CREATE TABLE  "adjudicator" (
+   "id" integer DEFAULT nextval('"adjudicator_id_seq"') NOT NULL,
+   "tournament_id" int CHECK ("tournament_id" >= 0) NOT NULL,
+   "user_id" int CHECK ("user_id" >= 0) NOT NULL,
+   "active"    smallint NOT NULL DEFAULT '1',
+   "breaking"    smallint NOT NULL DEFAULT '0',
+   "strength"    smallint DEFAULT NULL,
+   "society_id" int CHECK ("society_id" >= 0) NOT NULL,
+   "can_chair"    smallint NOT NULL DEFAULT '1',
+   "are_watched"    smallint NOT NULL DEFAULT '0',
+   "checkedin"    smallint NOT NULL DEFAULT '0',
+   primary key ("id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `adjudicator_in_panel`
---
-
-DROP TABLE IF EXISTS `adjudicator_in_panel`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `adjudicator_in_panel` (
-  `adjudicator_id` int(10) unsigned NOT NULL,
-  `panel_id` int(10) unsigned NOT NULL,
-  `function` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `got_feedback` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`adjudicator_id`,`panel_id`),
-  KEY `fk_adjudicator_has_panel_panel1_idx` (`panel_id`),
-  KEY `fk_adjudicator_has_panel_adjudicator1_idx` (`adjudicator_id`),
-  CONSTRAINT `fk_adjudicator_has_panel_adjudicator1` FOREIGN KEY (`adjudicator_id`) REFERENCES `adjudicator` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_adjudicator_has_panel_panel1` FOREIGN KEY (`panel_id`) REFERENCES `panel` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE INDEX "adjudicator_user_id_idx" ON "adjudicator" USING btree ("user_id");
+CREATE INDEX "adjudicator_tournament_id_idx" ON "adjudicator" USING btree ("tournament_id");
+CREATE INDEX "adjudicator_society_id_idx" ON "adjudicator" USING btree ("society_id");
+ALTER TABLE "adjudicator" ADD FOREIGN KEY ("society_id") REFERENCES "society" ("id");
+ALTER TABLE "adjudicator" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "adjudicator" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
+
+--
+-- Table structure for table adjudicator_in_panel
+--
+
+DROP TABLE IF EXISTS "adjudicator_in_panel" CASCADE;
+CREATE TABLE  "adjudicator_in_panel" (
+   "adjudicator_id" int CHECK ("adjudicator_id" >= 0) NOT NULL,
+   "panel_id" int CHECK ("panel_id" >= 0) NOT NULL,
+   "function"  smallint CHECK ("function" >= 0) NOT NULL DEFAULT '0',
+   "got_feedback"    smallint NOT NULL DEFAULT '0',
+   primary key ("adjudicator_id", "panel_id")
+)  ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `adjudicator_strike`
---
-
-DROP TABLE IF EXISTS `adjudicator_strike`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `adjudicator_strike` (
-  `adjudicator_from_id` int(10) unsigned NOT NULL,
-  `adjudicator_to_id` int(10) unsigned NOT NULL,
-  `tournament_id` int(10) unsigned NOT NULL,
-  `user_clash_id` int(11) DEFAULT NULL,
-  `accepted` tinyint(1) NOT NULL DEFAULT '1',
-  PRIMARY KEY (`adjudicator_from_id`,`adjudicator_to_id`),
-  KEY `fk_adjudicator_has_adjudicator_adjudicator2_idx` (`adjudicator_to_id`),
-  KEY `fk_adjudicator_has_adjudicator_adjudicator1_idx` (`adjudicator_from_id`),
-  KEY `fk_adjudicator_strike_tournament1_idx` (`tournament_id`),
-  KEY `fk_adjudicator_strike_user_clash1_idx` (`user_clash_id`),
-  CONSTRAINT `fk_adjudicator_has_adjudicator_adjudicator1` FOREIGN KEY (`adjudicator_from_id`) REFERENCES `adjudicator` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_adjudicator_has_adjudicator_adjudicator2` FOREIGN KEY (`adjudicator_to_id`) REFERENCES `adjudicator` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_adjudicator_strike_tournament1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_adjudicator_strike_user_clash1` FOREIGN KEY (`user_clash_id`) REFERENCES `user_clash` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE INDEX "adjudicator_in_panel_panel_id_idx" ON "adjudicator_in_panel" USING btree ("panel_id");
+CREATE INDEX "adjudicator_in_panel_adjudicator_id_idx" ON "adjudicator_in_panel" USING btree ("adjudicator_id");
+ALTER TABLE "adjudicator_in_panel" ADD FOREIGN KEY ("adjudicator_id") REFERENCES "adjudicator" ("id");
+ALTER TABLE "adjudicator_in_panel" ADD FOREIGN KEY ("panel_id") REFERENCES "panel" ("id");
+
+--
+-- Table structure for table adjudicator_strike
+--
+
+DROP TABLE IF EXISTS "adjudicator_strike" CASCADE;
+CREATE TABLE  "adjudicator_strike" (
+   "adjudicator_from_id" int CHECK ("adjudicator_from_id" >= 0) NOT NULL,
+   "adjudicator_to_id" int CHECK ("adjudicator_to_id" >= 0) NOT NULL,
+   "tournament_id" int CHECK ("tournament_id" >= 0) NOT NULL,
+   "user_clash_id"   int DEFAULT NULL,
+   "accepted"    smallint NOT NULL DEFAULT '1',
+   primary key ("adjudicator_from_id", "adjudicator_to_id")
+)  ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `answer`
---
-
-DROP TABLE IF EXISTS `answer`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `answer` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `feedback_id` int(10) unsigned NOT NULL,
-  `question_id` int(10) unsigned NOT NULL,
-  `value` text,
-  PRIMARY KEY (`id`),
-  KEY `fk_answer_questions1_idx` (`question_id`),
-  KEY `fk_answer_feedback1_idx` (`feedback_id`),
-  CONSTRAINT `fk_answer_feedback1` FOREIGN KEY (`feedback_id`) REFERENCES `feedback` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_answer_questions1` FOREIGN KEY (`question_id`) REFERENCES `question` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=48524 DEFAULT CHARSET=utf8;
+CREATE INDEX "adjudicator_strike_adjudicator_to_id_idx" ON "adjudicator_strike" USING btree ("adjudicator_to_id");
+CREATE INDEX "adjudicator_strike_adjudicator_from_id_idx" ON "adjudicator_strike" USING btree ("adjudicator_from_id");
+CREATE INDEX "adjudicator_strike_tournament_id_idx" ON "adjudicator_strike" USING btree ("tournament_id");
+CREATE INDEX "adjudicator_strike_user_clash_id_idx" ON "adjudicator_strike" USING btree ("user_clash_id");
+ALTER TABLE "adjudicator_strike" ADD FOREIGN KEY ("adjudicator_from_id") REFERENCES "adjudicator" ("id");
+ALTER TABLE "adjudicator_strike" ADD FOREIGN KEY ("adjudicator_to_id") REFERENCES "adjudicator" ("id");
+ALTER TABLE "adjudicator_strike" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "adjudicator_strike" ADD FOREIGN KEY ("user_clash_id") REFERENCES "user_clash" ("id");
+
+--
+-- Table structure for table answer
+--
+
+DROP TABLE IF EXISTS "answer" CASCADE;
+DROP SEQUENCE IF EXISTS "answer_id_seq" CASCADE ;
+
+CREATE SEQUENCE "answer_id_seq"  START WITH 48524 ;
+
+CREATE TABLE  "answer" (
+   "id" integer DEFAULT nextval('"answer_id_seq"') NOT NULL,
+   "feedback_id" int CHECK ("feedback_id" >= 0) NOT NULL,
+   "question_id" int CHECK ("question_id" >= 0) NOT NULL,
+   "value"   text,
+   primary key ("id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `ca`
---
-
-DROP TABLE IF EXISTS `ca`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ca` (
-  `user_id` int(11) unsigned NOT NULL,
-  `tournament_id` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`user_id`,`tournament_id`),
-  KEY `fk_user_has_tournament_tournament2_idx` (`tournament_id`),
-  KEY `fk_user_has_tournament_user2_idx` (`user_id`),
-  CONSTRAINT `fk_user_has_tournament_tournament2` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_user_has_tournament_user2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+CREATE INDEX "answer_question_id_idx" ON "answer" USING btree ("question_id");
+CREATE INDEX "answer_feedback_id_idx" ON "answer" USING btree ("feedback_id");
+ALTER TABLE "answer" ADD FOREIGN KEY ("feedback_id") REFERENCES "feedback" ("id");
+ALTER TABLE "answer" ADD FOREIGN KEY ("question_id") REFERENCES "question" ("id");
+
+--
+-- Table structure for table ca
+--
+
+DROP TABLE IF EXISTS "ca" CASCADE;
+CREATE TABLE  "ca" (
+   "user_id" int CHECK ("user_id" >= 0) NOT NULL,
+   "tournament_id" int CHECK ("tournament_id" >= 0) NOT NULL,
+   primary key ("user_id", "tournament_id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `convenor`
---
-
-DROP TABLE IF EXISTS `convenor`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `convenor` (
-  `tournament_id` int(10) unsigned NOT NULL,
-  `user_id` int(11) unsigned NOT NULL,
-  PRIMARY KEY (`tournament_id`,`user_id`),
-  KEY `fk_tournament_has_user_user1_idx` (`user_id`),
-  KEY `fk_tournament_has_user_tournament1_idx` (`tournament_id`),
-  CONSTRAINT `fk_tournament_has_user_tournament1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_tournament_has_user_user1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE INDEX "ca_tournament_id_idx" ON "ca" USING btree ("tournament_id");
+CREATE INDEX "ca_user_id_idx" ON "ca" USING btree ("user_id");
+ALTER TABLE "ca" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "ca" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
+
+--
+-- Table structure for table convenor
+--
+
+DROP TABLE IF EXISTS "convenor" CASCADE;
+CREATE TABLE  "convenor" (
+   "tournament_id" int CHECK ("tournament_id" >= 0) NOT NULL,
+   "user_id" int CHECK ("user_id" >= 0) NOT NULL,
+   primary key ("tournament_id", "user_id")
+)  ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `country`
---
-
-DROP TABLE IF EXISTS `country`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `country` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) DEFAULT NULL,
-  `alpha_2` varchar(2) DEFAULT NULL,
-  `alpha_3` varchar(3) DEFAULT NULL,
-  `region_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=252 DEFAULT CHARSET=utf8;
+CREATE INDEX "convenor_user_id_idx" ON "convenor" USING btree ("user_id");
+CREATE INDEX "convenor_tournament_id_idx" ON "convenor" USING btree ("tournament_id");
+ALTER TABLE "convenor" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "convenor" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
+
+--
+-- Table structure for table country
+--
+
+DROP TABLE IF EXISTS "country" CASCADE;
+DROP SEQUENCE IF EXISTS "country_id_seq" CASCADE ;
+
+CREATE SEQUENCE "country_id_seq"  START WITH 252 ;
+
+CREATE TABLE  "country" (
+   "id" integer DEFAULT nextval('"country_id_seq"') NOT NULL,
+   "name"   varchar(100) DEFAULT NULL,
+   "alpha_2"   varchar(2) DEFAULT NULL,
+   "alpha_3"   varchar(3) DEFAULT NULL,
+   "region_id"   int DEFAULT NULL,
+   primary key ("id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
+/*!40000 ALTER TABLE country DISABLE KEYS */;
 
 --
--- Dumping data for table `country`
+-- Dumping data for table country
 --
 
-LOCK TABLES `country` WRITE;
-/*!40000 ALTER TABLE `country` DISABLE KEYS */;
-INSERT INTO `country` VALUES (1,'Afghanistan','af','afg',24),(2,'Aland Islands','ax','ala',11),(3,'Albania','al','alb',13),(4,'Algeria','dz','dza',41),(5,'American Samoa','as','asm',34),(6,'Andorra','ad','and',13),(7,'Angola','ao','ago',43),(8,'Anguilla','ai','aia',53),(9,'Antarctica','aq',NULL,71),(10,'Antigua and Barbuda','ag','atg',53),(11,'Argentina','ar','arg',61),(12,'Armenia','am','arm',23),(13,'Aruba','aw','abw',53),(14,'Australia','au','aus',31),(15,'Austria','at','aut',12),(16,'Azerbaijan','az','aze',23),(17,'Bahamas','bs','bhs',53),(18,'Bahrain','bh','bhr',23),(19,'Bangladesh','bd','bgd',24),(20,'Barbados','bb','brb',53),(21,'Belarus','by','blr',14),(22,'Belgium','be','bel',12),(23,'Belize','bz','blz',52),(24,'Benin','bj','ben',42),(25,'Bermuda','bm','bmu',51),(26,'Bhutan','bt','btn',24),(27,'Bolivia, Plurinational State of','bo','bol',61),(28,'Bonaire, Sint Eustatius and Saba','bq','bes',53),(29,'Bosnia and Herzegovina','ba','bih',13),(30,'Botswana','bw','bwa',45),(31,'Bouvet Island','bv',NULL,11),(32,'Brazil','br','bra',61),(33,'British Indian Ocean Territory','io',NULL,25),(34,'Brunei Darussalam','bn','brn',25),(35,'Bulgaria','bg','bgr',14),(36,'Burkina Faso','bf','bfa',42),(37,'Burundi','bi','bdi',44),(38,'Cambodia','kh','khm',25),(39,'Cameroon','cm','cmr',43),(40,'Canada','ca','can',51),(41,'Cape Verde','cv','cpv',42),(42,'Cayman Islands','ky','cym',53),(43,'Central African Republic','cf','caf',43),(44,'Chad','td','tcd',43),(45,'Chile','cl','chl',61),(46,'China','cn','chn',22),(47,'Christmas Island','cx',NULL,31),(48,'Cocos (Keeling) Islands','cc',NULL,31),(49,'Colombia','co','col',61),(50,'Comoros','km','com',44),(51,'Congo','cg','cog',43),(52,'Congo, The Democratic Republic of the','cd','cod',43),(53,'Cook Islands','ck','cok',34),(54,'Costa Rica','cr','cri',52),(55,'Cote d\'Ivoire','ci','civ',42),(56,'Croatia','hr','hrv',13),(57,'Cuba','cu','cub',53),(58,'Curacao','cw','cuw',53),(59,'Cyprus','cy','cyp',13),(60,'Czech Republic','cz','cze',14),(61,'Denmark','dk','dnk',11),(62,'Djibouti','dj','dji',44),(63,'Dominica','dm','dma',53),(64,'Dominican Republic','do','dom',53),(65,'Ecuador','ec','ecu',61),(66,'Egypt','eg','egy',41),(67,'El Salvador','sv','slv',52),(68,'Equatorial Guinea','gq','gnq',43),(69,'Eritrea','er','eri',44),(70,'Estonia','ee','est',11),(71,'Ethiopia','et','eth',44),(72,'Falkland Islands (Malvinas)','fk','flk',61),(73,'Faroe Islands','fo','fro',11),(74,'Fiji','fj','fji',33),(75,'Finland','fi','fin',11),(76,'France','fr','fra',12),(77,'French Guiana','gf','guf',61),(78,'French Polynesia','pf','pyf',34),(79,'French Southern Territories','tf',NULL,71),(80,'Gabon','ga','gab',43),(81,'Gambia','gm','gmb',42),(82,'Georgia','ge','geo',23),(83,'Germany','de','deu',12),(84,'Ghana','gh','gha',42),(85,'Gibraltar','gi','gib',13),(86,'Greece','gr','grc',13),(87,'Greenland','gl','grl',51),(88,'Grenada','gd','grd',53),(89,'Guadeloupe','gp','glp',53),(90,'Guam','gu','gum',32),(91,'Guatemala','gt','gtm',52),(92,'Guernsey','gg','ggy',11),(93,'Guinea','gn','gin',42),(94,'Guinea-Bissau','gw','gnb',42),(95,'Guyana','gy','guy',61),(96,'Haiti','ht','hti',53),(97,'Heard Island and McDonald Islands','hm',NULL,71),(98,'Holy See (Vatican City State)','va','vat',13),(99,'Honduras','hn','hnd',52),(100,'China, Hong Kong Special Administrative Region','hk','hkg',22),(101,'Hungary','hu','hun',14),(102,'Iceland','is','isl',11),(103,'India','in','ind',24),(104,'Indonesia','id','idn',25),(105,'Iran, Islamic Republic of','ir','irn',24),(106,'Iraq','iq','irq',23),(107,'Ireland','ie','irl',11),(108,'Isle of Man','im','imn',11),(109,'Israel','il','isr',23),(110,'Italy','it','ita',13),(111,'Jamaica','jm','jam',53),(112,'Japan','jp','jpn',22),(113,'Jersey','je','jey',11),(114,'Jordan','jo','jor',23),(115,'Kazakhstan','kz','kaz',21),(116,'Kenya','ke','ken',44),(117,'Kiribati','ki','kir',32),(118,'Korea, Democratic People\'s Republic of','kp','prk',22),(119,'Korea, Republic of','kr','kor',22),(120,'Kuwait','kw','kwt',23),(121,'Kyrgyzstan','kg','kgz',21),(122,'Lao People\'s Democratic Republic','la','lao',25),(123,'Latvia','lv','lva',11),(124,'Lebanon','lb','lbn',23),(125,'Lesotho','ls','lso',45),(126,'Liberia','lr','lbr',42),(127,'Libyan Arab Jamahiriya','ly','lby',41),(128,'Liechtenstein','li','lie',12),(129,'Lithuania','lt','ltu',11),(130,'Luxembourg','lu','lux',12),(131,'China, Macau Special Administrative Region','mo','mac',22),(132,'Macedonia, The former Yugoslav Republic of','mk','mkd',13),(133,'Madagascar','mg','mdg',44),(134,'Malawi','mw','mwi',44),(135,'Malaysia','my','mys',25),(136,'Maldives','mv','mdv',24),(137,'Mali','ml','mli',42),(138,'Malta','mt','mlt',13),(139,'Marshall Islands','mh','mhl',32),(140,'Martinique','mq','mtq',53),(141,'Mauritania','mr','mrt',42),(142,'Mauritius','mu','mus',44),(143,'Mayotte','yt','myt',44),(144,'Mexico','mx','mex',52),(145,'Micronesia, Federated States of','fm','fsm',32),(146,'Moldova, Republic of','md','mda',14),(147,'Monaco','mc','mco',12),(148,'Mongolia','mn','mng',22),(149,'Montenegro','me','mne',13),(150,'Montserrat','ms','msr',53),(151,'Morocco','ma','mar',41),(152,'Mozambique','mz','moz',44),(153,'Myanmar','mm','mmr',25),(154,'Namibia','na','nam',45),(155,'Nauru','nr','nru',32),(156,'Nepal','np','npl',24),(157,'Netherlands','nl','nld',12),(158,'New Caledonia','nc','ncl',33),(159,'New Zealand','nz','nzl',31),(160,'Nicaragua','ni','nic',52),(161,'Niger','ne','ner',42),(162,'Nigeria','ng','nga',42),(163,'Niue','nu','niu',34),(164,'Norfolk Island','nf','nfk',31),(165,'Northern Mariana Islands','mp','mnp',32),(166,'Norway','no','nor',11),(167,'Oman','om','omn',23),(168,'Pakistan','pk','pak',24),(169,'Palau','pw','plw',32),(170,'State of Palestine, \"non-state entity\"','ps','pse',23),(171,'Panama','pa','pan',52),(172,'Papua New Guinea','pg','png',33),(173,'Paraguay','py','pry',61),(174,'Peru','pe','per',61),(175,'Philippines','ph','phl',25),(176,'Pitcairn','pn','pcn',34),(177,'Poland','pl','pol',14),(178,'Portugal','pt','prt',13),(179,'Puerto Rico','pr','pri',53),(180,'Qatar','qa','qat',23),(181,'Reunion','re','reu',44),(182,'Romania','ro','rou',14),(183,'Russian Federation','ru','rus',14),(184,'Rwanda','rw','rwa',44),(185,'Saint Barthelemy','bl','blm',53),(186,'Saint Helena, Ascension and Tristan Da Cunha','sh','shn',42),(187,'Saint Kitts and Nevis','kn','kna',53),(188,'Saint Lucia','lc','lca',53),(189,'Saint Martin (French Part)','mf','maf',53),(190,'Saint Pierre and Miquelon','pm','spm',51),(191,'Saint Vincent and The Grenadines','vc','vct',53),(192,'Samoa','ws','wsm',34),(193,'San Marino','sm','smr',13),(194,'Sao Tome and Principe','st','stp',43),(195,'Saudi Arabia','sa','sau',23),(196,'Senegal','sn','sen',42),(197,'Serbia','rs','srb',13),(198,'Seychelles','sc','syc',44),(199,'Sierra Leone','sl','sle',42),(200,'Singapore','sg','sgp',25),(201,'Sint Maarten (Dutch Part)','sx','sxm',53),(202,'Slovakia','sk','svk',14),(203,'Slovenia','si','svn',13),(204,'Solomon Islands','sb','slb',33),(205,'Somalia','so','som',44),(206,'South Africa','za','zaf',45),(207,'South Georgia and The South Sandwich Islands','gs',NULL,71),(208,'South Sudan','ss','ssd',41),(209,'Spain','es','esp',13),(210,'Sri Lanka','lk','lka',24),(211,'Sudan','sd','sdn',41),(212,'Suriname','sr','sur',61),(213,'Svalbard and Jan Mayen','sj','sjm',11),(214,'Swaziland','sz','swz',45),(215,'Sweden','se','swe',11),(216,'Switzerland','ch','che',12),(217,'Syrian Arab Republic','sy','syr',23),(218,'Taiwan, Province of China','tw',NULL,22),(219,'Tajikistan','tj','tjk',21),(220,'Tanzania, United Republic of','tz','tza',44),(221,'Thailand','th','tha',25),(222,'Timor-Leste','tl','tls',25),(223,'Togo','tg','tgo',42),(224,'Tokelau','tk','tkl',34),(225,'Tonga','to','ton',34),(226,'Trinidad and Tobago','tt','tto',53),(227,'Tunisia','tn','tun',41),(228,'Turkey','tr','tur',23),(229,'Turkmenistan','tm','tkm',21),(230,'Turks and Caicos Islands','tc','tca',53),(231,'Tuvalu','tv','tuv',34),(232,'Uganda','ug','uga',44),(233,'Ukraine','ua','ukr',14),(234,'United Arab Emirates','ae','are',23),(235,'United Kingdom of Great Britain and Northern Ireland','gb','gbr',11),(236,'United States of America','us','usa',51),(237,'United States Minor Outlying Islands','um',NULL,51),(238,'Uruguay','uy','ury',61),(239,'Uzbekistan','uz','uzb',21),(240,'Vanuatu','vu','vut',33),(241,'Venezuela, Bolivarian Republic of','ve','ven',61),(242,'Viet Nam','vn','vnm',25),(243,'Virgin Islands, British','vg','vgb',53),(244,'Virgin Islands, U.S.','vi','vir',53),(245,'Wallis and Futuna','wf','wlf',34),(246,'Western Sahara','eh','esh',41),(247,'Yemen','ye','yem',23),(248,'Zambia','zm','zmb',44),(249,'Zimbabwe','zw','zwe',44),(250,'Unknow','xx','xxx',0),(251,'Kosovo','xk','unk',13);
-/*!40000 ALTER TABLE `country` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO "country" VALUES (1,E'Afghanistan',E'af',E'afg',24);
+INSERT INTO "country" VALUES (2,E'Aland Islands',E'ax',E'ala',11);
+INSERT INTO "country" VALUES (3,E'Albania',E'al',E'alb',13);
+INSERT INTO "country" VALUES (4,E'Algeria',E'dz',E'dza',41);
+INSERT INTO "country" VALUES (5,E'American Samoa',E'as',E'asm',34);
+INSERT INTO "country" VALUES (6,E'Andorra',E'ad',E'and',13);
+INSERT INTO "country" VALUES (7,E'Angola',E'ao',E'ago',43);
+INSERT INTO "country" VALUES (8,E'Anguilla',E'ai',E'aia',53);
+INSERT INTO "country" VALUES (9,E'Antarctica',E'aq',NULL,71);
+INSERT INTO "country" VALUES (10,E'Antigua and Barbuda',E'ag',E'atg',53);
+INSERT INTO "country" VALUES (11,E'Argentina',E'ar',E'arg',61);
+INSERT INTO "country" VALUES (12,E'Armenia',E'am',E'arm',23);
+INSERT INTO "country" VALUES (13,E'Aruba',E'aw',E'abw',53);
+INSERT INTO "country" VALUES (14,E'Australia',E'au',E'aus',31);
+INSERT INTO "country" VALUES (15,E'Austria',E'at',E'aut',12);
+INSERT INTO "country" VALUES (16,E'Azerbaijan',E'az',E'aze',23);
+INSERT INTO "country" VALUES (17,E'Bahamas',E'bs',E'bhs',53);
+INSERT INTO "country" VALUES (18,E'Bahrain',E'bh',E'bhr',23);
+INSERT INTO "country" VALUES (19,E'Bangladesh',E'bd',E'bgd',24);
+INSERT INTO "country" VALUES (20,E'Barbados',E'bb',E'brb',53);
+INSERT INTO "country" VALUES (21,E'Belarus',E'by',E'blr',14);
+INSERT INTO "country" VALUES (22,E'Belgium',E'be',E'bel',12);
+INSERT INTO "country" VALUES (23,E'Belize',E'bz',E'blz',52);
+INSERT INTO "country" VALUES (24,E'Benin',E'bj',E'ben',42);
+INSERT INTO "country" VALUES (25,E'Bermuda',E'bm',E'bmu',51);
+INSERT INTO "country" VALUES (26,E'Bhutan',E'bt',E'btn',24);
+INSERT INTO "country" VALUES (27,E'Bolivia, Plurinational State of',E'bo',E'bol',61);
+INSERT INTO "country" VALUES (28,E'Bonaire, Sint Eustatius and Saba',E'bq',E'bes',53);
+INSERT INTO "country" VALUES (29,E'Bosnia and Herzegovina',E'ba',E'bih',13);
+INSERT INTO "country" VALUES (30,E'Botswana',E'bw',E'bwa',45);
+INSERT INTO "country" VALUES (31,E'Bouvet Island',E'bv',NULL,11);
+INSERT INTO "country" VALUES (32,E'Brazil',E'br',E'bra',61);
+INSERT INTO "country" VALUES (33,E'British Indian Ocean Territory',E'io',NULL,25);
+INSERT INTO "country" VALUES (34,E'Brunei Darussalam',E'bn',E'brn',25);
+INSERT INTO "country" VALUES (35,E'Bulgaria',E'bg',E'bgr',14);
+INSERT INTO "country" VALUES (36,E'Burkina Faso',E'bf',E'bfa',42);
+INSERT INTO "country" VALUES (37,E'Burundi',E'bi',E'bdi',44);
+INSERT INTO "country" VALUES (38,E'Cambodia',E'kh',E'khm',25);
+INSERT INTO "country" VALUES (39,E'Cameroon',E'cm',E'cmr',43);
+INSERT INTO "country" VALUES (40,E'Canada',E'ca',E'can',51);
+INSERT INTO "country" VALUES (41,E'Cape Verde',E'cv',E'cpv',42);
+INSERT INTO "country" VALUES (42,E'Cayman Islands',E'ky',E'cym',53);
+INSERT INTO "country" VALUES (43,E'Central African Republic',E'cf',E'caf',43);
+INSERT INTO "country" VALUES (44,E'Chad',E'td',E'tcd',43);
+INSERT INTO "country" VALUES (45,E'Chile',E'cl',E'chl',61);
+INSERT INTO "country" VALUES (46,E'China',E'cn',E'chn',22);
+INSERT INTO "country" VALUES (47,E'Christmas Island',E'cx',NULL,31);
+INSERT INTO "country" VALUES (48,E'Cocos (Keeling) Islands',E'cc',NULL,31);
+INSERT INTO "country" VALUES (49,E'Colombia',E'co',E'col',61);
+INSERT INTO "country" VALUES (50,E'Comoros',E'km',E'com',44);
+INSERT INTO "country" VALUES (51,E'Congo',E'cg',E'cog',43);
+INSERT INTO "country" VALUES (52,E'Congo, The Democratic Republic of the',E'cd',E'cod',43);
+INSERT INTO "country" VALUES (53,E'Cook Islands',E'ck',E'cok',34);
+INSERT INTO "country" VALUES (54,E'Costa Rica',E'cr',E'cri',52);
+INSERT INTO "country" VALUES (55,E'Cote d\'Ivoire',E'ci',E'civ',42);
+INSERT INTO "country" VALUES (56,E'Croatia',E'hr',E'hrv',13);
+INSERT INTO "country" VALUES (57,E'Cuba',E'cu',E'cub',53);
+INSERT INTO "country" VALUES (58,E'Curacao',E'cw',E'cuw',53);
+INSERT INTO "country" VALUES (59,E'Cyprus',E'cy',E'cyp',13);
+INSERT INTO "country" VALUES (60,E'Czech Republic',E'cz',E'cze',14);
+INSERT INTO "country" VALUES (61,E'Denmark',E'dk',E'dnk',11);
+INSERT INTO "country" VALUES (62,E'Djibouti',E'dj',E'dji',44);
+INSERT INTO "country" VALUES (63,E'Dominica',E'dm',E'dma',53);
+INSERT INTO "country" VALUES (64,E'Dominican Republic',E'do',E'dom',53);
+INSERT INTO "country" VALUES (65,E'Ecuador',E'ec',E'ecu',61);
+INSERT INTO "country" VALUES (66,E'Egypt',E'eg',E'egy',41);
+INSERT INTO "country" VALUES (67,E'El Salvador',E'sv',E'slv',52);
+INSERT INTO "country" VALUES (68,E'Equatorial Guinea',E'gq',E'gnq',43);
+INSERT INTO "country" VALUES (69,E'Eritrea',E'er',E'eri',44);
+INSERT INTO "country" VALUES (70,E'Estonia',E'ee',E'est',11);
+INSERT INTO "country" VALUES (71,E'Ethiopia',E'et',E'eth',44);
+INSERT INTO "country" VALUES (72,E'Falkland Islands (Malvinas)',E'fk',E'flk',61);
+INSERT INTO "country" VALUES (73,E'Faroe Islands',E'fo',E'fro',11);
+INSERT INTO "country" VALUES (74,E'Fiji',E'fj',E'fji',33);
+INSERT INTO "country" VALUES (75,E'Finland',E'fi',E'fin',11);
+INSERT INTO "country" VALUES (76,E'France',E'fr',E'fra',12);
+INSERT INTO "country" VALUES (77,E'French Guiana',E'gf',E'guf',61);
+INSERT INTO "country" VALUES (78,E'French Polynesia',E'pf',E'pyf',34);
+INSERT INTO "country" VALUES (79,E'French Southern Territories',E'tf',NULL,71);
+INSERT INTO "country" VALUES (80,E'Gabon',E'ga',E'gab',43);
+INSERT INTO "country" VALUES (81,E'Gambia',E'gm',E'gmb',42);
+INSERT INTO "country" VALUES (82,E'Georgia',E'ge',E'geo',23);
+INSERT INTO "country" VALUES (83,E'Germany',E'de',E'deu',12);
+INSERT INTO "country" VALUES (84,E'Ghana',E'gh',E'gha',42);
+INSERT INTO "country" VALUES (85,E'Gibraltar',E'gi',E'gib',13);
+INSERT INTO "country" VALUES (86,E'Greece',E'gr',E'grc',13);
+INSERT INTO "country" VALUES (87,E'Greenland',E'gl',E'grl',51);
+INSERT INTO "country" VALUES (88,E'Grenada',E'gd',E'grd',53);
+INSERT INTO "country" VALUES (89,E'Guadeloupe',E'gp',E'glp',53);
+INSERT INTO "country" VALUES (90,E'Guam',E'gu',E'gum',32);
+INSERT INTO "country" VALUES (91,E'Guatemala',E'gt',E'gtm',52);
+INSERT INTO "country" VALUES (92,E'Guernsey',E'gg',E'ggy',11);
+INSERT INTO "country" VALUES (93,E'Guinea',E'gn',E'gin',42);
+INSERT INTO "country" VALUES (94,E'Guinea-Bissau',E'gw',E'gnb',42);
+INSERT INTO "country" VALUES (95,E'Guyana',E'gy',E'guy',61);
+INSERT INTO "country" VALUES (96,E'Haiti',E'ht',E'hti',53);
+INSERT INTO "country" VALUES (97,E'Heard Island and McDonald Islands',E'hm',NULL,71);
+INSERT INTO "country" VALUES (98,E'Holy See (Vatican City State)',E'va',E'vat',13);
+INSERT INTO "country" VALUES (99,E'Honduras',E'hn',E'hnd',52);
+INSERT INTO "country" VALUES (100,E'China, Hong Kong Special Administrative Region',E'hk',E'hkg',22);
+INSERT INTO "country" VALUES (101,E'Hungary',E'hu',E'hun',14);
+INSERT INTO "country" VALUES (102,E'Iceland',E'is',E'isl',11);
+INSERT INTO "country" VALUES (103,E'India',E'in',E'ind',24);
+INSERT INTO "country" VALUES (104,E'Indonesia',E'id',E'idn',25);
+INSERT INTO "country" VALUES (105,E'Iran, Islamic Republic of',E'ir',E'irn',24);
+INSERT INTO "country" VALUES (106,E'Iraq',E'iq',E'irq',23);
+INSERT INTO "country" VALUES (107,E'Ireland',E'ie',E'irl',11);
+INSERT INTO "country" VALUES (108,E'Isle of Man',E'im',E'imn',11);
+INSERT INTO "country" VALUES (109,E'Israel',E'il',E'isr',23);
+INSERT INTO "country" VALUES (110,E'Italy',E'it',E'ita',13);
+INSERT INTO "country" VALUES (111,E'Jamaica',E'jm',E'jam',53);
+INSERT INTO "country" VALUES (112,E'Japan',E'jp',E'jpn',22);
+INSERT INTO "country" VALUES (113,E'Jersey',E'je',E'jey',11);
+INSERT INTO "country" VALUES (114,E'Jordan',E'jo',E'jor',23);
+INSERT INTO "country" VALUES (115,E'Kazakhstan',E'kz',E'kaz',21);
+INSERT INTO "country" VALUES (116,E'Kenya',E'ke',E'ken',44);
+INSERT INTO "country" VALUES (117,E'Kiribati',E'ki',E'kir',32);
+INSERT INTO "country" VALUES (118,E'Korea, Democratic People\'s Republic of',E'kp',E'prk',22);
+INSERT INTO "country" VALUES (119,E'Korea, Republic of',E'kr',E'kor',22);
+INSERT INTO "country" VALUES (120,E'Kuwait',E'kw',E'kwt',23);
+INSERT INTO "country" VALUES (121,E'Kyrgyzstan',E'kg',E'kgz',21);
+INSERT INTO "country" VALUES (122,E'Lao People\'s Democratic Republic',E'la',E'lao',25);
+INSERT INTO "country" VALUES (123,E'Latvia',E'lv',E'lva',11);
+INSERT INTO "country" VALUES (124,E'Lebanon',E'lb',E'lbn',23);
+INSERT INTO "country" VALUES (125,E'Lesotho',E'ls',E'lso',45);
+INSERT INTO "country" VALUES (126,E'Liberia',E'lr',E'lbr',42);
+INSERT INTO "country" VALUES (127,E'Libyan Arab Jamahiriya',E'ly',E'lby',41);
+INSERT INTO "country" VALUES (128,E'Liechtenstein',E'li',E'lie',12);
+INSERT INTO "country" VALUES (129,E'Lithuania',E'lt',E'ltu',11);
+INSERT INTO "country" VALUES (130,E'Luxembourg',E'lu',E'lux',12);
+INSERT INTO "country" VALUES (131,E'China, Macau Special Administrative Region',E'mo',E'mac',22);
+INSERT INTO "country" VALUES (132,E'Macedonia, The former Yugoslav Republic of',E'mk',E'mkd',13);
+INSERT INTO "country" VALUES (133,E'Madagascar',E'mg',E'mdg',44);
+INSERT INTO "country" VALUES (134,E'Malawi',E'mw',E'mwi',44);
+INSERT INTO "country" VALUES (135,E'Malaysia',E'my',E'mys',25);
+INSERT INTO "country" VALUES (136,E'Maldives',E'mv',E'mdv',24);
+INSERT INTO "country" VALUES (137,E'Mali',E'ml',E'mli',42);
+INSERT INTO "country" VALUES (138,E'Malta',E'mt',E'mlt',13);
+INSERT INTO "country" VALUES (139,E'Marshall Islands',E'mh',E'mhl',32);
+INSERT INTO "country" VALUES (140,E'Martinique',E'mq',E'mtq',53);
+INSERT INTO "country" VALUES (141,E'Mauritania',E'mr',E'mrt',42);
+INSERT INTO "country" VALUES (142,E'Mauritius',E'mu',E'mus',44);
+INSERT INTO "country" VALUES (143,E'Mayotte',E'yt',E'myt',44);
+INSERT INTO "country" VALUES (144,E'Mexico',E'mx',E'mex',52);
+INSERT INTO "country" VALUES (145,E'Micronesia, Federated States of',E'fm',E'fsm',32);
+INSERT INTO "country" VALUES (146,E'Moldova, Republic of',E'md',E'mda',14);
+INSERT INTO "country" VALUES (147,E'Monaco',E'mc',E'mco',12);
+INSERT INTO "country" VALUES (148,E'Mongolia',E'mn',E'mng',22);
+INSERT INTO "country" VALUES (149,E'Montenegro',E'me',E'mne',13);
+INSERT INTO "country" VALUES (150,E'Montserrat',E'ms',E'msr',53);
+INSERT INTO "country" VALUES (151,E'Morocco',E'ma',E'mar',41);
+INSERT INTO "country" VALUES (152,E'Mozambique',E'mz',E'moz',44);
+INSERT INTO "country" VALUES (153,E'Myanmar',E'mm',E'mmr',25);
+INSERT INTO "country" VALUES (154,E'Namibia',E'na',E'nam',45);
+INSERT INTO "country" VALUES (155,E'Nauru',E'nr',E'nru',32);
+INSERT INTO "country" VALUES (156,E'Nepal',E'np',E'npl',24);
+INSERT INTO "country" VALUES (157,E'Netherlands',E'nl',E'nld',12);
+INSERT INTO "country" VALUES (158,E'New Caledonia',E'nc',E'ncl',33);
+INSERT INTO "country" VALUES (159,E'New Zealand',E'nz',E'nzl',31);
+INSERT INTO "country" VALUES (160,E'Nicaragua',E'ni',E'nic',52);
+INSERT INTO "country" VALUES (161,E'Niger',E'ne',E'ner',42);
+INSERT INTO "country" VALUES (162,E'Nigeria',E'ng',E'nga',42);
+INSERT INTO "country" VALUES (163,E'Niue',E'nu',E'niu',34);
+INSERT INTO "country" VALUES (164,E'Norfolk Island',E'nf',E'nfk',31);
+INSERT INTO "country" VALUES (165,E'Northern Mariana Islands',E'mp',E'mnp',32);
+INSERT INTO "country" VALUES (166,E'Norway',E'no',E'nor',11);
+INSERT INTO "country" VALUES (167,E'Oman',E'om',E'omn',23);
+INSERT INTO "country" VALUES (168,E'Pakistan',E'pk',E'pak',24);
+INSERT INTO "country" VALUES (169,E'Palau',E'pw',E'plw',32);
+INSERT INTO "country" VALUES (170,E'State of Palestine, \"non-state entity\"',E'ps',E'pse',23);
+INSERT INTO "country" VALUES (171,E'Panama',E'pa',E'pan',52);
+INSERT INTO "country" VALUES (172,E'Papua New Guinea',E'pg',E'png',33);
+INSERT INTO "country" VALUES (173,E'Paraguay',E'py',E'pry',61);
+INSERT INTO "country" VALUES (174,E'Peru',E'pe',E'per',61);
+INSERT INTO "country" VALUES (175,E'Philippines',E'ph',E'phl',25);
+INSERT INTO "country" VALUES (176,E'Pitcairn',E'pn',E'pcn',34);
+INSERT INTO "country" VALUES (177,E'Poland',E'pl',E'pol',14);
+INSERT INTO "country" VALUES (178,E'Portugal',E'pt',E'prt',13);
+INSERT INTO "country" VALUES (179,E'Puerto Rico',E'pr',E'pri',53);
+INSERT INTO "country" VALUES (180,E'Qatar',E'qa',E'qat',23);
+INSERT INTO "country" VALUES (181,E'Reunion',E're',E'reu',44);
+INSERT INTO "country" VALUES (182,E'Romania',E'ro',E'rou',14);
+INSERT INTO "country" VALUES (183,E'Russian Federation',E'ru',E'rus',14);
+INSERT INTO "country" VALUES (184,E'Rwanda',E'rw',E'rwa',44);
+INSERT INTO "country" VALUES (185,E'Saint Barthelemy',E'bl',E'blm',53);
+INSERT INTO "country" VALUES (186,E'Saint Helena, Ascension and Tristan Da Cunha',E'sh',E'shn',42);
+INSERT INTO "country" VALUES (187,E'Saint Kitts and Nevis',E'kn',E'kna',53);
+INSERT INTO "country" VALUES (188,E'Saint Lucia',E'lc',E'lca',53);
+INSERT INTO "country" VALUES (189,E'Saint Martin (French Part)',E'mf',E'maf',53);
+INSERT INTO "country" VALUES (190,E'Saint Pierre and Miquelon',E'pm',E'spm',51);
+INSERT INTO "country" VALUES (191,E'Saint Vincent and The Grenadines',E'vc',E'vct',53);
+INSERT INTO "country" VALUES (192,E'Samoa',E'ws',E'wsm',34);
+INSERT INTO "country" VALUES (193,E'San Marino',E'sm',E'smr',13);
+INSERT INTO "country" VALUES (194,E'Sao Tome and Principe',E'st',E'stp',43);
+INSERT INTO "country" VALUES (195,E'Saudi Arabia',E'sa',E'sau',23);
+INSERT INTO "country" VALUES (196,E'Senegal',E'sn',E'sen',42);
+INSERT INTO "country" VALUES (197,E'Serbia',E'rs',E'srb',13);
+INSERT INTO "country" VALUES (198,E'Seychelles',E'sc',E'syc',44);
+INSERT INTO "country" VALUES (199,E'Sierra Leone',E'sl',E'sle',42);
+INSERT INTO "country" VALUES (200,E'Singapore',E'sg',E'sgp',25);
+INSERT INTO "country" VALUES (201,E'Sint Maarten (Dutch Part)',E'sx',E'sxm',53);
+INSERT INTO "country" VALUES (202,E'Slovakia',E'sk',E'svk',14);
+INSERT INTO "country" VALUES (203,E'Slovenia',E'si',E'svn',13);
+INSERT INTO "country" VALUES (204,E'Solomon Islands',E'sb',E'slb',33);
+INSERT INTO "country" VALUES (205,E'Somalia',E'so',E'som',44);
+INSERT INTO "country" VALUES (206,E'South Africa',E'za',E'zaf',45);
+INSERT INTO "country" VALUES (207,E'South Georgia and The South Sandwich Islands',E'gs',NULL,71);
+INSERT INTO "country" VALUES (208,E'South Sudan',E'ss',E'ssd',41);
+INSERT INTO "country" VALUES (209,E'Spain',E'es',E'esp',13);
+INSERT INTO "country" VALUES (210,E'Sri Lanka',E'lk',E'lka',24);
+INSERT INTO "country" VALUES (211,E'Sudan',E'sd',E'sdn',41);
+INSERT INTO "country" VALUES (212,E'Suriname',E'sr',E'sur',61);
+INSERT INTO "country" VALUES (213,E'Svalbard and Jan Mayen',E'sj',E'sjm',11);
+INSERT INTO "country" VALUES (214,E'Swaziland',E'sz',E'swz',45);
+INSERT INTO "country" VALUES (215,E'Sweden',E'se',E'swe',11);
+INSERT INTO "country" VALUES (216,E'Switzerland',E'ch',E'che',12);
+INSERT INTO "country" VALUES (217,E'Syrian Arab Republic',E'sy',E'syr',23);
+INSERT INTO "country" VALUES (218,E'Taiwan, Province of China',E'tw',NULL,22);
+INSERT INTO "country" VALUES (219,E'Tajikistan',E'tj',E'tjk',21);
+INSERT INTO "country" VALUES (220,E'Tanzania, United Republic of',E'tz',E'tza',44);
+INSERT INTO "country" VALUES (221,E'Thailand',E'th',E'tha',25);
+INSERT INTO "country" VALUES (222,E'Timor-Leste',E'tl',E'tls',25);
+INSERT INTO "country" VALUES (223,E'Togo',E'tg',E'tgo',42);
+INSERT INTO "country" VALUES (224,E'Tokelau',E'tk',E'tkl',34);
+INSERT INTO "country" VALUES (225,E'Tonga',E'to',E'ton',34);
+INSERT INTO "country" VALUES (226,E'Trinidad and Tobago',E'tt',E'tto',53);
+INSERT INTO "country" VALUES (227,E'Tunisia',E'tn',E'tun',41);
+INSERT INTO "country" VALUES (228,E'Turkey',E'tr',E'tur',23);
+INSERT INTO "country" VALUES (229,E'Turkmenistan',E'tm',E'tkm',21);
+INSERT INTO "country" VALUES (230,E'Turks and Caicos Islands',E'tc',E'tca',53);
+INSERT INTO "country" VALUES (231,E'Tuvalu',E'tv',E'tuv',34);
+INSERT INTO "country" VALUES (232,E'Uganda',E'ug',E'uga',44);
+INSERT INTO "country" VALUES (233,E'Ukraine',E'ua',E'ukr',14);
+INSERT INTO "country" VALUES (234,E'United Arab Emirates',E'ae',E'are',23);
+INSERT INTO "country" VALUES (235,E'United Kingdom of Great Britain and Northern Ireland',E'gb',E'gbr',11);
+INSERT INTO "country" VALUES (236,E'United States of America',E'us',E'usa',51);
+INSERT INTO "country" VALUES (237,E'United States Minor Outlying Islands',E'um',NULL,51);
+INSERT INTO "country" VALUES (238,E'Uruguay',E'uy',E'ury',61);
+INSERT INTO "country" VALUES (239,E'Uzbekistan',E'uz',E'uzb',21);
+INSERT INTO "country" VALUES (240,E'Vanuatu',E'vu',E'vut',33);
+INSERT INTO "country" VALUES (241,E'Venezuela, Bolivarian Republic of',E've',E'ven',61);
+INSERT INTO "country" VALUES (242,E'Viet Nam',E'vn',E'vnm',25);
+INSERT INTO "country" VALUES (243,E'Virgin Islands, British',E'vg',E'vgb',53);
+INSERT INTO "country" VALUES (244,E'Virgin Islands, U.S.',E'vi',E'vir',53);
+INSERT INTO "country" VALUES (245,E'Wallis and Futuna',E'wf',E'wlf',34);
+INSERT INTO "country" VALUES (246,E'Western Sahara',E'eh',E'esh',41);
+INSERT INTO "country" VALUES (247,E'Yemen',E'ye',E'yem',23);
+INSERT INTO "country" VALUES (248,E'Zambia',E'zm',E'zmb',44);
+INSERT INTO "country" VALUES (249,E'Zimbabwe',E'zw',E'zwe',44);
+INSERT INTO "country" VALUES (250,E'Unknow',E'xx',E'xxx',0);
+INSERT INTO "country" VALUES (251,E'Kosovo',E'xk',E'unk',13);
 
---
--- Table structure for table `debate`
---
-
-DROP TABLE IF EXISTS `debate`;
+/*!40000 ALTER TABLE country ENABLE KEYS */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `debate` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `round_id` int(10) unsigned NOT NULL,
-  `tournament_id` int(10) unsigned NOT NULL,
-  `og_team_id` int(10) unsigned NOT NULL,
-  `oo_team_id` int(10) unsigned NOT NULL,
-  `cg_team_id` int(10) unsigned NOT NULL,
-  `co_team_id` int(10) unsigned NOT NULL,
-  `panel_id` int(10) unsigned NOT NULL,
-  `venue_id` int(10) unsigned NOT NULL,
-  `energy` int(11) NOT NULL DEFAULT '0',
-  `og_feedback` tinyint(1) NOT NULL DEFAULT '0',
-  `oo_feedback` tinyint(1) NOT NULL DEFAULT '0',
-  `cg_feedback` tinyint(1) NOT NULL DEFAULT '0',
-  `co_feedback` tinyint(1) NOT NULL DEFAULT '0',
-  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `messages` text,
-  PRIMARY KEY (`id`),
-  KEY `fk_debate_venue1_idx` (`venue_id`),
-  KEY `fk_debate_panel1_idx` (`panel_id`),
-  KEY `fk_debate_round1_idx` (`round_id`,`tournament_id`),
-  KEY `fk_debate_team1_idx` (`og_team_id`),
-  KEY `fk_debate_team2_idx` (`oo_team_id`),
-  KEY `fk_debate_team3_idx` (`cg_team_id`),
-  KEY `fk_debate_team4_idx` (`co_team_id`),
-  CONSTRAINT `fk_debate_panel1` FOREIGN KEY (`panel_id`) REFERENCES `panel` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_debate_venue1` FOREIGN KEY (`venue_id`) REFERENCES `venue` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=8674 DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table debate
+--
+
+DROP TABLE IF EXISTS "debate" CASCADE;
+DROP SEQUENCE IF EXISTS "debate_id_seq" CASCADE ;
+
+CREATE SEQUENCE "debate_id_seq"  START WITH 8674 ;
+
+CREATE TABLE  "debate" (
+   "id" integer DEFAULT nextval('"debate_id_seq"') NOT NULL,
+   "round_id" int CHECK ("round_id" >= 0) NOT NULL,
+   "tournament_id" int CHECK ("tournament_id" >= 0) NOT NULL,
+   "og_team_id" int CHECK ("og_team_id" >= 0) NOT NULL,
+   "oo_team_id" int CHECK ("oo_team_id" >= 0) NOT NULL,
+   "cg_team_id" int CHECK ("cg_team_id" >= 0) NOT NULL,
+   "co_team_id" int CHECK ("co_team_id" >= 0) NOT NULL,
+   "panel_id" int CHECK ("panel_id" >= 0) NOT NULL,
+   "venue_id" int CHECK ("venue_id" >= 0) NOT NULL,
+   "energy"   int NOT NULL DEFAULT '0',
+   "og_feedback"    smallint NOT NULL DEFAULT '0',
+   "oo_feedback"    smallint NOT NULL DEFAULT '0',
+   "cg_feedback"    smallint NOT NULL DEFAULT '0',
+   "co_feedback"    smallint NOT NULL DEFAULT '0',
+   "time"   timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   "messages"   text,
+   primary key ("id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `energy_config`
---
-
-DROP TABLE IF EXISTS `energy_config`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `energy_config` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `key` varchar(100) NOT NULL,
-  `tournament_id` int(10) unsigned NOT NULL,
-  `label` varchar(255) NOT NULL,
-  `value` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `fk_energy_config_tournament1_idx` (`tournament_id`),
-  CONSTRAINT `fk_energy_config_tournament1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3827 DEFAULT CHARSET=utf8;
+CREATE INDEX "debate_venue_id_idx" ON "debate" USING btree ("venue_id");
+CREATE INDEX "debate_panel_id_idx" ON "debate" USING btree ("panel_id");
+CREATE INDEX "debate_1_idx" ON "debate" USING btree ("round_id", "tournament_id");
+CREATE INDEX "debate_og_team_id_idx" ON "debate" USING btree ("og_team_id");
+CREATE INDEX "debate_oo_team_id_idx" ON "debate" USING btree ("oo_team_id");
+CREATE INDEX "debate_cg_team_id_idx" ON "debate" USING btree ("cg_team_id");
+CREATE INDEX "debate_co_team_id_idx" ON "debate" USING btree ("co_team_id");
+ALTER TABLE "debate" ADD FOREIGN KEY ("panel_id") REFERENCES "panel" ("id");
+ALTER TABLE "debate" ADD FOREIGN KEY ("venue_id") REFERENCES "venue" ("id");
+
+--
+-- Table structure for table energy_config
+--
+
+DROP TABLE IF EXISTS "energy_config" CASCADE;
+DROP SEQUENCE IF EXISTS "energy_config_id_seq" CASCADE ;
+
+CREATE SEQUENCE "energy_config_id_seq"  START WITH 3827 ;
+
+CREATE TABLE  "energy_config" (
+   "id" integer DEFAULT nextval('"energy_config_id_seq"') NOT NULL,
+   "tournament_id" int CHECK ("tournament_id" >= 0) NOT NULL,
+   "label"   varchar(255) NOT NULL,
+   "value"   int NOT NULL DEFAULT '0',
+   primary key ("id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `feedback`
---
-
-DROP TABLE IF EXISTS `feedback`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `feedback` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `debate_id` int(10) unsigned NOT NULL,
-  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `to_type` tinyint(4) DEFAULT NULL,
-  `to_id` int(11) DEFAULT NULL,
-  `from_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_feedback_debate1_idx` (`debate_id`),
-  CONSTRAINT `fk_feedback_debate1` FOREIGN KEY (`debate_id`) REFERENCES `debate` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=9362 DEFAULT CHARSET=utf8;
+CREATE INDEX "energy_config_100_idx" ON "energy_config" USING btree ("100");
+CREATE INDEX "energy_config_tournament_id_idx" ON "energy_config" USING btree ("tournament_id");
+ALTER TABLE "energy_config" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+
+--
+-- Table structure for table feedback
+--
+
+DROP TABLE IF EXISTS "feedback" CASCADE;
+DROP SEQUENCE IF EXISTS "feedback_id_seq" CASCADE ;
+
+CREATE SEQUENCE "feedback_id_seq"  START WITH 9362 ;
+
+CREATE TABLE  "feedback" (
+   "id" integer DEFAULT nextval('"feedback_id_seq"') NOT NULL,
+   "debate_id" int CHECK ("debate_id" >= 0) NOT NULL,
+   "time"   timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   "to_type"    smallint DEFAULT NULL,
+   "to_id"   int DEFAULT NULL,
+   "from_id"   int DEFAULT NULL,
+   primary key ("id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `in_society`
---
-
-DROP TABLE IF EXISTS `in_society`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `in_society` (
-  `user_id` int(10) unsigned NOT NULL,
-  `society_id` int(10) unsigned NOT NULL,
-  `starting` date NOT NULL,
-  `ending` date DEFAULT NULL,
-  PRIMARY KEY (`society_id`,`user_id`),
-  KEY `fk_username_has_university_university1_idx` (`society_id`),
-  KEY `fk_username_has_university_username1_idx` (`user_id`),
-  CONSTRAINT `fk_username_in_society_society1` FOREIGN KEY (`society_id`) REFERENCES `society` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_username_in_society_username1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE INDEX "feedback_debate_id_idx" ON "feedback" USING btree ("debate_id");
+ALTER TABLE "feedback" ADD FOREIGN KEY ("debate_id") REFERENCES "debate" ("id");
+
+--
+-- Table structure for table in_society
+--
+
+DROP TABLE IF EXISTS "in_society" CASCADE;
+CREATE TABLE  "in_society" (
+   "user_id" int CHECK ("user_id" >= 0) NOT NULL,
+   "society_id" int CHECK ("society_id" >= 0) NOT NULL,
+   "starting"   date NOT NULL,
+   "ending"   date DEFAULT NULL,
+   primary key ("society_id", "user_id")
+)  ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `language`
---
-
-DROP TABLE IF EXISTS `language`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `language` (
-  `language` varchar(16) NOT NULL,
-  `label` varchar(100) NOT NULL,
-  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`language`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE INDEX "in_society_society_id_idx" ON "in_society" USING btree ("society_id");
+CREATE INDEX "in_society_user_id_idx" ON "in_society" USING btree ("user_id");
+ALTER TABLE "in_society" ADD FOREIGN KEY ("society_id") REFERENCES "society" ("id");
+ALTER TABLE "in_society" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
+
+--
+-- Table structure for table language
+--
+
+DROP TABLE IF EXISTS "language" CASCADE;
+CREATE TABLE  "language" (
+   "language"   varchar(16) NOT NULL,
+   "label"   varchar(100) NOT NULL,
+   "last_update"   timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   primary key ("language")
+)  ;
 /*!40101 SET character_set_client = @saved_cs_client */;
+/*!40000 ALTER TABLE language DISABLE KEYS */;
 
 --
--- Dumping data for table `language`
+-- Dumping data for table language
 --
 
-LOCK TABLES `language` WRITE;
-/*!40000 ALTER TABLE `language` DISABLE KEYS */;
-INSERT INTO `language` VALUES ('de-DE','German (DE)','2016-01-18 16:28:28'),('es-CO','Colombian (ES)','2015-12-29 07:27:02'),('fr-FR','Frence (FR)','2016-01-05 17:23:24'),('tr-TR','Turkish (TR)','2015-09-25 14:42:06');
-/*!40000 ALTER TABLE `language` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO "language" VALUES (E'de-DE',E'German (DE)',E'2016-01-18 16:28:28');
+INSERT INTO "language" VALUES (E'es-CO',E'Colombian (ES)',E'2015-12-29 07:27:02');
+INSERT INTO "language" VALUES (E'fr-FR',E'Frence (FR)',E'2016-01-05 17:23:24');
+INSERT INTO "language" VALUES (E'tr-TR',E'Turkish (TR)',E'2015-09-25 14:42:06');
 
---
--- Table structure for table `language_maintainer`
---
-
-DROP TABLE IF EXISTS `language_maintainer`;
+/*!40000 ALTER TABLE language ENABLE KEYS */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `language_maintainer` (
-  `user_id` int(11) unsigned NOT NULL,
-  `language_language` varchar(16) NOT NULL,
-  PRIMARY KEY (`user_id`,`language_language`),
-  KEY `fk_user_has_language_language1_idx` (`language_language`),
-  KEY `fk_user_has_language_user1_idx` (`user_id`),
-  CONSTRAINT `fk_user_has_language_user1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_user_maintaines_language` FOREIGN KEY (`language_language`) REFERENCES `language` (`language`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table language_maintainer
+--
+
+DROP TABLE IF EXISTS "language_maintainer" CASCADE;
+CREATE TABLE  "language_maintainer" (
+   "user_id" int CHECK ("user_id" >= 0) NOT NULL,
+   "language_language"   varchar(16) NOT NULL,
+   primary key ("user_id", "language_language")
+)  ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `language_officer`
---
-
-DROP TABLE IF EXISTS `language_officer`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `language_officer` (
-  `user_id` int(11) unsigned NOT NULL,
-  `tournament_id` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`user_id`,`tournament_id`),
-  KEY `fk_user_has_tournament_tournament1_idx` (`tournament_id`),
-  KEY `fk_user_has_tournament_user1_idx` (`user_id`),
-  CONSTRAINT `fk_user_has_tournament_tournament1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_user_has_tournament_user1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+CREATE INDEX "language_maintainer_language_language_idx" ON "language_maintainer" USING btree ("language_language");
+CREATE INDEX "language_maintainer_user_id_idx" ON "language_maintainer" USING btree ("user_id");
+ALTER TABLE "language_maintainer" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
+ALTER TABLE "language_maintainer" ADD FOREIGN KEY ("language_language") REFERENCES "language" ("language");
+
+--
+-- Table structure for table language_officer
+--
+
+DROP TABLE IF EXISTS "language_officer" CASCADE;
+CREATE TABLE  "language_officer" (
+   "user_id" int CHECK ("user_id" >= 0) NOT NULL,
+   "tournament_id" int CHECK ("tournament_id" >= 0) NOT NULL,
+   primary key ("user_id", "tournament_id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `legacy_motion`
---
-
-DROP TABLE IF EXISTS `legacy_motion`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `legacy_motion` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `motion` text NOT NULL,
-  `language` varchar(2) NOT NULL DEFAULT 'en',
-  `time` date NOT NULL,
-  `infoslide` text,
-  `tournament` varchar(255) NOT NULL,
-  `round` varchar(45) DEFAULT NULL,
-  `link` varchar(255) DEFAULT NULL,
-  `by_user_id` int(11) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_legacy_motion_user1_idx` (`by_user_id`),
-  CONSTRAINT `fk_legacy_motion_user1` FOREIGN KEY (`by_user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
+CREATE INDEX "language_officer_tournament_id_idx" ON "language_officer" USING btree ("tournament_id");
+CREATE INDEX "language_officer_user_id_idx" ON "language_officer" USING btree ("user_id");
+ALTER TABLE "language_officer" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "language_officer" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
+
+--
+-- Table structure for table legacy_motion
+--
+
+DROP TABLE IF EXISTS "legacy_motion" CASCADE;
+DROP SEQUENCE IF EXISTS "legacy_motion_id_seq" CASCADE ;
+
+CREATE SEQUENCE "legacy_motion_id_seq"  START WITH 28 ;
+
+CREATE TABLE  "legacy_motion" (
+   "id" integer DEFAULT nextval('"legacy_motion_id_seq"') NOT NULL,
+   "motion"   text NOT NULL,
+   "language"   varchar(2) NOT NULL DEFAULT 'en',
+   "time"   date NOT NULL,
+   "infoslide"   text,
+   "tournament"   varchar(255) NOT NULL,
+   "round"   varchar(45) DEFAULT NULL,
+   "link"   varchar(255) DEFAULT NULL,
+   "by_user_id" int CHECK ("by_user_id" >= 0) DEFAULT NULL,
+   primary key ("id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `legacy_tag`
---
-
-DROP TABLE IF EXISTS `legacy_tag`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `legacy_tag` (
-  `motion_tag_id` int(11) NOT NULL,
-  `legacy_motion_id` int(11) NOT NULL,
-  PRIMARY KEY (`motion_tag_id`,`legacy_motion_id`),
-  KEY `fk_motion_tag_has_legacy_motion_legacy_motion1_idx` (`legacy_motion_id`),
-  KEY `fk_motion_tag_has_legacy_motion_motion_tag1_idx` (`motion_tag_id`),
-  CONSTRAINT `fk_motion_tag_has_legacy_motion_legacy_motion1` FOREIGN KEY (`legacy_motion_id`) REFERENCES `legacy_motion` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_motion_tag_has_legacy_motion_motion_tag1` FOREIGN KEY (`motion_tag_id`) REFERENCES `motion_tag` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE INDEX "legacy_motion_by_user_id_idx" ON "legacy_motion" USING btree ("by_user_id");
+ALTER TABLE "legacy_motion" ADD FOREIGN KEY ("by_user_id") REFERENCES "user" ("id");
+
+--
+-- Table structure for table legacy_tag
+--
+
+DROP TABLE IF EXISTS "legacy_tag" CASCADE;
+CREATE TABLE  "legacy_tag" (
+   "motion_tag_id"   int NOT NULL,
+   "legacy_motion_id"   int NOT NULL,
+   primary key ("motion_tag_id", "legacy_motion_id")
+)  ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `message`
---
-
-DROP TABLE IF EXISTS `message`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `message` (
-  `id` int(11) NOT NULL,
-  `language` varchar(16) NOT NULL DEFAULT '',
-  `translation` text CHARACTER SET utf8,
-  PRIMARY KEY (`language`,`id`),
-  KEY `fk_message_source_message` (`id`),
-  CONSTRAINT `fk_message_source_message` FOREIGN KEY (`id`) REFERENCES `source_message` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE INDEX "legacy_tag_legacy_motion_id_idx" ON "legacy_tag" USING btree ("legacy_motion_id");
+CREATE INDEX "legacy_tag_motion_tag_id_idx" ON "legacy_tag" USING btree ("motion_tag_id");
+ALTER TABLE "legacy_tag" ADD FOREIGN KEY ("legacy_motion_id") REFERENCES "legacy_motion" ("id");
+ALTER TABLE "legacy_tag" ADD FOREIGN KEY ("motion_tag_id") REFERENCES "motion_tag" ("id");
+
+--
+-- Table structure for table message
+--
+
+DROP TABLE IF EXISTS "message" CASCADE;
+CREATE TABLE  "message" (
+   "id"   int NOT NULL,
+   "language"   varchar(16) NOT NULL DEFAULT '',
+   "translation"   text,
+   primary key ("language", "id")
+)  ;
 /*!40101 SET character_set_client = @saved_cs_client */;
+/*!40000 ALTER TABLE message DISABLE KEYS */;
 
 --
--- Dumping data for table `message`
+-- Dumping data for table message
 --
 
-LOCK TABLES `message` WRITE;
-/*!40000 ALTER TABLE `message` DISABLE KEYS */;
-INSERT INTO `message` VALUES (1,'de-DE','ID'),(2,'de-DE','Name'),(3,'de-DE','Import: {modelClass}'),(4,'de-DE','Import'),(5,'de-DE','Verein'),(6,'de-DE','Update'),(7,'de-DE','Löschen'),(8,'de-DE','Bist du sicher, dass du das Element löschen möchtest?'),(9,'de-DE','Update: {modelClass}'),(10,'de-DE','Kombiniere \'{society}\' mit ...'),(11,'de-DE','Wähle den korrekten Verein ...'),(12,'de-DE','Erstelle {modelClass}'),(13,'de-DE','Betrachte {modelClass}'),(14,'de-DE','Aktualisiere {modelClass}'),(15,'de-DE','Lösche {modelClass}'),(16,'de-DE','Neues Element hinzufügen'),(17,'de-DE','Inhalt neu laden'),(18,'de-DE','Importiere von CSV Datei'),(19,'de-DE','Erstelle'),(20,'de-DE','Sprachen'),(21,'de-DE','Erstelle Sprache'),(22,'de-DE','Spezielle Anforderungen'),(23,'de-DE','Themen Tags'),(24,'de-DE','Kombiniere Themen Tag \'{tag}\' mit ...'),(25,'de-DE','Wähle den korrekten Tag ...'),(26,'de-DE','Suche'),(27,'de-DE','Zurücksetzen'),(28,'de-DE','Erstelle Themen Tag'),(29,'de-DE','API'),(30,'de-DE','Master'),(31,'de-DE','Nachrichten'),(32,'de-DE','Nachricht erstellen'),(33,'de-DE','{count} Tags geändert'),(34,'de-DE','Datei Syntax falsch'),(35,'de-DE','Themen-Tag'),(36,'de-DE','Runde'),(37,'de-DE','Abkürzung'),(38,'de-DE','Menge'),(39,'de-DE','Eröffnende Regierung'),(40,'de-DE','Eröffnende Opposition'),(41,'de-DE','Schließende Regierung'),(42,'de-DE','Schließende Opposition'),(43,'de-DE','Team'),(44,'de-DE','Aktiv'),(45,'de-DE','Turnier'),(46,'de-DE','RednerIn'),(47,'de-DE','Verein'),(48,'de-DE','Springerteam'),(49,'de-DE','Sprachstatus'),(50,'de-DE','Alles normal'),(51,'de-DE','Wurde durch Springerteam ersetzt'),(52,'de-DE','RednerIn {letter} erschien nicht'),(53,'de-DE','Schlüssel'),(54,'de-DE','Label'),(55,'de-DE','Wert'),(56,'de-DE','Teamposition darf nicht leer sein'),(57,'de-DE','KO-Runde'),(58,'de-DE','Tabmaster-BenutzerIn'),(59,'de-DE','BenutzerIn'),(60,'de-DE','ENL-Platzierung'),(61,'de-DE','ESL-Platzierung'),(62,'de-DE','Cache Ergebnisse'),(63,'de-DE','Voller Name'),(64,'de-DE','Abkürzung'),(65,'de-DE','Stadt'),(66,'de-DE','Land'),(67,'de-DE','ER Team'),(68,'de-DE','EO Team'),(69,'de-DE','SR Team'),(70,'de-DE','SO Team'),(71,'de-DE','Jury'),(72,'de-DE','Raum'),(73,'de-DE','ER Feedback'),(74,'de-DE','EO Feedback'),(75,'de-DE','SR Feedback'),(76,'de-DE','SO Feedback'),(77,'de-DE','Zeit'),(78,'de-DE','Thema'),(79,'de-DE','Sprache'),(80,'de-DE','Datum'),(81,'de-DE','Infotext zum Thema'),(82,'de-DE','Link'),(83,'de-DE','von BenutzerIn'),(84,'de-DE','Übersetzung'),(85,'de-DE','JurorIn'),(86,'de-DE','Antwort'),(87,'de-DE','Feedback'),(88,'de-DE','Frage'),(89,'de-DE','Erstellt'),(90,'de-DE','Läuft'),(91,'de-DE','Geschlossen'),(92,'de-DE','Versteckt'),(93,'de-DE','Veranstaltet von'),(94,'de-DE','Turniername'),(95,'de-DE','Beginnt am'),(96,'de-DE','Endet am'),(97,'de-DE','Zeitzone'),(98,'de-DE','Logo'),(99,'de-DE','URL-Kürzel'),(100,'de-DE','Tab-\r\nAlgorithmus'),(101,'de-DE','Voraussichtliche Rundenanzahl'),(102,'de-DE','Zeige ESL-Platzierung'),(103,'de-DE','Es gibt ein Finale'),(104,'de-DE','Es gibt ein Halbfinale'),(105,'de-DE','Es gibt ein Viertelfinale'),(106,'de-DE','Es gibt ein Achtelfinale'),(107,'de-DE','Zugriffsschlüssel'),(108,'de-DE','TeilnehmerInnenschild'),(109,'de-DE','Alpha 2'),(110,'de-DE','Alpha 3'),(111,'de-DE','Region'),(112,'de-DE','Sprachcode'),(113,'de-DE','Abdeckung'),(114,'de-DE','Letzte Aktualisierung'),(115,'de-DE','Stärke'),(116,'de-DE','Kann hauptjurieren'),(117,'de-DE','Werden beobachtet'),(118,'de-DE','Nicht bewertet'),(121,'de-DE','Kann jurieren'),(122,'de-DE','Ordentlich'),(124,'de-DE','Hohes Potential'),(125,'de-DE','HauptjurorIn'),(126,'de-DE','Gut'),(127,'de-DE','Breakend'),(128,'de-DE','ChefjurorIn'),(129,'de-DE','Beginn'),(130,'de-DE','Ende'),(131,'de-DE','Rednerpunkte'),(132,'de-DE','Diese Email-Adresse ist bereits vergeben.'),(133,'de-DE','DebattantIn'),(134,'de-DE','Auth-Schlüssel'),(135,'de-DE','Passwort-Hash'),(136,'de-DE','Passwort-Reset-Schlüssel'),(137,'de-DE','Email'),(138,'de-DE','Account-Rolle'),(139,'de-DE','Account-Status'),(140,'de-DE','Letzte Änderung'),(141,'de-DE','Vorname'),(142,'de-DE','Nachname'),(143,'de-DE','Bild'),(144,'de-DE','Platzhalter'),(145,'de-DE','TabmasterIn'),(146,'de-DE','Admin'),(147,'de-DE','Gelöscht'),(148,'de-DE','Nicht bekanntgegeben'),(149,'de-DE','Weiblich'),(150,'de-DE','Männlich'),(151,'de-DE','Andere'),(152,'de-DE','mixed'),(153,'de-DE','Noch nicht gesetzt'),(154,'de-DE','Interview wird benötigt'),(155,'de-DE','EPL'),(157,'de-DE','ESL'),(158,'de-DE','Englisch als zweite Sprache'),(159,'de-DE','EFL'),(160,'de-DE','English als Fremdsprache'),(161,'de-DE','Nicht gesetzt'),(162,'de-DE','Fehler beim Speichern von InSociety für {user_name\r\n}'),(163,'de-DE','Fehler beim Speichern von BenutzerIn {user_name}'),(164,'de-DE','{tournament_name}: BenutzerInnen-Account für {user_name}'),(165,'de-DE','Diese URL-Abkürzung ist nicht erlaubt.'),(166,'de-DE','Veröffentlicht'),(167,'de-DE','Angezeigt'),(168,'de-DE','Begann'),(169,'de-DE','Jurierend'),(170,'de-DE','Beendet'),(171,'de-DE','Haupt'),(172,'de-DE','EinsteigerInnen'),(173,'de-DE','Finale'),(174,'de-DE','Halbfinale'),(175,'de-DE','Viertelfinale'),(176,'de-DE','Achtelfinale'),(177,'de-DE','Runde #{num}'),(178,'de-DE','Vorrunde'),(179,'de-DE','Energie'),(180,'de-DE','Infotext'),(181,'de-DE','Vorbereitungszeit begann'),(182,'de-DE','Letzte Temperatur'),(183,'de-DE','ms zur Berechnung'),(184,'de-DE','Nicht genug Teams für einen Raum - {aktiv: {teams_count})'),(185,'de-DE','Mindestens 2 JurorInnen sind nötig - (aktive: {count_adju})'),(186,'de-DE','Anzahl der Teams muss durch 4 dividierbar sein ;) - (aktive: {count_teams})'),(187,'de-DE','Nicht genug aktive Räume - (aktive: {active_rooms} benötigt: {required})'),(188,'de-DE','Nicht genug JurorInnen - (aktive: {active} benötigt: {required})'),(189,'de-DE','Nicht genug freie JurorInnen bei dieser vorkonfigurierten Jurysetzung. (füllbare Räume: {active} mindestens benötigt: {required})'),(190,'de-DE','Kann Jury nicht speichern! Fehler: {message}'),(191,'de-DE','Kann Debatte nicht speichern! Fehler: {message}'),(192,'de-DE','Kann Debatte nicht speichern! Fehler:<br>{errors}'),(193,'de-DE','Keine Debatte #{num} zum Aktualisieren gefunden'),(195,'de-DE','Typ'),(196,'de-DE','Parameter falls gebraucht'),(197,'de-DE','Passt zu Team -> HauptjurorIn'),(198,'de-DE','Passt zu HauptjurorIn -> NebenjurorIn'),(199,'de-DE','Passt zu NebenjurorIn -> HauptjurorIn'),(200,'de-DE','Nicht gut'),(201,'de-DE','Sehr gut'),(202,'de-DE','Exzellent'),(203,'de-DE','Sternen-Wertung (1-5) Feld'),(204,'de-DE','Kurzes Textfeld'),(205,'de-DE','Langes Textfeld'),(206,'de-DE','Nummernfeld'),(207,'de-DE','Kontrollboxfeld'),(208,'de-DE','Debatte'),(209,'de-DE','Feedback für ID'),(210,'de-DE','JurorInnen-Konflikt von ID'),(211,'de-DE','JurorInnen-Konflikt mit ID'),(212,'de-DE','Gruppe'),(213,'de-DE','Aktiver Raum'),(214,'de-DE','NebenjurorIn'),(215,'de-DE','Verwendet'),(216,'de-DE','Ist vorkonfigurierte Jury'),(217,'de-DE','Jury #{id} beinhaltet {amount} HauptjurorInnen'),(218,'de-DE','Kategorie'),(219,'de-DE','Nachricht'),(220,'de-DE','Funktion'),(221,'de-DE','Altes Thema'),(222,'de-DE','Fragen'),(223,'de-DE','Konflikt mit'),(224,'de-DE','Grund'),(225,'de-DE','Teamkonflikt'),(226,'de-DE','JurorInnenkonflikt'),(227,'de-DE','Kein Typ gefunden'),(228,'de-DE','ER A RednerInnenpunkte'),(229,'de-DE','ER B RednerInnenpunkte'),(230,'de-DE','ER Platzierung'),(231,'de-DE','EO A RednerInnenpunkte'),(232,'de-DE','EO B RednerInnenpunkte'),(233,'de-DE','EO Platzierung'),(234,'de-DE','SR A RednerInnenpunkte'),(235,'de-DE','SR B RednerInnenpunkte'),(236,'de-DE','SR Platzierung'),(237,'de-DE','SO A RednerInnenpunkte'),(238,'de-DE','SO B RednerInnenpunkte'),(239,'de-DE','SO Platzierung'),(240,'de-DE','Überprüft'),(241,'de-DE','Eingegeben von BenutzerIn ID'),(242,'de-DE','Gleiche Platzierungen existieren'),(243,'de-DE','Ironman durch'),(244,'de-DE','CJ'),(245,'de-DE','Passwort-Reset-Schlüssel darf nicht leer sein.'),(246,'de-DE','Falscher Passwort-Reset-Schlüssel.'),(247,'de-DE','Komma ( , ) getrennte Datei'),(248,'de-DE','Strickpunkt ( ; ) getrennte Datei'),(249,'de-DE','Tag ( ->| ) getrennte Datei'),(250,'de-DE','CSV-Datei'),(251,'de-DE','Trennzeichen'),(252,'de-DE','Markiere als Test-Datenimport (es werden keine Emails versendet)'),(253,'de-DE','BenutzerInnenname'),(254,'de-DE','Profilbild'),(255,'de-DE','Derzeitiger Verein'),(256,'de-DE','Mit welchem Geschlecht identifizierst du dich am meisten'),(257,'de-DE','Diese URL ist nicht erlaubt.'),(258,'de-DE','{adju} ist registriert!'),(259,'de-DE','{adju} wurde bereits registriert!'),(260,'de-DE','{id) ist nicht gültig! Kein Juror!'),(261,'de-DE','{speaker} wurde registriert!'),(262,'de-DE','{speaker} wurde bereits registriert!'),(263,'de-DE','{id) ist nicht gültig! Kein Team!'),(264,'de-DE','Keine gültige Eingabe'),(265,'de-DE','Überprüfungscode'),(266,'de-DE','DebReg'),(267,'de-DE','Passwort zurücksetzen für {user}'),(268,'de-DE','Benutzerin mit dieser Email-Adresse nicht gefunden'),(269,'de-DE','{object} hinzufügen'),(270,'de-DE','Verein erstellen'),(271,'de-DE','Hey cool! Du hast einen unbekannten Verein hinzugefügt!'),(272,'de-DE','Bevor wir dich verknüpfen können gib uns doch bitte noch einige Informationen zu deinem Verein:'),(273,'de-DE','Suche nach Land ...'),(274,'de-DE','Neuen Verein hinzufügen'),(275,'de-DE','Suche nach Verein ...'),(276,'de-DE','Füge Datum des Beginns hinzu ...'),(277,'de-DE','Füge Datum des Endes hinzu, falls passend ...'),(278,'de-DE','Sprachen-Beauftragte'),(279,'de-DE','Beauftragte/r'),(280,'de-DE','Jedes {object} ...'),(281,'de-DE','Sprachstatus-Bericht'),(282,'de-DE','Status'),(283,'de-DE','Beantrage ein Interview'),(284,'de-DE','Setze ENL'),(285,'de-DE','Setze ESL'),(286,'de-DE','Sprachen-Beauftragte/r'),(288,'de-DE','Hinzufügen'),(289,'de-DE','Suchen nach NutzerIn ...'),(290,'de-DE','Einchecken'),(291,'de-DE','Übermitteln'),(292,'de-DE','TeilnehmerInnenschilder erstellen'),(293,'de-DE','Nur für BenutzerIn ...'),(294,'de-DE','TeilnehmerInnenschilder drucken'),(295,'de-DE','Strichcode generieren'),(296,'de-DE','Nach BenutzerIn suchen ... oder leer lassen'),(297,'de-DE','Strichcodes drucken'),(298,'de-DE','Teams'),(299,'de-DE','Teamname'),(300,'de-DE','RednerIn A'),(301,'de-DE','RednerIn B'),(302,'de-DE','So einsenden'),(303,'de-DE','Thema:'),(304,'de-DE','Jury:'),(305,'de-DE','Aktiv schalten'),(307,'de-DE','Nach BenutzerIn suchen ...'),(308,'de-DE','Turniere'),(309,'de-DE','Überblick'),(310,'de-DE','Themen'),(311,'de-DE','Teamtab'),(312,'de-DE','RednerInnentab'),(313,'de-DE','KO-Runden'),(314,'de-DE','Breakende JurorInnen'),(315,'de-DE','So einsenden!'),(316,'de-DE','DebReg-Turnier'),(317,'de-DE','Zeige vergangene Turniere'),(318,'de-DE','JurorInnen'),(319,'de-DE','Ergebnis'),(320,'de-DE','gemeinsam mit {teammate}'),(321,'de-DE','als Ironman'),(322,'de-DE','Du bist als Team <br> \'{team}\' {with} für {society} registriert'),(323,'de-DE','Du bist als JurorIn für {society} registriert'),(325,'de-DE','Registrierungsinformationen'),(326,'de-DE','Informationen hinzufügen'),(327,'de-DE','Runde #{num} Info'),(328,'de-DE','Du bist <b>{pos}</b> im Raum <b>{room}</b>.'),(329,'de-DE','Runde beginnt um: <b>{time}</b>'),(330,'de-DE','Infotext'),(331,'de-DE','Runde #{num} Teams'),(332,'de-DE','Mein super geniales Turnier ... z.B. Vienna IV'),(333,'de-DE','Wähle die CheforganisatorInnen aus ...'),(334,'de-DE','Wähle das Datum des Beginns...'),(335,'de-DE','Wähle das Datum des Endes ...'),(336,'de-DE','ChefjurorInnen'),(337,'de-DE','Wähle deine ChefjurorInnen ...'),(338,'de-DE','Wähle deinen Tabmaster ...'),(339,'de-DE','Turnierarchiv'),(340,'de-DE','Der obige Fehler ist aufgetreten während der Server deine Anfrage bearbeitet hat.'),(341,'de-DE','Bitte kontaktiere uns, wenn du der Meinung bist, dass dies ein Serverfehler ist. Danke!'),(342,'de-DE','Passwort wiederherstellen'),(343,'de-DE','Bitte wähle dein neues Passwort:'),(344,'de-DE','Speichern'),(345,'de-DE','Registrieren'),(346,'de-DE','Bitte fülle die folgenden Felder aus, um dich zu registrieren:'),(347,'de-DE','Die meisten Zuweisungsalgorithmen dieses Systems versuchen, unter anderem eine diverse Jury zu generieren. Damit dies funktionieren kann, würden wir dich bitten, eine Option aus der Liste auszuwählen. Wir sind uns bewusst, dass durch unsere Auswahl nicht jede persönliche Präferenz abgedeckt werden kann und entschuldigen uns für fehlende Optionen. Wenn du den Eindruck hast, dass keine dieser Optionen anwendbar ist, wähle bitte <Not Revealing>. Diese Option wird niemals regulären NutzerInnen angezeigt und dient einzig Berechnungszwecken!'),(348,'de-DE','Einloggen'),(349,'de-DE','Bitte fülle die folgenden Felder aus um dich einzuloggen:'),(350,'de-DE','Falls du dein Passwort vergessen hast, kannst du {resetIt}'),(351,'de-DE','es resetten'),(352,'de-DE','Passwortreset anfordern'),(353,'de-DE','Bitte gib deine Email-Adresse ein. Wir werden dir einen Link zum Resetten deines Passworts zusenden.'),(354,'de-DE','Senden'),(355,'de-DE','Räume-CSV'),(356,'de-DE','JurorInnen-CSV'),(357,'de-DE','Team-CSV'),(358,'de-DE','erstellt'),(359,'de-DE','Beispiel einer Raum-CSV'),(360,'de-DE','Beispiel einer Team-CSV'),(361,'de-DE','Beispiel einer JurorInnen-CSV'),(362,'de-DE','Aktuelles BPS-Turnier {count, plural, =0{Tournament} =1{Tournament} other{Tournaments}}'),(363,'de-DE','Willkommen bei {appName}!'),(364,'de-DE','Zeige Turniere'),(365,'de-DE','Erstelle Turnier'),(366,'de-DE','Ehe wir dich registrieren können vervollständige bitte die Informationen zu deinem Verein:'),(367,'de-DE','Kontakt'),(368,'de-DE','Vorkonfigurierte Jury #'),(369,'de-DE','Jury'),(370,'de-DE','Durchschnittliche Jury-Stärke'),(371,'de-DE','Erstelle Jury'),(372,'de-DE','Vorkonfigurierte Jury für die nächste Runde'),(373,'de-DE','Erstelle {object} ...'),(374,'de-DE','Platz'),(375,'de-DE','Teampunkte'),(376,'de-DE','#{number}'),(377,'de-DE','Keine breakenden Juroren definiert'),(378,'de-DE','Verteilung der RednerInnenpunkte'),(379,'de-DE','Lauf'),(380,'de-DE','Eröffnende Regierung'),(381,'de-DE','Eröffnende Opposition'),(382,'de-DE','Schließende Regierung'),(383,'de-DE','Schließende Opposition'),(384,'de-DE','Zeige Infotext'),(385,'de-DE','Zeige Thema'),(386,'de-DE','Fehlende Personen'),(387,'de-DE','Markiere fehlende Personen als inaktiv'),(388,'de-DE','Ergebnisse'),(389,'de-DE','Runner Ansicht für Runde #{number}'),(390,'de-DE','Automatische Aktualisierung <i id=\'pjax-status\' class=\'\'></i>'),(391,'de-DE','Aktualisiere individuellen Konflikt'),(392,'de-DE','Individueller Konflikt'),(393,'de-DE','Es sind noch nicht alle DebattantInnen im System. :)'),(394,'de-DE','Erstelle Konflikt'),(395,'de-DE','Aktualisiere Konflikt'),(396,'de-DE','Energie-Einstellungen'),(397,'de-DE','Aktualisiere Energie Einstellungen'),(398,'de-DE','Runde #{number}'),(399,'de-DE','Runden'),(400,'de-DE','Aktionen'),(401,'de-DE','Veröffentliche Tab'),(402,'de-DE','Erneute Draw-Erstellung versuchen'),(403,'de-DE','Aktualisiere Runde'),(404,'de-DE','Drowpdown-Menü umschalten'),(405,'de-DE','Verbessere weiter um'),(407,'de-DE','Bist du sicher, dass du die Runde neu anlegen möchtest? Alle Informationen gehen dabei verloren!'),(408,'de-DE','Drucke Laufzettel'),(411,'de-DE','Rundenstatus'),(412,'de-DE','Durchschnittliche Energie'),(413,'de-DE','Erstellungszeit'),(414,'de-DE','Farbpalette'),(415,'de-DE','Geschlecht'),(416,'de-DE','Regionen'),(417,'de-DE','Punkte'),(418,'de-DE','Laden ...'),(419,'de-DE','Zeige Feedback'),(420,'de-DE','Zeige BenutzerIn'),(421,'de-DE','Tausche Raum {venue} mit'),(422,'de-DE','Wähle einen Raum ...'),(423,'de-DE','Aktualisiere {modelClass} #{number}'),(424,'de-DE','Energielevel'),(425,'de-DE','Wähle ein Team ...'),(426,'de-DE','Wähle eine Sprache ...'),(427,'de-DE','Wähle JurorIn ...'),(428,'de-DE','Tausche JurorInnen'),(429,'de-DE','Tausche JurorIn ...'),(430,'de-DE','mit'),(431,'de-DE','JurorIn ...'),(432,'de-DE','Suche nach Themen-Tag ...'),(433,'de-DE','Rang'),(434,'de-DE','Gesamt'),(435,'de-DE','Debatten-ID'),(436,'de-DE','Raum'),(437,'de-DE','KO-Runden'),(438,'de-DE','Themenarchiv'),(439,'de-DE','Systemexternes Thema'),(440,'de-DE','Dein geniales Turnier'),(441,'de-DE','Füge ein Datum ein ...'),(442,'de-DE','Runde #1 oder Finale'),(443,'de-DE','DHW ...'),(444,'de-DE','http://bitte.quelle.angeben.de'),(445,'de-DE','{modelClass} manuell einfügen'),(446,'de-DE','Optionen'),(447,'de-DE','Weiter'),(448,'de-DE','Noch keine Ergebnisse!'),(449,'de-DE','Ergebnisse in Raum: {venue}'),(450,'de-DE','Ergebnisse für {venue}'),(451,'de-DE','Tabellenansicht'),(452,'de-DE','Ergebnisse für {label}'),(453,'de-DE','Wechseln zur Raumansicht'),(454,'de-DE','Ergebnis des Springerteams'),(455,'de-DE','Zeige Details zum Ergebnis'),(456,'de-DE','Korregiere Ergebnis'),(457,'de-DE','Raumansicht'),(458,'de-DE','Wechseln zur Tabellenansicht'),(459,'de-DE','Bestätige Daten für {venue}'),(460,'de-DE','beginne neu'),(461,'de-DE','Runde {number}'),(462,'de-DE','Vielen Dank'),(463,'de-DE','Vielen Dank!'),(464,'de-DE','Ergebnisse erfolgreich gespeichert'),(465,'de-DE','Geschwindigkeits-Bonus!'),(466,'de-DE','Schneller! Hopp hopp!'),(467,'de-DE','Faulpelze! Ihr seid Letzter!'),(468,'de-DE','Du bist <b>#{place}</b> von {max}'),(469,'de-DE','Feedback übermitteln'),(470,'de-DE','Zurück zum Turnier'),(471,'de-DE','Feedbacks'),(472,'de-DE','Ziel-JurorIn'),(473,'de-DE','JurorInnen-Name ...'),(474,'de-DE','JurorIn-Feedback'),(475,'de-DE','Übermittle Feedback'),(476,'de-DE','{tournament} - Sprachen-Beauftragte/r'),(477,'de-DE','Sprachstatus überprüfen'),(478,'de-DE','enthält geheime Alientechnologie'),(479,'de-DE','Fehler berichten'),(480,'de-DE','{tournament} - Manager'),(481,'de-DE','Räume auflisten'),(482,'de-DE','Raum erstellen'),(483,'de-DE','Raum importieren'),(484,'de-DE','Teams auflisten'),(485,'de-DE','Team erstellen'),(486,'de-DE','Team importieren'),(487,'de-DE','Teamkonflikt'),(488,'de-DE','JurorInnen auflisten'),(489,'de-DE','JurorIn erstellen'),(490,'de-DE','JurorIn importieren'),(491,'de-DE','Vorkonfigurierte Jury zeigen'),(492,'de-DE','Vorkonfigurierte Jury erstellen'),(493,'de-DE','JurorInnenkonflikt'),(494,'de-DE','Turnier aktualisieren'),(495,'de-DE','Teamübersicht anzeigen'),(496,'de-DE','RednerInnenübersicht anzeigen'),(497,'de-DE','KO-Rundenübersicht anzeigen'),(498,'de-DE','Das Tab zu veröffentlichen wird das Turnier schließen und archivieren! Bist du sicher, dass du fortfahren möchtest?'),(499,'de-DE','Fehlende/r BenutzerIn'),(500,'de-DE','Eincheck-Formular'),(501,'de-DE','Teilnehmerschilder drucken'),(502,'de-DE','Einchecken zurücksetzen'),(503,'de-DE','Bist du sicher, dass du das Einchecken zurücksetzen möchtest?'),(504,'de-DE','Sync mit DebReg'),(505,'de-DE','Migriere zu Tabbie1'),(506,'de-DE','Extreme Vorsicht, junger Padawan!'),(507,'de-DE','Runden auflisten'),(508,'de-DE','Runde erstellen'),(509,'de-DE','Energie-Optionen'),(510,'de-DE','Ergebnisse anzeigen'),(511,'de-DE','Laufzettel einfügen'),(512,'de-DE','Cache korrigieren'),(513,'de-DE','Fragen einrichten'),(514,'de-DE','Jedes Feedback'),(515,'de-DE','Feedback für JurorIn'),(516,'de-DE','Über'),(517,'de-DE','Anleitung'),(518,'de-DE','BenutzerInnen'),(519,'de-DE','Registrieren'),(520,'de-DE','{user}s Profil'),(521,'de-DE','{user}s Verlauf'),(522,'de-DE','Ausloggen'),(524,'de-DE','Aktualisiere {label}'),(525,'de-DE','Nächster Schritt'),(526,'de-DE','Raum {number}'),(527,'de-DE','Räume'),(529,'de-DE','Konflikte'),(530,'de-DE','Importiere Konflikte'),(531,'de-DE','Akzeptieren'),(532,'de-DE','Ablehnen'),(533,'de-DE','Suche nach Team ...'),(534,'de-DE','Suche nach JurorIn ...'),(535,'de-DE','JurorInnenkonflikt hinzufügen'),(536,'de-DE','{modelClass} zusätzlich erstellen'),(537,'de-DE','Team aktualisieren'),(538,'de-DE','Team löschen'),(539,'de-DE','(not set)'),(540,'de-DE',NULL),(541,'de-DE','Team mit JurorIn in Konflikt setzen'),(542,'de-DE','Team aktualisieren'),(543,'de-DE','Team löschen'),(544,'de-DE','{modelClass}s Verlauf'),(545,'de-DE','Verlauf'),(546,'de-DE','Team-Überblick'),(547,'de-DE','EPL-Platzierung'),(548,'de-DE','RednerInnenpunkte des Teams'),(549,'de-DE','Aktuell ist kein veröffentlichtes Tab verfügbar'),(550,'de-DE','Kann hauptjurieren'),(551,'de-DE','Sollte nicht hauptjurieren'),(552,'de-DE','Break'),(553,'de-DE','Nicht breakend'),(554,'de-DE','Unter Beobachtung'),(555,'de-DE','Nicht unter Beobachtung'),(556,'de-DE','Beobachtung\r\n umschalten'),(557,'de-DE','Breakend umschalten'),(558,'de-DE','Beobachterstatus zurücksetzen'),(559,'de-DE','Suche nach {object} ...'),(560,'de-DE','Hauptjuriert'),(561,'de-DE','Punkte-Tendenz'),(562,'de-DE','Aktualisiere BenutzerInnen-Profil'),(563,'de-DE','Individuelle Konflikte'),(564,'de-DE','Aktualisiere Konflikt-Informationen'),(565,'de-DE','Lösche Konflikt'),(566,'de-DE','Dem System sind keine Konflikte bekannt.'),(567,'de-DE','Besuchte Debattiervereine'),(568,'de-DE','Verein zum Verlauf hinzufügen'),(569,'de-DE','nach wie vor aktiv'),(570,'de-DE','Aktualisiere Informationen zu besuchten Vereinen'),(571,'de-DE','Für {name} ein neues Passwort erzwingen'),(572,'de-DE','Abbrechen'),(573,'de-DE','Suche nach einem Turnier ...'),(574,'de-DE','Neues Passwort festlegen'),(575,'de-DE','BenutzerIn aktualisieren'),(576,'de-DE','BenutzerIn löschen'),(577,'de-DE','BenutzerIn erstellen'),(578,'de-DE','Keine zutreffende Bedingung'),(579,'de-DE','Jury bestand Überprüfung nicht. Alt: {old} / Neu: {new}'),(580,'de-DE','Kann {object} nicht speichern! Fehler: {message}'),(582,'de-DE','Keine Datei verfügbar'),(583,'de-DE','Keine passenden Einträge gefunden'),(584,'de-DE','Vielen Dank für deine Eingabe.'),(585,'de-DE','Fehler beim Speichern der Jury:'),(586,'de-DE','Jury gelöscht'),(587,'de-DE','Willkommen! Dies ist das erste Mal, dass du dich anmeldest. Bitte stelle sicher, dass all deine Informationen zutreffen.'),(588,'de-DE','Ein neuer Verein wurde gespeichert'),(589,'de-DE','Beim Entgegennehmen deiner vorherigen Eingabe ist ein Fehler aufgetreten. Bitte versuche es noch einmal.'),(590,'de-DE','BenutzerIn registriert! Willkommen, {user}!'),(591,'de-DE','Anmeldung fehlgeschlagen'),(592,'de-DE','Bitte überprüfe für weitere Anweisungen deine Emails.'),(593,'de-DE','Bitte entschuldige - für die angegebene Email-Adresse können wir kein Passwort zurücksetzen.<br>{message}'),(594,'de-DE','Das neue Passwort wurde gespeichert.'),(595,'de-DE','Neues Passwort festgelegt.'),(596,'de-DE','Fehler beim Speichern des neuen Passworts.'),(597,'de-DE','Verknüpfung mit Verein nicht gespeichert'),(598,'de-DE','BenutzerIn erfolgreich gespeichert'),(599,'de-DE','BenutzerIn nicht gespeichert!'),(600,'de-DE','Verbindung zu Verein nicht gespeichert!'),(601,'de-DE','BenutzerIn erfolgreich aktualisiert!'),(602,'de-DE','Bitte gib ein neues Passwort ein!'),(603,'de-DE','BenutzerIn gelöscht'),(604,'de-DE','Kann aufgrund von {error} nicht gelöscht werden.'),(605,'de-DE','Konnte nicht gelöscht werden, da bereits in Gebrauch.<br> {ex}'),(606,'de-DE','Checking Flags zurücksetzen'),(607,'de-DE','Es gab keinen Bedarf zurückzusetzen.'),(608,'de-DE','Bitte lege erst die breakenden JurorInnen fest - benutze hierfür das Sternensymbol in der Aktionsspalte.'),(609,'de-DE','Konnte Team nicht erstellen.'),(610,'de-DE','Fehler beim Speichern des Vereinsverhältnisses für {society}.'),(611,'de-DE','Fehler beim Speichern von Team {name}!'),(613,'de-DE','Kann Turnierverknüpfung nicht speichern.'),(614,'de-DE','Kann Frage nicht löschen.'),(615,'de-DE','Vereinsverknüpfung wurde erfolgreich erstellt'),(616,'de-DE','Verein konnte nicht gespeichert werden'),(617,'de-DE','Fehler beim wakeup'),(618,'de-DE','Vereinsinformationen aktualisiert'),(619,'de-DE','Das Tab ist veröffentlicht, das Turnier geschlossen. Auf zu einem Drink!'),(620,'de-DE','Kein/e HauptjurorIn im Panel gefunden - falscher Typ?'),(622,'de-DE','Kein gültiger Typ'),(623,'de-DE','{object} erfolgreich eingegeben'),(624,'de-DE','{object} erstellt'),(625,'de-DE','Individueller Konflikt'),(626,'de-DE','Individueller Konflikt konnte nicht gespeichert werden'),(627,'de-DE','{object} aktualisiert'),(628,'de-DE','{object} konnte nicht gespeichert werden'),(629,'de-DE','{object} gelöscht'),(630,'de-DE','{tournament} auf Tabbie2'),(631,'de-DE','{tournament} findet vom {start} bis zum {end} statt und wird ausgetragen von {host} in {country}.'),(632,'de-DE','Turnier erfolgreich erstellt'),(633,'de-DE','Turnier wurde erstellt doch die Energie-Konfiguration schluf fehl!'),(634,'de-DE','Kann Turnier nicht speichern!'),(635,'de-DE','DebReg Synchronisation erfolgreich'),(636,'de-DE','Räume getauscht'),(637,'de-DE','Fehler beim Wechseln'),(638,'de-DE','Neue Räume festgelegt'),(639,'de-DE','Fehler beim Festlegen eines neuen Raumes'),(640,'de-DE','Kann Runde nicht erstellen: Anzahl der Teams ist nicht durch 4 teilbar'),(641,'de-DE','Erfolgreich neu gesetzt in {secs}s'),(642,'de-DE','Energie in {secs}s um {diff} Punkte verbessert'),(643,'de-DE','JurorIn {n1} und {n2} getauscht'),(644,'de-DE','Konnte nicht tauschen, da: {a_panel}<br>und<br>{b_panel}'),(645,'de-DE','Zeige Runde {number}'),(646,'de-DE','Für diesen Raum konnten keine Debatten gefunden werden'),(647,'de-DE','Diese Spracheinstellung ist ungültig.'),(648,'de-DE','Team zu {status} aufgewertet'),(649,'de-DE','Spracheinstellungen gespeichert'),(650,'de-DE','Fehler beim Speichern der Spracheinstellungen'),(651,'de-DE','BenutzerIn nicht gefunden!'),(652,'de-DE','{object} erfolgreich hinzugefügt'),(653,'de-DE','Löschen erfolgreich'),(654,'de-DE','Die Syntax der Datei ist falsch! Erwartet werden 3 Spalten.'),(656,'de-DE','Fehler beim Speichern der Ergebnisse.<br>Bitte frage einen Laufzettel aus Papier an!'),(657,'de-DE','Ergebnis gespeichert. Auf zum Nächsten!'),(658,'de-DE','Debatte #{id} existiert nicht'),(659,'de-DE','Korrigiere die Teampunkte des Teams {team} von {old_points} auf {new_points}'),(660,'de-DE','Korrigiere die RednerInnenpunkte von RednerIn {pos} des Teams {team} von {old_points} auf {new_points}'),(661,'de-DE','Cache ist in Bestform. Keine Veränderungen nötig!'),(662,'de-DE','Kann Entscheidung zum Konflikt nicht speichern. {reason}'),(663,'de-DE','Nicht genügend Räume'),(664,'de-DE','Zu viele Räume'),(665,'de-DE','Maximiere Wiederholungen zum Verbessern der JurorInnenzuweisung'),(666,'de-DE','Strafwert für Teams und JurorInnen aus gleichen Vereinen'),(667,'de-DE','Beide JurorInnen sind im Konflikt'),(668,'de-DE','Team ist mit JurorIn im Konflikt.'),(669,'de-DE','JurorIn darf nicht hauptjurieren.'),(670,'de-DE','HauptjurorIn ist für die aktuelle Situation suboptimal.'),(671,'de-DE','JuroIn hat das Team bereits gesehen.'),(672,'de-DE','JurorIn hat bereits in dieser Konstellation juriert.'),(673,'de-DE','Die Jury hat eine dem Raum unangemessene Stärke.'),(674,'de-DE','Richards Geheimzutat'),(675,'de-DE','JurorIn {adju} und {team} in gleichem Verein.'),(676,'de-DE','Die JurorInnen {adju1} und {adju2} stehen manuell im Konflikt.'),(677,'de-DE','JurorIn {adju} und Team {team} stehen manuell im Konflikt.'),(678,'de-DE','JurorIn {adju} wurde als Nicht-HauptjurorIn markiert.'),(679,'de-DE','HauptjurorIn ist um {points} suboptimal.'),(680,'de-DE','Die JurorInnen {adju1} und {adju2} haben zuvor x{occ} gemeinsam juriert.'),(681,'de-DE','JurorIn {adju} hat das Team {team} zuvor x {occ} juriert.'),(682,'de-DE','Steilheits-Vergleich: {comparison_factor}, Differenz: {roomDifference}, Steilheits-Strafe: {steepnessPenalty}'),(686,'de-DE','Unbestimmt'),(687,'de-DE','Nordeuropa'),(688,'de-DE','Westeuropa'),(689,'de-DE','Südeuropa'),(690,'de-DE','Osteuropa'),(691,'de-DE','Zentralasien'),(692,'de-DE','Ostasien'),(693,'de-DE','Westasien'),(694,'de-DE','Südasien'),(695,'de-DE','Süd-Ostasien'),(696,'de-DE','Australien & Neuseeland'),(697,'de-DE','Mikronesien'),(698,'de-DE','Melanesien'),(699,'de-DE','Polynesien'),(700,'de-DE','Nordafrika'),(701,'de-DE','Westafrika'),(702,'de-DE','Zentralafrika'),(703,'de-DE','Ostafrika'),(704,'de-DE','Südafrika'),(705,'de-DE','Nordamerika'),(706,'de-DE','Mittelamerika'),(707,'de-DE','Karibik'),(708,'de-DE','Südamerika'),(709,'de-DE','Antarktis'),(710,'de-DE','Bestrafte/r JurorIn'),(711,'de-DE','Schlechte/r JurorIn'),(712,'de-DE','Ordentliche/r JurorIn'),(713,'de-DE','Durchschnittliche/r JurorIn'),(714,'de-DE','Durchschnittliche/r HauptjurorIn'),(715,'de-DE','Gute/r HauptjurorIn'),(716,'de-DE','Breakende/r HauptjurorIn'),(717,'de-DE','<b>Dieses Turnier hat noch keine Teams.</b><br>{add_button} oder {import_button}'),(718,'de-DE','Ein Team hinzufügen'),(719,'de-DE','Importiere sie als CSV-Datei'),(720,'de-DE','<b>Dieses Turnier hat noch keine Räume.</b><br>{add} oder {import}'),(721,'de-DE','Einen Raum hinzufügen'),(722,'de-DE','Importiere sie als CSV-Datei'),(723,'de-DE','<b>Diese Turnier hat keine Juroren.</b><br>{add_button} oder {import_button}'),(724,'de-DE','Importiere sie als CSV-Datei'),(725,'de-DE','Für diese Runde wurden bereits Ergebnisse eingetragen. Neusetzung nicht möglich!'),(726,'de-DE','Für diese Runde wurden bereits Ergebnisse eingetragen. Verbessern nicht möglich!'),(727,'de-DE','Feedback #{num}'),(728,'de-DE','BenutzerIn ID'),(729,'de-DE','Sprach-VerwalterIn'),(730,'de-DE','Sprach-VerwalterIn'),(731,'de-DE','Sprach-VerwalterIn erstellen'),(732,'de-DE','EFL-Ranking anzeigen'),(733,'de-DE','EinsteigerInnen-Ranking anzeigen'),(734,'de-DE','Englisch als gemeisterte Sprache'),(735,'de-DE','EIN'),(736,'de-DE','EinsteigerIn festlegen'),(737,'de-DE','ENL'),(738,'de-DE','Neue Sprache erstellen'),(739,'de-DE','Setzung als JSON exportieren'),(740,'de-DE','Das Team {name} kann nicht gelöscht werden, da es bereits in Gebrauch ist.'),(741,'de-DE','Der/die JurorIn {name} kann nicht gelöscht werden, da er/sie bereits verwendet wird.'),(742,'de-DE','Der Raum {name} kann nicht gelöscht werden, da er bereits verwendet wird.'),(743,'de-DE','Gib in 3-4 allgemeinen Stichworten an, um was es im Thema geht. Falls bereits passende Stichworte existieren, verwende bitte diese!'),(744,'de-DE','Fehler beim Speichern des benutzerdefinierten Attributs: {name}'),(745,'de-DE','Fehler beim Speichern des benutzerdefinierten Werts \'{key}\': {value}'),(746,'de-DE','BenutzerIn Attr ID'),(747,'de-DE','Turnier ID'),(748,'de-DE','Benötigt'),(749,'de-DE','Hilfe'),(750,'de-DE','Benutzerdefinierte Werte für {tournament}'),(751,'de-DE','Die Syntax der Datei passt nicht. Es werden mindestens 5 Spalten benötigt.'),(753,'de-DE','Jurierlehrling'),(754,'de-DE','Importiere {modelClass} #{number}'),(755,'de-DE','Veröffentliche bestätigte Setzung'),(756,'de-DE','Importiere Setzung aus JSON'),(757,'de-DE','Dies wird die aktuelle Setzung überschreiben! Alle Informationen gehen dabei verloren\r\n!'),(758,'de-DE','Runde neu setzen'),(759,'de-DE','Runde löschen'),(760,'de-DE','Bist du sicher, dass du die Runde LÖSCHEN willst? Alle Informationen gehen dabei verloren!'),(761,'de-DE','Die Runde ist bereits aktiv! Überschreiben mit der Eingabe ist nicht möglich.'),(762,'de-DE','Die hochgeladene Datei war leer. Bitte wähle eine andere Datei.'),(764,'de-DE','RednerInnen'),(765,'de-DE','Die Syntax der Datei ist falsch! Mindestens {min} Spalten werden benötigt; {num} vorhanden in Zeile {line}'),(766,'de-DE','Fragetext'),(767,'de-DE','Hilfstext'),(770,'de-DE','Konflikte von JurorInnen mit JurorInnen'),(771,'de-DE','Alle zulassen'),(772,'de-DE','Alle verweigern'),(773,'de-DE','Konflikte von Teams mit JurorInnen'),(774,'de-DE','Keine gültige Entscheidung'),(775,'de-DE','Importiere Wertung für {modelClass}'),(777,'de-DE','Öffentlich zugängliche URLs'),(778,'de-DE','Debatte nicht gefunden - falscher Typ?'),(783,'de-DE','Themenausgeglichenheit'),(784,'de-DE','Rundeninformation'),(785,'de-DE','Es gibt derzeit keine aktive Runde. Lade diese Seite später noch einmal neu.'),(787,'de-DE','Teilgedoppeltes Achtelfinale'),(788,'de-DE','Ersetze JurorIn {adjudicator} durch'),(789,'de-DE','Ersetze'),(790,'de-DE','Ansehen'),(791,'de-DE','Tausche Team {team} mit'),(792,'de-DE','Versuche Setzung erneut'),(793,'de-DE','AVG'),(794,'de-DE',NULL),(795,'de-DE',NULL),(796,'de-DE',NULL),(1,'es-CO','ID'),(2,'es-CO','Nombre'),(3,'es-CO','Importar {modelClass}'),(4,'es-CO','Importar'),(5,'es-CO','Sociedades de Debate'),(6,'es-CO','Actualizar'),(7,'es-CO','Eliminar'),(8,'es-CO','¿Estás seguro de que quieres eliminar este elemento?'),(9,'es-CO','Actualizar {modelClass}:'),(10,'es-CO','Fusionar las sociedades \'{society}\' en ...'),(11,'es-CO','Selecciones la Sociedad de Debate principal'),(12,'es-CO','Crear {modelClass}'),(13,'es-CO','Ver {modelClass}'),(14,'es-CO','Actualizar {modelClass}'),(15,'es-CO','Eliminar {modelClass}'),(16,'es-CO','Agregar nuevo elemento'),(17,'es-CO','Volver a cargar contenido'),(18,'es-CO','Importar archivo EXL'),(19,'es-CO','Crear'),(20,'es-CO','Idiomas'),(21,'es-CO','Crear idioma'),(22,'es-CO','Necesidades especiales'),(23,'es-CO','Etiquetas de la moción'),(24,'es-CO','Fusionar la etiqueta \'{tag}\' de la moción a'),(25,'es-CO','Seleccione la etiqueta principal'),(26,'es-CO','Buscar'),(27,'es-CO','Reiniciar'),(28,'es-CO','Crear etiqueta para la moción'),(29,'es-CO','API'),(30,'es-CO','Master'),(31,'es-CO','Mensajes'),(32,'es-CO','Crear mensaje'),(33,'es-CO','{count} Cambiar etiquetas'),(34,'es-CO','Error de archivo'),(35,'es-CO','Etiqueta de la moción'),(36,'es-CO','Ronda'),(37,'es-CO','Abreviación'),(38,'es-CO','Puntaje'),(39,'es-CO','Cámara alta de Gobierno'),(40,'es-CO','Cámara alta de Oposición'),(41,'es-CO','Cámara baja de Gobierno'),(42,'es-CO','Cámara baja de Oposición'),(43,'es-CO','Equipo'),(44,'es-CO','Activo'),(45,'es-CO','Torneo'),(46,'es-CO','Orador'),(47,'es-CO','Sociedad de Debate'),(48,'es-CO','Swing Team'),(49,'es-CO','Estatus por idioma'),(50,'es-CO','Todo normal'),(51,'es-CO','Fue remplazado por equipo swing'),(52,'es-CO','Orador {letra} no se presentó'),(53,'es-CO','Llave'),(54,'es-CO','Etiqueta'),(55,'es-CO','Valor'),(56,'es-CO','La posición del equipo no puede estar en blanco'),(57,'es-CO','Fuera de ronda'),(58,'es-CO','Usuario del Tabulador'),(59,'es-CO','Usuario'),(60,'es-CO','ENL Posición'),(61,'es-CO','ESL Posición'),(62,'es-CO','Resultados caché'),(63,'es-CO','Nombre Completo'),(64,'es-CO','Abreviación'),(65,'es-CO','Ciudad'),(66,'es-CO','País'),(67,'es-CO','Primer Gobierno'),(68,'es-CO','Primera Oposición'),(69,'es-CO','Segundo Gobierno'),(70,'es-CO','Segunda Oposición'),(71,'es-CO','Panel'),(72,'es-CO','Lugar'),(73,'es-CO','Retroalimentación\r\n CAG'),(74,'es-CO','Retroalimentación CAO'),(75,'es-CO','Retroalimentación CBG'),(76,'es-CO','Retroalimentación CBO'),(77,'es-CO','Hora'),(78,'es-CO','Moción'),(79,'es-CO','Idioma'),(80,'es-CO','Fecha'),(81,'es-CO','Diapositiva de información'),(82,'es-CO','Enlace'),(83,'es-CO','Por Usuario'),(84,'es-CO','Traducción'),(85,'es-CO','Adjudicador'),(86,'es-CO','Respuesta'),(87,'es-CO','Retroalimentación'),(88,'es-CO','Pregunta'),(89,'es-CO','Creado'),(90,'es-CO','En marcha'),(91,'es-CO','Cerrado'),(92,'es-CO','Oculto'),(93,'es-CO','Organizado por'),(94,'es-CO','Nombre del torneo'),(95,'es-CO','Fecha de inicio'),(96,'es-CO','Fecha de finalización'),(97,'es-CO','Zona horaria'),(98,'es-CO','Logo'),(99,'es-CO','URL Adjunta'),(100,'es-CO','Algoritmo de tabulación'),(101,'es-CO','Número estimado de rondas'),(102,'es-CO','Mostrar ranking ESL'),(103,'es-CO','¿Hay una gran final?'),(104,'es-CO','¿Hay semifinales?'),(105,'es-CO','¿Hay cuartos de final?'),(106,'es-CO','¿Hay octavos de final?'),(107,'es-CO','Símbolo de acceso'),(108,'es-CO','Insignia del participante'),(109,'es-CO','Alfa 2'),(110,'es-CO','Alfa 3'),(111,'es-CO','Región'),(112,'es-CO','Código de lenguaje'),(113,'es-CO','Covertura'),(114,'es-CO','Última actualización'),(115,'es-CO','Fuerza'),(116,'es-CO','Puede ser juez principal'),(117,'es-CO','está observando'),(118,'es-CO','Sin clasificar'),(121,'es-CO','Puede juzgar'),(122,'es-CO','Decente'),(124,'es-CO','Gran potencial'),(125,'es-CO','Juez principal'),(126,'es-CO','Bueno'),(127,'es-CO','Breaking'),(128,'es-CO','Jefe de adjudicación'),(129,'es-CO','Empezando'),(130,'es-CO','Finalizando'),(131,'es-CO','Puntos de orador'),(132,'es-CO','Esta dirección de correo ya está en uso'),(133,'es-CO','Debatiente'),(134,'es-CO','Clave de autenticación'),(135,'es-CO','Contraseña'),(136,'es-CO','Restablecer contraseña'),(137,'es-CO','Correo electrónico'),(138,'es-CO','Rol de la cuenta'),(139,'es-CO','Estado de la cuenta'),(140,'es-CO','Último cambio'),(141,'es-CO','Nombre'),(142,'es-CO','Apellido'),(143,'es-CO','Imagen de perfil'),(144,'es-CO','Lugar de ubicación'),(145,'es-CO','Tabulador'),(146,'es-CO','Administrador'),(147,'es-CO','Eliminado'),(148,'es-CO','No revelar'),(149,'es-CO','Femenino'),(150,'es-CO','Masculino'),(151,'es-CO','Otro'),(152,'es-CO','mezclado'),(153,'es-CO','Sin definir'),(154,'es-CO','Entrevista necesaria'),(155,'es-CO','EPL'),(157,'es-CO','ESL'),(158,'es-CO','Español como segunda lengua'),(159,'es-CO','ELE'),(160,'es-CO','Español como lengua extranjera'),(161,'es-CO','Sin asignar'),(162,'es-CO','Error guardando Relación con la sociedad para {user_name}'),(163,'es-CO','Error guardando usuario {user_name}'),(164,'es-CO','{tournament_name}: Cuenta de usuario para  {user_name}'),(165,'es-CO','Esta dirección no está permitida'),(166,'es-CO','Publicado'),(167,'es-CO','Visualizado'),(168,'es-CO','Iniciado'),(169,'es-CO','Juzgando'),(170,'es-CO','Finalizado'),(171,'es-CO','Principal'),(172,'es-CO','Principiante'),(173,'es-CO','Final'),(174,'es-CO','Semifinal'),(175,'es-CO','Cuartos de final'),(176,'es-CO','Octavos de final'),(177,'es-CO','Ronda #{num}'),(178,'es-CO','En ronda'),(179,'es-CO','Energía'),(180,'es-CO','Diapositiva de información'),(181,'es-CO','Empieza el tiempo de preparación'),(182,'es-CO','Última temperatura'),(183,'es-CO','ms a calcular'),(184,'es-CO','No hay suficientes equipos para completar la sala - (active: {teams_count})'),(185,'es-CO','Al menos dos jueces son necesarios - (active: {count_adju})'),(186,'es-CO','El número de equipos activos debe dividirse entre 4 ;) - (active: {count_teams})'),(187,'es-CO','No hay suficientes salas activas (active: {active_rooms} required: {required})'),(188,'es-CO','No hay suficientes jueces (active: {active} min-required: {required})'),(189,'es-CO','No hay jueces libres suficientes con esta configuración preseleccionada de panel (fillable rooms: {active} min-required: {required})'),(190,'es-CO','No se puede guardar el panel! Error {message}'),(191,'es-CO','No se puede guardar el debate! Error {message}'),(192,'es-CO','No se puede guardar el debate! Errores <br>{errors}'),(193,'es-CO','No se encuentra el debate #{num} para actualizar'),(195,'es-CO','Tipo'),(196,'es-CO','Parámetro si es necesario'),(197,'es-CO','Aplica al equipo -> Juez principal'),(198,'es-CO','Aplica al Juez principal -> Juez panel'),(199,'es-CO','Aplicar a juez panel -> Juez principal'),(200,'es-CO','No es bueno'),(201,'es-CO','Muy bueno'),(202,'es-CO','Excelente'),(203,'es-CO','Califique (De 1 a 5) en el campo'),(204,'es-CO','Campo para texto corto'),(205,'es-CO','Campo para texto largo'),(206,'es-CO','Número de campo'),(207,'es-CO','Casilla de verificación de campo'),(208,'es-CO','Debate'),(209,'es-CO','Retroalimentación a ID'),(210,'es-CO','Calificación del juez de ID'),(211,'es-CO','Calificación del juez a ID'),(212,'es-CO','Grupo'),(213,'es-CO','Sala activa'),(214,'es-CO','Juez panel'),(215,'es-CO','Usado'),(216,'es-CO','Es el panel predeterminado'),(217,'es-CO','Panel #{id} tiene {amount} jueces principales'),(218,'es-CO','Categoría'),(219,'es-CO','Mensaje'),(220,'es-CO','Función'),(221,'es-CO','Mociones usadas'),(222,'es-CO','Preguntas'),(223,'es-CO','En conflicto con'),(224,'es-CO','Razón'),(225,'es-CO','Equipo en conflicto'),(226,'es-CO','Juez en conflicto'),(227,'es-CO','No se encuentra el tipo'),(228,'es-CO','CAG Orador A'),(229,'es-CO','CAG Orador B'),(230,'es-CO','CAG Puesto'),(231,'es-CO','CAO Orador A'),(232,'es-CO','CAO Orador B'),(233,'es-CO','CAO Puesto'),(234,'es-CO','CBG Orador A'),(235,'es-CO','CBG Orador B'),(236,'es-CO','CBG Puesto'),(237,'es-CO','CBO Orador A'),(238,'es-CO','CBO Orador B'),(239,'es-CO','CBO Puesto'),(240,'es-CO','Revisado'),(241,'es-CO','Ingresado por usuario ID'),(242,'es-CO','Existe empate'),(243,'es-CO','Ironman by'),(244,'es-CO','Jefe de Adjudicación'),(245,'es-CO','El espacio para restablecer la contraseña no puede estár en blanco'),(246,'es-CO','Error en el restablecimiento de contraseña'),(247,'es-CO','Archivo separado por comas ( , )'),(248,'es-CO','Archivo separado por punto y coma ( ; )'),(249,'es-CO','Archivo separado por espacios tabulados ( ->| )'),(250,'es-CO','Archivo EXL'),(251,'es-CO','Delimitador'),(252,'es-CO','Marcar como datos de prueba (no enviar e-mail)'),(253,'es-CO','Nombre de usuario'),(254,'es-CO','Imagen de perfil'),(255,'es-CO','Sociedad de debate actual'),(256,'es-CO','Con qué género se siente más identificado'),(257,'es-CO','La URL no está permitida'),(258,'es-CO','{adju} Registrado'),(259,'es-CO','{adju} ya está registrado!'),(260,'es-CO','{id} número no valido! no es juez!'),(261,'es-CO','{speaker} Registrado!'),(262,'es-CO','{speaker} ya se encuentra registrado!'),(263,'es-CO','{id} número no valido! No es un equipo!'),(264,'es-CO','No es una entrada válida'),(265,'es-CO','Código de verificación'),(266,'es-CO','RegDeb'),(267,'es-CO','Contraseña reestablecida por {user}'),(268,'es-CO','No se encuentra el usuario con este E-mail'),(269,'es-CO','Agregar {object}'),(270,'es-CO','Crear sociedad de debate'),(271,'es-CO','Hey tranquilo! Estás ingresando una sociedad de debate desconocida.'),(272,'es-CO','Antes de que podamos vincularte, por favor completa la información sobre tu sociedad de debate'),(273,'es-CO','Buscar por país'),(274,'es-CO','Agregar nueva sociedad de debate'),(275,'es-CO','Buscar por sociedad de debate...'),(276,'es-CO','Ingrese la fecha de inicio...'),(277,'es-CO','Ingrese la fecha de finalización (si aplica)...'),(278,'es-CO','Idioma oficial'),(279,'es-CO','Oficial'),(280,'es-CO','Alguno \r\n{object} ...'),(281,'es-CO','Revisión del estado de idiomas'),(282,'es-CO','Estado'),(283,'es-CO','Requiere entrevista'),(284,'es-CO','Grupo ENL'),(285,'es-CO','Grupo ESL'),(286,'es-CO','Idioma oficial'),(288,'es-CO','Agregar'),(289,'es-CO','Buscar usuario...'),(290,'es-CO','Comprobar'),(291,'es-CO','Enviar'),(292,'es-CO','Generar ballots'),(293,'es-CO','Únicamente hacer por usuario...'),(294,'es-CO','Imprimir Ballots'),(295,'es-CO','Generar código de barras'),(296,'es-CO','Buscar usuario.. o dejar en blanco'),(297,'es-CO','Imprimir código de barras'),(298,'es-CO','Equipos'),(299,'es-CO','Nombre del equipo'),(300,'es-CO','Orador A'),(301,'es-CO','Orador B'),(302,'es-CO','Así queda'),(303,'es-CO','Moción:'),(304,'es-CO','Panel de jueces:'),(305,'es-CO','Palanca activa'),(307,'es-CO','Buscar usuario...'),(308,'es-CO','Torneos'),(309,'es-CO','Detalle general'),(310,'es-CO','Mociones'),(311,'es-CO','Tabla de equipos'),(312,'es-CO','Tabla de oradores'),(313,'es-CO','Fuera de rondas'),(314,'es-CO','Jueces que pasan el break'),(315,'es-CO','Así queda'),(316,'es-CO','Registro torneos de debate'),(317,'es-CO','Mostrar antiguos torneos'),(318,'es-CO','Jueces'),(319,'es-CO','Resultado'),(320,'es-CO','junto con {teammate}'),(321,'es-CO','as ironman'),(322,'es-CO','Estás registrado como equipo <br> \'{team}\' {with} por {society}'),(323,'es-CO','Usted está registrado como juez por {society}'),(325,'es-CO','Registro de información'),(326,'es-CO','Ingresar información'),(327,'es-CO','Información de la ronda #{num}'),(328,'es-CO','Estás <b>{pos}</b> en la sala <b>{room}</b>.'),(329,'es-CO','La ronda comienza a las: <b>{time}</b>'),(330,'es-CO','Diapositiva de Información'),(331,'es-CO','Equipos Ronda #{num}'),(332,'es-CO','Mi súper increíble IV Torneo... ej: Vienna IV'),(333,'es-CO','Seleccione los organizadores'),(334,'es-CO','Ingrese fecha y hora de inicio...'),(335,'es-CO','Ingrese fecha y hora de finalización...'),(336,'es-CO','Jefes de adjudicación'),(337,'es-CO','Elija sus JAs...'),(338,'es-CO','Elija su Tabulador'),(339,'es-CO','Archivo del torneo'),(340,'es-CO','Se produjo un error mientras el servidor Web procesaba su solicitud.'),(341,'es-CO','Por favor contáctenos si cree que es un problema del servidor. Gracias'),(342,'es-CO','Recuperar contraseña'),(343,'es-CO','Por favor escoja su nueva contraseña'),(344,'es-CO','Guardar'),(345,'es-CO','Registrarse'),(346,'es-CO','Por favor complete la siguiente información para registrarse:'),(347,'es-CO','La mayoría de los algoritmos de asignación están en el sistema, pero tenga presente la diversidad del panel de jueces. Para que el sistema funcione completamente, le pedimos que escoja una opción de esta lista. Somos conscientes que no todas las preferencias personales pueden tenerse en cuenta en nuestras opciones. Si cree que ninguna de las opciones es útil para usted, por favor escoja <Not Revealing>. Esta opción nunca mostrará los resultados a los usuarios y se usa únicamente para calcular.'),(348,'es-CO','Ingresar'),(349,'es-CO','Por favor ingrese la siguiente información para iniciar sesión:'),(350,'es-CO','Si olvidó su contraseña puede {resetlt}'),(351,'es-CO','Reestablecer'),(352,'es-CO','Solicitar nueva contraseña'),(353,'es-CO','Por favor ingrese su e-mail. Un enlace será enviado allí para recuperar su contraseña.'),(354,'es-CO','Enviar'),(355,'es-CO','Posiciones EXL'),(356,'es-CO','Jueces EXL'),(357,'es-CO','Equipos EXL'),(358,'es-CO','Crear'),(359,'es-CO','Posiciones de muestra EXL'),(360,'es-CO','Equipo de muestra EXL'),(361,'es-CO','Muestra Jueces EXL'),(362,'es-CO','Torneo BP Actual {count, plural, =0{Tournament} =1{Tournament} other{Tournaments}}'),(363,'es-CO','Bienvenido a {appName}!'),(364,'es-CO','Ver torneos'),(365,'es-CO','Crear torneo'),(366,'es-CO','Antes de registrarse por favor complete la información acerca de su sociedad de debate:'),(367,'es-CO','Contacto'),(368,'es-CO','Preseleccionar panel de jueces #'),(369,'es-CO','Panel de jueces'),(370,'es-CO','Calificación promedio de panel de jueces'),(371,'es-CO','Crear panel de jueces'),(372,'es-CO','Preseleccionar jueces para la próxima ronda'),(373,'es-CO','Agregar {object}\r\n...'),(374,'es-CO','Lugar'),(375,'es-CO','Puntos de Equipo'),(376,'es-CO','#{number}'),(377,'es-CO','No hay jueces que pasen el break definidos'),(378,'es-CO','Distribución de puntos de orador'),(379,'es-CO','Corre'),(380,'es-CO','Cámara Alta de Gobierno'),(381,'es-CO','Cámara Alta de Oposición'),(382,'es-CO','Cámara Baja de Gobierno'),(383,'es-CO','Cámara Baja de Oposición'),(384,'es-CO','Mostrar diapositiva de información'),(385,'es-CO','Mostrar moción'),(386,'es-CO','Usuario desaparecido'),(387,'es-CO','Marcar desaparecido como inactivo'),(388,'es-CO','Resultados'),(389,'es-CO','Corre la información de al ronda #{number}'),(390,'es-CO','Auto actualización <i id=\'pjax-status\' class=\'\'></i>'),(391,'es-CO','Actualizar enfrentamiento individual'),(392,'es-CO','Enfrentamiento individual'),(393,'es-CO','En el sistema aún no están todos los debatientes :)'),(394,'es-CO','Crear impedimento'),(395,'es-CO','Actualizar impedimento'),(396,'es-CO','Configuración de energía'),(397,'es-CO','Actualizar valores de energía'),(398,'es-CO','Ronda #{number}'),(399,'es-CO','Rondas'),(400,'es-CO','Acciones'),(401,'es-CO','Publicar la tabulación'),(402,'es-CO','Volver intentar generar ronda'),(403,'es-CO','Actualizar ronda'),(404,'es-CO','Toggle desplegable'),(405,'es-CO','Continúa mejorando por'),(407,'es-CO','Está seguro que quiere volver a sortear la ronda? Perderá toda la información!'),(408,'es-CO','Imprimir Ballots'),(411,'es-CO','Estado de la ronda'),(412,'es-CO','Puntaje promedio'),(413,'es-CO','Tiempo de preparación'),(414,'es-CO','Paleta de color'),(415,'es-CO','Género'),(416,'es-CO','Regiones'),(417,'es-CO','Puntos'),(418,'es-CO','Cargando ...'),(419,'es-CO','Ver retroalimentación'),(420,'es-CO','Ver usuario'),(421,'es-CO','Cambiar posición con {venue}'),(422,'es-CO','Elija posición ...'),(423,'es-CO','Actualizar {modelClass} #{número}'),(424,'es-CO','Nivel de puntaje'),(425,'es-CO','Elegir equipo ...'),(426,'es-CO','Elegir idioma ...'),(427,'es-CO','Elegir juez ...'),(428,'es-CO','Cambiar jueces ...'),(429,'es-CO','Cambiar este juez ...'),(430,'es-CO','con'),(431,'es-CO','con este ...'),(432,'es-CO','Buscar moción por etiqueta ...'),(433,'es-CO','Puesto'),(434,'es-CO','Total'),(435,'es-CO','Debate ID'),(436,'es-CO','Sala'),(437,'es-CO','Fuera de ronda'),(438,'es-CO','Archivo de moción'),(439,'es-CO','Moción a terceros'),(440,'es-CO','Su sensacional IV'),(441,'es-CO','Ingrese fecha ...'),(442,'es-CO','Ronda #1 o Final'),(443,'es-CO','EC ...'),(444,'es-CO','http://dar.creditos.donde.los.creditos.se.necesitan.com'),(445,'es-CO','Ingresar {modelClass} Manualmente'),(446,'es-CO','Opciones'),(447,'es-CO','Continuar'),(448,'es-CO','No hay resultados aún!'),(449,'es-CO','Resultados en la sala: {venue}'),(450,'es-CO','Resultados por posición {venue}'),(451,'es-CO','Vista de la lista'),(452,'es-CO','Resultados por {label}'),(453,'es-CO','Cambiar a vista de las posiciones'),(454,'es-CO','Puntaje del Swing Team'),(455,'es-CO','Ver detalles de los resultados'),(456,'es-CO','Resultado correcto'),(457,'es-CO','Ver posiciones'),(458,'es-CO','Cambiar a vista de la lista'),(459,'es-CO','Confirmar datos de {venue}'),(460,'es-CO','Comenzar de nuevo'),(461,'es-CO','Ronda {number}'),(462,'es-CO','Gracias'),(463,'es-CO','Gracias!'),(464,'es-CO','Resultados exitosamente guardados'),(465,'es-CO','Boooonus por velocidad!'),(466,'es-CO','Apúrate ¡vamos! ¡vamos!'),(467,'es-CO','¡Ya está!¡El último!'),(468,'es-CO','Usted es <b>#{place}</b> de {max}'),(469,'es-CO','Ingresar retroalimentación'),(470,'es-CO','Volver al torneo'),(471,'es-CO','Retroalimentaciones'),(472,'es-CO','Objetivo del juez'),(473,'es-CO','Nombre del juez'),(474,'es-CO','Retroalimentación del juez'),(475,'es-CO','Enviar retroalimentación'),(476,'es-CO','{tournament} - Idioma oficial'),(477,'es-CO','Revisar estado del idioma'),(478,'es-CO','desarrollado con tecnología alien secreta'),(479,'es-CO','Reporte error'),(480,'es-CO','{tournament} - Director'),(481,'es-CO','Lista de posiciones'),(482,'es-CO','Crear posición'),(483,'es-CO','Importar posición'),(484,'es-CO','Lista de equipos'),(485,'es-CO','Crear equipo'),(486,'es-CO','Importar Equipo'),(487,'es-CO','Puntuar equipo'),(488,'es-CO','Lista de Jueces'),(489,'es-CO','Crear Juez'),(490,'es-CO','Importar Juez'),(491,'es-CO','Ver panel de jueces preseleccionado'),(492,'es-CO','Crear panel de jueces preseleccionado'),(493,'es-CO','Puntuar adjudicador'),(494,'es-CO','Actualizar torneo'),(495,'es-CO','Mostrar Tabla de equipos'),(496,'es-CO','Mostrar tabla de oradores'),(497,'es-CO','Mostrar fuera de ronda'),(498,'es-CO','Al publicar la tabulación el torneo se cerrará y archivará! Seguro que desea continuar?'),(499,'es-CO','Usuarios desaparecidos'),(500,'es-CO','Forma de confirmación'),(501,'es-CO','Imprimir Badgets'),(502,'es-CO','Reiniciar confirmación'),(503,'es-CO','Está seguro que desea reiniciar la confirmación?'),(504,'es-CO','Sincronizar con DebReg'),(505,'es-CO','Ir a Tabbie 1'),(506,'es-CO','Mucho cuidado pequeño padawan!'),(507,'es-CO','Lista de Rondas'),(508,'es-CO','Crear ronda'),(509,'es-CO','Opciones de energía'),(510,'es-CO','Lista de resultados'),(511,'es-CO','Ingrese ballot'),(512,'es-CO','Caché correcta'),(513,'es-CO','Preguntas de configuración'),(514,'es-CO','Cada retroalimentación'),(515,'es-CO','Retroalimentacion de jueces'),(516,'es-CO','Acerca de'),(517,'es-CO','Cómo se hace'),(518,'es-CO','Usuarios'),(519,'es-CO','Registro'),(520,'es-CO','Perfil de {user}'),(521,'es-CO','Historial de {user}'),(522,'es-CO','Cerrar sesión'),(524,'es-CO','Actualizar {label}'),(525,'es-CO','Siguiente paso'),(526,'es-CO','Sala {number}'),(527,'es-CO','Posiciones'),(529,'es-CO','Puntuaciones'),(530,'es-CO','Importar puntuaciones'),(531,'es-CO','Aceptar'),(532,'es-CO','Rechazar'),(533,'es-CO','Buscar equipo...'),(534,'es-CO','Buscar juez ...'),(535,'es-CO','Puntuar jueces'),(536,'es-CO','Crear adicional {modelClass}'),(537,'es-CO','Actualizar equipo'),(538,'es-CO','Eliminar equipo'),(539,'es-CO','Buscar por juez ...'),(540,'es-CO','Buscar un juez para ...'),(541,'es-CO','Puntuar equipo con juez'),(542,'es-CO','Actualizar equipo'),(543,'es-CO','Eliminar equipo'),(544,'es-CO','{modelClass} Historial'),(545,'es-CO','Historial'),(546,'es-CO','Revisión de equipos'),(547,'es-CO','EPL Posición'),(548,'es-CO','Puntos de orador por equipo'),(549,'es-CO','No hay tabulación disponible para publicar por el momento'),(550,'es-CO','Puede ser juez principal'),(551,'es-CO','No debe ser juez principal'),(552,'es-CO','Pasa el Break'),(553,'es-CO','No pasa el break'),(554,'es-CO','Observador'),(555,'es-CO','No observador'),(556,'es-CO','Ver palanca'),(557,'es-CO','Break palanca'),(558,'es-CO','Reiniciar bandera de observación'),(559,'es-CO','Buscar {object} ...'),(560,'es-CO','Juez principal'),(561,'es-CO','Indicador'),(562,'es-CO','Actualziar perfil de usuario'),(563,'es-CO','Enfrentamiento individual'),(564,'es-CO','Actualizar información de enfrentamiento'),(565,'es-CO','Eliminar enfrentamiento'),(566,'es-CO','No se conoce enfrentamiento en el sistema.'),(567,'es-CO','Historial de la sociedad de debate'),(568,'es-CO','Agregar nueva sociedad de debate al historial'),(569,'es-CO','Continúa activo'),(570,'es-CO','Actualizar información de sociedad de debate'),(571,'es-CO','Forzar nueva contraseña para {name}'),(572,'es-CO','Cancelar'),(573,'es-CO','Buscar torneo...'),(574,'es-CO','Elegir nueva contraseña'),(575,'es-CO','Actualizar usuario'),(576,'es-CO','Eliminar usuario'),(577,'es-CO','Crear usuario'),(578,'es-CO','No coincide condición'),(579,'es-CO','No pasó la verificación de antiguedad del panel:  {old} / new: {new}'),(580,'es-CO','No se pudo guardar {object}! Error: {message}'),(582,'es-CO','No hay archivo disponible'),(583,'es-CO','No coincide busqueda de historial'),(584,'es-CO','Gracias por su registro'),(585,'es-CO','Error guardando el panel de jueces:'),(586,'es-CO','Panel de jueces eliminado'),(587,'es-CO','Bienvenido! Esta es la primera vez que ingresas, por favor confirma que tu información sea correcta'),(588,'es-CO','La nueva sociedad de debate ha sido guardada.'),(589,'es-CO','Ha ocurrido un error recibiendo tu ingreso anterior. Por favor ingréselo nuevamente'),(590,'es-CO','Usuario registrado! Bienvenido {user}'),(591,'es-CO','Falló inicio de sesión'),(592,'es-CO','Revisa tu e-mail para más instrucciones'),(593,'es-CO','Lo sentimos, no podemos recuperar la contraseña del e-mail ingresado <br>{message}'),(594,'es-CO','Nueva contraseña guardada'),(595,'es-CO','Elegir nueva contraseña'),(596,'es-CO','Error guardando nueva contraseña'),(597,'es-CO','Conexión con sociedad de debate no guardada'),(598,'es-CO','Usuario exitosamente guardado!'),(599,'es-CO','Usuario no guardado!'),(600,'es-CO','Conexión con sociedad de debate no guardada!'),(601,'es-CO','Usuario actualizado exitosamente!'),(602,'es-CO','Por favor ingrese nueva contraseña!'),(603,'es-CO','Usuario eliminado'),(604,'es-CO','No se puede eliminar debido a {error}'),(605,'es-CO','No se puede eliminar porque actualmente está siendo usado. <br> {ex}'),(606,'es-CO','Comprobando reinicio de banderas'),(607,'es-CO','No hay necesidad de reiniciar'),(608,'es-CO','Por favor elija los jueces del break primero - Use el ícono de inicio en la columna de acciones.'),(609,'es-CO','No se puede crear equipo.'),(610,'es-CO','Error guardando relación con la sociedad de debate {society}'),(611,'es-CO','Error guardando equipo {name}!'),(613,'es-CO','No se puede guardar conexión con el torneo'),(614,'es-CO','No se puede eliminar la pregunta'),(615,'es-CO','Relación con la sociedad de debate exitosamente creada'),(616,'es-CO','No se puede guardar la sociedad de debate'),(617,'es-CO','Error en la activación'),(618,'es-CO','Información de la sociedad de debate actualizada'),(619,'es-CO','Tabulación publicada y torneo cerrado. ¡Vamos por una cerveza!'),(620,'es-CO','Juez principal del panel de jueces no encontrado - Escribiste mal?'),(622,'es-CO','Invalido'),(623,'es-CO','{object} enviado exitosamente'),(624,'es-CO','{object} creado'),(625,'es-CO','Enfrentamiento individual'),(626,'es-CO','No se pudo guardar enfrentamiento individual'),(627,'es-CO','{object} actualizado'),(628,'es-CO','No se puede guardar {object}'),(629,'es-CO','{object} eliminado'),(630,'es-CO','{tournament} en Tabbie2'),(631,'es-CO','{tournament} tendrá lugar del {start} al {end} organizado por {host} en {country}'),(632,'es-CO','Torneo creado exitosamente'),(633,'es-CO','Se creo el torneo pero la configuración de la conexión falló!'),(634,'es-CO','No se puede guardar el torneo!'),(635,'es-CO','Sincronización exitosa con DebReg'),(636,'es-CO','Posiciones cambiadas'),(637,'es-CO','Error mientras se hacía la combinación'),(638,'es-CO','Nuevas posicioes seleccionadas'),(639,'es-CO','Error mientras se configuraban las nuevas posiciones'),(640,'es-CO','No se puede crear la ronda: La cantidad de equipos no se puede dividir en 4'),(641,'es-CO','Exitosamente reasignado in {sec}s'),(642,'es-CO','Mejorar la energía por {diff} puntos en {secs}'),(643,'es-CO','Juez {n1} y {n2} se cambiaron'),(644,'es-CO','No se puede cambiar debido a quel {a_panel}<br>y<br>{b_panel}'),(645,'es-CO','Mostrar ronda {number}'),(646,'es-CO','No se encontraron debates en esta ronda'),(647,'es-CO','El idioma no es una opción valida en parámetros'),(648,'es-CO','Equipo actualizado a {status}'),(649,'es-CO','Configuración de idioma guardada'),(650,'es-CO','Error guardando la configuración de idioma'),(651,'es-CO','No se encuentra usuario!'),(652,'es-CO','{object} agregado exitosamente'),(653,'es-CO','Eliminado exitosamente'),(654,'es-CO','Error en el formato! Se requieren 3 columnas'),(656,'es-CO','Error guardando resultados. <br> Por favor solicite la ballot!'),(657,'es-CO','Se guardaron los resultados! Siguiente!'),(658,'es-CO','Debate #{id} no existe'),(659,'es-CO','Números correctos de equipo para {team} desde {old_points} hasta {new_points}'),(660,'es-CO','Confirmado puntaje de orador {pos} del equipo {team} desde {old_points} hasta {new_points}'),(661,'es-CO','Caché en perfecto estado. No se necesitan cambios'),(662,'es-CO','No se puede guardar el enfrentamiento {reason}'),(663,'es-CO','No hay suficientes posiciones'),(664,'es-CO','Demasiadas posiciones'),(665,'es-CO','Número máximo de interacciones para mejorar la asignación de jueces'),(666,'es-CO','Equipo y juez en la misma penalidad'),(667,'es-CO','Ambos adjudicadores en conflicto'),(668,'es-CO','Equipo y adjudicadores en conflicto'),(669,'es-CO','Juez no está habilitado para ser juez principal'),(670,'es-CO','El juez no es la mejor opción en la situación actual'),(671,'es-CO','El juez ya ha visto al equipo'),(672,'es-CO','El juez ya ha juzgado en esta combinación'),(673,'es-CO','El panel no está bien puntuado para la sala'),(674,'es-CO','El ingrediente especial de Richard'),(675,'es-CO','Juez {adju} y {team} en la misma sociedad de debate.'),(676,'es-CO','Juez {adju1} y {adju2} enfrentados manualmente'),(677,'es-CO','Juez {adju} y equipo {team} se enfrentan manualmente'),(678,'es-CO','Juez {adju} fue etiquetado como no principal.'),(679,'es-CO','El equipo de jueces no es el mejor por puntaje {points}.'),(680,'es-CO','Juez {adju1} y {adju2} han juzgados juntos x {occ} antes'),(681,'es-CO','Juez {adju} ya juzgó el equipo {team} x {occ} antes.'),(682,'es-CO','Pendiente comparación: {comparison_factor}, Diferencia: {roomDifference}, Pendiente penalidad: {steepnessPenalty}'),(686,'es-CO','Sin definir'),(687,'es-CO','Norte de Europa'),(688,'es-CO','Oeste de Europa'),(689,'es-CO','Sur de Europa'),(690,'es-CO','Europa del Este'),(691,'es-CO','Asia central'),(692,'es-CO','Este de Asia'),(693,'es-CO','Oeste de Asia'),(694,'es-CO','Sur de Asia'),(695,'es-CO','Suseste de Asia'),(696,'es-CO','Australia y Nueva Zelanda'),(697,'es-CO','Micronesia'),(698,'es-CO','Melanesia'),(699,'es-CO','Polinesia'),(700,'es-CO','Norte de África'),(701,'es-CO','Oeste de África'),(702,'es-CO','Africa Central'),(703,'es-CO','Este de África'),(704,'es-CO','Sur de África'),(705,'es-CO','Norte América'),(706,'es-CO','Centro América'),(707,'es-CO','Caribe'),(708,'es-CO','Sur América'),(709,'es-CO','Antártida'),(710,'es-CO','Juez penalizado'),(711,'es-CO','Mal juez'),(712,'es-CO','Juez decente'),(713,'es-CO','Juez promedio'),(714,'es-CO','Juez principal promedio'),(715,'es-CO','Buen juez principal'),(716,'es-CO','Jueces principales del break'),(717,'es-CO','<b> Este torneo no tiene equipos aún. </b><br>{add_button} or {import_button}'),(718,'es-CO','Agregar equipo'),(719,'es-CO','Importarlos vía archivo EXL.'),(720,'es-CO','Este torneo no tiene lugares aún. <br>{add} or {import}'),(721,'es-CO','Agregar lugar'),(722,'es-CO','Importarlos vía archivo EXL'),(723,'es-CO','<b> Este torneo no tiene jueces aún.</b><br>{add_button} ó {import_button}.'),(724,'es-CO','Importarlos via archivo EXL'),(725,'es-CO','Ya se ingresaron los resultados para esta ronda. No se pueden cambiar!'),(726,'es-CO','Ya se ingresaron los resultados para esta ronda. No se pueden mejorar!'),(727,'es-CO','Retroalimentación #{num}'),(728,'es-CO','ID del usuario'),(729,'es-CO','Encargado del idioma'),(730,'es-CO','Encargados del idioma'),(731,'es-CO','Crear encargado del idioma'),(732,'es-CO','Mostrar ELE ranking'),(733,'es-CO','Mostrar ranking de novatos'),(734,'es-CO','Inglés como idioma de dominio'),(735,'es-CO','NOV'),(736,'es-CO','Seleccionar novato'),(737,'es-CO','ENL'),(738,'es-CO','Agregar nuevo idioma'),(739,'es-CO',NULL),(740,'es-CO',NULL),(741,'es-CO',NULL),(742,'es-CO',NULL),(743,'es-CO',NULL),(744,'es-CO',NULL),(745,'es-CO',NULL),(746,'es-CO',NULL),(747,'es-CO',NULL),(748,'es-CO',NULL),(749,'es-CO',NULL),(750,'es-CO',NULL),(751,'es-CO',NULL),(753,'es-CO',NULL),(754,'es-CO',NULL),(755,'es-CO',NULL),(756,'es-CO',NULL),(757,'es-CO',NULL),(758,'es-CO',NULL),(759,'es-CO',NULL),(760,'es-CO',NULL),(761,'es-CO',NULL),(762,'es-CO',NULL),(764,'es-CO',NULL),(765,'es-CO',NULL),(766,'es-CO',NULL),(767,'es-CO',NULL),(770,'es-CO',NULL),(771,'es-CO',NULL),(772,'es-CO',NULL),(773,'es-CO',NULL),(774,'es-CO',NULL),(775,'es-CO',NULL),(777,'es-CO',NULL),(778,'es-CO',NULL),(783,'es-CO',NULL),(784,'es-CO',NULL),(785,'es-CO',NULL),(787,'es-CO',NULL),(788,'es-CO',NULL),(789,'es-CO',NULL),(790,'es-CO',NULL),(791,'es-CO',NULL),(792,'es-CO',NULL),(793,'es-CO',NULL),(794,'es-CO',NULL),(795,'es-CO',NULL),(796,'es-CO',NULL),(1,'tr-TR','Kullanıcı Kodu'),(2,'tr-TR','İsim'),(3,'tr-TR','{modelClass}\'ı İçeri Aktar'),(4,'tr-TR','İçeri Aktar'),(5,'tr-TR','Topluluklar'),(6,'tr-TR','Güncelle'),(7,'tr-TR','Sil'),(8,'tr-TR','Bu ögeyi silmek istediğinizden emin misiniz?'),(9,'tr-TR','{modelClass}\'ı Güncelle:'),(10,'tr-TR','\'{society}\' Topluluğunu Şununla Birleştir: ...'),(11,'tr-TR','Bir Ana Topluluk Seç ...'),(12,'tr-TR','{modelClass} Oluştur'),(13,'tr-TR','{modelClass}\'ı Görüntüle'),(14,'tr-TR','{modelClass}\'ı Güncelle'),(15,'tr-TR','{modelClass}\'ı Sil'),(16,'tr-TR','Yeni öge ekle'),(17,'tr-TR','İçeriği yeniden yükle'),(18,'tr-TR','CSV Dosyası Aracılığıyla İçeri Aktar'),(19,'tr-TR','Oluştur'),(20,'tr-TR','Diller'),(21,'tr-TR','Dil Oluştur'),(22,'tr-TR','Özel İhtiyaçlar'),(23,'tr-TR','Önerge Etiketleri'),(24,'tr-TR','\'{tag}\' Önerge Etiketini Şununla Birleştir: ...'),(25,'tr-TR','Bir Üst Etiket Seç ...'),(26,'tr-TR','Ara'),(27,'tr-TR','Sıfırla'),(28,'tr-TR','Önerge Etiketi Oluştur'),(29,'tr-TR','Uygulama Programlama Arayüzü'),(30,'tr-TR','Yönetici'),(31,'tr-TR','Mesajlar'),(32,'tr-TR','Mesaj Oluştur'),(33,'tr-TR','{count} adet Etiket değiştirildi'),(34,'tr-TR','Dosya Söz Dizimi Hatalı'),(35,'tr-TR','Önerge Etiketi'),(36,'tr-TR','Tur'),(37,'tr-TR','Kısaltma'),(38,'tr-TR',NULL),(39,'tr-TR','Hükümet Açılış'),(40,'tr-TR','Muhalefet Açılış'),(41,'tr-TR','Hükümet Kapanış'),(42,'tr-TR','Muhalefet Kapanış'),(43,'tr-TR','Takım'),(44,'tr-TR','Aktif'),(45,'tr-TR','Turnuva'),(46,'tr-TR','Konuşmacı'),(47,'tr-TR','Topluluk'),(48,'tr-TR','Gölge Takım'),(49,'tr-TR','Dil Durumu'),(50,'tr-TR','Her şey kontrol altında'),(51,'tr-TR','Yerine bir gölge takım yerleştirildi'),(52,'tr-TR','Konuşmacı {letter} maça katılmadı'),(53,'tr-TR',NULL),(54,'tr-TR','Etiket'),(55,'tr-TR','Değer'),(56,'tr-TR','Takım pozisyonu boş bırakılamaz'),(57,'tr-TR',NULL),(58,'tr-TR','Tabmaster Kullanıcısı'),(59,'tr-TR','Kullanıcı'),(60,'tr-TR','ENL Sıralaması'),(61,'tr-TR','ESL Sıralaması'),(62,'tr-TR',''),(63,'tr-TR','Tam İsim'),(64,'tr-TR','Kısaltma'),(65,'tr-TR','Şehir'),(66,'tr-TR','Ülke'),(67,'tr-TR','HA Takımı'),(68,'tr-TR','MA Takımı'),(69,'tr-TR','HK Takımı'),(70,'tr-TR','MK Takımı'),(71,'tr-TR','Panel'),(72,'tr-TR','Salon'),(73,'tr-TR','HA Geri Bildirimi'),(74,'tr-TR','MA Geri Bildirimi'),(75,'tr-TR','HK Geri Bildirimi'),(76,'tr-TR','MK Geri Bildirimi'),(77,'tr-TR','Zaman'),(78,'tr-TR','Önerge'),(79,'tr-TR','Dil'),(80,'tr-TR','Tarih'),(81,'tr-TR','Bilgi Slaytı'),(82,'tr-TR','Link'),(83,'tr-TR','Kullanıcı Tarafından'),(84,'tr-TR','Çeviri'),(85,'tr-TR','Jüri'),(86,'tr-TR','Cevap'),(87,'tr-TR','Geri Bildirim'),(88,'tr-TR','Soru'),(89,'tr-TR','Oluşturuldu'),(90,'tr-TR','Devam Ediyor'),(91,'tr-TR','Kapandı'),(92,'tr-TR','Gizlendi'),(93,'tr-TR','Ev Sahibi:'),(94,'tr-TR','Turnuva Adı'),(95,'tr-TR','Başlangıç Tarihi'),(96,'tr-TR','Bitiş Tarihi:'),(97,'tr-TR','Zaman Dilimi'),(98,'tr-TR','Logo'),(99,'tr-TR',NULL),(100,'tr-TR','Tab Algoritması'),(101,'tr-TR','Tahmini tur sayısı'),(102,'tr-TR','ESL Sıralamasını Göster'),(103,'tr-TR','Final turu var mı'),(104,'tr-TR','Yarı final turu var mı'),(105,'tr-TR','Çeyrek final turu var m?'),(106,'tr-TR','Ön çeyrek final turu var mı'),(107,'tr-TR','Erişim İşareti'),(108,'tr-TR','Katılımcı Kimlik Kartı'),(109,'tr-TR',NULL),(110,'tr-TR',NULL),(111,'tr-TR','Bölge'),(112,'tr-TR','Dil Kodu'),(113,'tr-TR','Kapsam'),(114,'tr-TR','Son Düzenleme'),(115,'tr-TR','Kuvvet'),(116,'tr-TR','Salon Başkanlığı için uygun'),(117,'tr-TR','İzleniyor'),(118,'tr-TR','Değerlendirilmemiş'),(121,'tr-TR','Jürilik için uygun'),(122,'tr-TR',NULL),(124,'tr-TR','Yüksek Potansiyelli'),(125,'tr-TR','Salon Başkanı'),(126,'tr-TR','İyi'),(127,'tr-TR',NULL),(128,'tr-TR','Jüri Komitesi Başkanı (CA)'),(129,'tr-TR',NULL),(130,'tr-TR',NULL),(131,'tr-TR','Konuşmacı Puanları'),(132,'tr-TR','Bu e-posta adresi kullanımda.'),(133,'tr-TR','Münazır'),(134,'tr-TR','Yetkilendirme Anahtarı'),(135,'tr-TR',NULL),(136,'tr-TR','Parola Sıfırlama Anahtarı'),(137,'tr-TR','e-posta'),(138,'tr-TR','Hesap Türü'),(139,'tr-TR','Hesap Durumu'),(140,'tr-TR','Son Değişiklik'),(141,'tr-TR','İsim'),(142,'tr-TR','Soyisim'),(143,'tr-TR','Fotoğraf'),(144,'tr-TR','Vekil'),(145,'tr-TR','Tabmaster'),(146,'tr-TR','Yönetici'),(147,'tr-TR','Silindi'),(148,'tr-TR','Belirtmek istemiyor'),(149,'tr-TR','Kadın'),(150,'tr-TR','Erkek'),(151,'tr-TR','Diğer'),(152,'tr-TR','karışık'),(153,'tr-TR','Daha belirlenmedi'),(154,'tr-TR','Mülakat gerekli'),(155,'tr-TR','EPL'),(157,'tr-TR','ESL'),(158,'tr-TR','İkinci dili İngilizce olan'),(159,'tr-TR','EFL'),(160,'tr-TR','Yabancı dili İngilizce olan'),(161,'tr-TR','Belirlenmemiş'),(162,'tr-TR','{user_name} Kullanıcısı İçin Kulüp İçi İlişkiyi Kaydetmede Hata'),(163,'tr-TR','{user_name} Kullanıcısını Kaydetmede Hata'),(164,'tr-TR','{tournament_name}: {user_name} için Kullanıcı Hesabı'),(165,'tr-TR','Bu URL-Slug\'ı kullanmanız mümkün değil'),(166,'tr-TR','Yayımlandı'),(167,'tr-TR','Gösterildi'),(168,'tr-TR','Başladı'),(169,'tr-TR',NULL),(170,'tr-TR','Bitti'),(171,'tr-TR','Ana'),(172,'tr-TR','Çaylak'),(173,'tr-TR','Final'),(174,'tr-TR','Yarı Final'),(175,'tr-TR','Çeyrek Final'),(176,'tr-TR','Ön Çeyrek Final'),(177,'tr-TR','Tur #{num}'),(178,'tr-TR','Turlar'),(179,'tr-TR',NULL),(180,'tr-TR','Bilgi Slaydı'),(181,'tr-TR','Hazırlık Süresi Başladı'),(182,'tr-TR','Ölçülen Son Sıcaklık'),(183,'tr-TR','ms\'de hazırlandı'),(184,'tr-TR','Bir salonu doldurmak için yeterli takım bulunmuyor - (aktif: {teams_count})'),(185,'tr-TR','En az iki jüri gerekli - (aktif: {count_adju})'),(186,'tr-TR','Aktif takım sayısı 4\'e bölünmeli ;) - (aktif: {count_teams})'),(187,'tr-TR','Gereğinden az salon bulunuyor - (aktif: {active_rooms})'),(188,'tr-TR','Yeteri kadar jüri bulunmuyor - (aktif: {active}, minimum: {required})'),(189,'tr-TR',NULL),(190,'tr-TR','Paneli kaydederken hata: {message}'),(191,'tr-TR','Maçı kaydederken hata: {message}'),(192,'tr-TR','Maçı kaydederken hata:<br>{errors}'),(193,'tr-TR','Güncellemek istediğiniz Maç #{num} bulunamadı.'),(195,'tr-TR',NULL),(196,'tr-TR',NULL),(197,'tr-TR',NULL),(198,'tr-TR',NULL),(199,'tr-TR',NULL),(200,'tr-TR','İyi Değil'),(201,'tr-TR','Oldukça İyi'),(202,'tr-TR','Mükemmel'),(203,'tr-TR',NULL),(204,'tr-TR','Kısa Metin Kutucuğu'),(205,'tr-TR','Uzun Metin Kutucuğu'),(206,'tr-TR','Sayı Kutucuğu'),(207,'tr-TR','Onay Kutusu Listesi'),(208,'tr-TR','Maç'),(209,'tr-TR','Geri Bildirim: ID'),(210,'tr-TR',NULL),(211,'tr-TR',NULL),(212,'tr-TR','Grup'),(213,'tr-TR','Aktif Salon'),(214,'tr-TR','Yan Jüri'),(215,'tr-TR','Kullanıldı'),(216,'tr-TR','Önceden Belirlenmiş Paneldir'),(217,'tr-TR','Panel #{id}\'de {amount} Salon Başkanı var'),(218,'tr-TR','Kategori'),(219,'tr-TR','Mesaj'),(220,'tr-TR','İşlev'),(221,'tr-TR',NULL),(222,'tr-TR',NULL),(223,'tr-TR',NULL),(224,'tr-TR',NULL),(225,'tr-TR',NULL),(226,'tr-TR',NULL),(227,'tr-TR',NULL),(228,'tr-TR','HA A Konuşmacı Puanı'),(229,'tr-TR','HA B Konuşmacı Puanı'),(230,'tr-TR','HA Sıralama'),(231,'tr-TR','MA A Konuşmacı Puanı'),(232,'tr-TR','MA B Konuşmacı Puanı'),(233,'tr-TR','MA Sıralama'),(234,'tr-TR','HK A Konuşmacı Puanı'),(235,'tr-TR','HK B Konuşmacı Puanı'),(236,'tr-TR','HK Sıralama'),(237,'tr-TR','MK A Konuşmacı Puanı'),(238,'tr-TR','MK B Konuşmacı Puanı'),(239,'tr-TR','MK Sıralama'),(240,'tr-TR','Kontrol Edildi'),(241,'tr-TR','Şu Kullanıcı Tarafından Girildi: ID'),(242,'tr-TR',NULL),(243,'tr-TR',NULL),(244,'tr-TR','CA'),(245,'tr-TR','Parola sıfırlama anahtarı boş bırakılamaz.'),(246,'tr-TR','Parola sıfırlama anahtarı hatası.'),(247,'tr-TR',NULL),(248,'tr-TR',NULL),(249,'tr-TR',NULL),(250,'tr-TR','CSV Dosyası'),(251,'tr-TR',NULL),(252,'tr-TR',NULL),(253,'tr-TR','Kullanıcı Adı'),(254,'tr-TR','Profil Fotoğrafı'),(255,'tr-TR','Güncel Topluluk'),(256,'tr-TR','Kendinizi hangi cinsiyet kategorisiyle en çok bağdaştırıyorsunuz'),(257,'tr-TR','Bu URL kullanılamaz.'),(258,'tr-TR','{adju} burada!'),(259,'tr-TR','{adju} zaten yoklama vermişti'),(260,'tr-TR','{id} numarası geçersiz! Bu kişi jüri değil!'),(261,'tr-TR','{speaker} burada!'),(262,'tr-TR','{speaker} zaten yoklama vermişti'),(263,'tr-TR','{id} numarası geçersiz! Bu bir takım değil!'),(264,'tr-TR','Geçerli bir girdi değil'),(265,'tr-TR','Doğrulama Kodu'),(266,'tr-TR',NULL),(267,'tr-TR','{user} için parola sıfırlama'),(268,'tr-TR','Bu e-posta adresiyle bir kullanıcı bulunamadı'),(269,'tr-TR','{object} Ekle'),(270,'tr-TR','Topluluk Oluştur'),(271,'tr-TR',NULL),(272,'tr-TR',NULL),(273,'tr-TR','Bir ülke ara ...'),(274,'tr-TR','Yeni Topluluk Ekle'),(275,'tr-TR','Bir topluluk ara ...'),(276,'tr-TR','Başlangıç tarihini gir ...'),(277,'tr-TR','Eğer mümkünse bitiş tarihini gir ...'),(278,'tr-TR','Dil Görevlileri'),(279,'tr-TR','Görevli'),(280,'tr-TR',NULL),(281,'tr-TR','Dil Durumunu Gözden Geçirme'),(282,'tr-TR','Durum'),(283,'tr-TR','Bir mülakat iste'),(284,'tr-TR',NULL),(285,'tr-TR',NULL),(286,'tr-TR',NULL),(288,'tr-TR',NULL),(289,'tr-TR',NULL),(290,'tr-TR','Yoklama'),(291,'tr-TR',NULL),(292,'tr-TR',NULL),(293,'tr-TR',NULL),(294,'tr-TR',NULL),(295,'tr-TR',NULL),(296,'tr-TR',NULL),(297,'tr-TR',NULL),(298,'tr-TR',NULL),(299,'tr-TR',NULL),(300,'tr-TR',NULL),(301,'tr-TR',NULL),(302,'tr-TR',NULL),(303,'tr-TR',NULL),(304,'tr-TR',NULL),(305,'tr-TR',NULL),(307,'tr-TR',NULL),(308,'tr-TR',NULL),(309,'tr-TR',NULL),(310,'tr-TR',NULL),(311,'tr-TR',NULL),(312,'tr-TR',NULL),(313,'tr-TR',NULL),(314,'tr-TR',NULL),(315,'tr-TR',NULL),(316,'tr-TR',NULL),(317,'tr-TR',NULL),(318,'tr-TR',NULL),(319,'tr-TR',NULL),(320,'tr-TR',NULL),(321,'tr-TR',NULL),(322,'tr-TR',NULL),(323,'tr-TR',NULL),(325,'tr-TR',NULL),(326,'tr-TR',NULL),(327,'tr-TR',NULL),(328,'tr-TR',NULL),(329,'tr-TR',NULL),(330,'tr-TR',NULL),(331,'tr-TR',NULL),(332,'tr-TR',NULL),(333,'tr-TR',NULL),(334,'tr-TR',NULL),(335,'tr-TR',NULL),(336,'tr-TR',NULL),(337,'tr-TR',NULL),(338,'tr-TR',NULL),(339,'tr-TR',NULL),(340,'tr-TR',NULL),(341,'tr-TR',NULL),(342,'tr-TR',NULL),(343,'tr-TR',NULL),(344,'tr-TR',NULL),(345,'tr-TR',NULL),(346,'tr-TR',NULL),(347,'tr-TR',NULL),(348,'tr-TR',NULL),(349,'tr-TR',NULL),(350,'tr-TR',NULL),(351,'tr-TR',NULL),(352,'tr-TR',NULL),(353,'tr-TR',NULL),(354,'tr-TR',NULL),(355,'tr-TR',NULL),(356,'tr-TR',NULL),(357,'tr-TR',NULL),(358,'tr-TR',NULL),(359,'tr-TR',NULL),(360,'tr-TR',NULL),(361,'tr-TR',NULL),(362,'tr-TR',NULL),(363,'tr-TR',NULL),(364,'tr-TR',NULL),(365,'tr-TR',NULL),(366,'tr-TR',NULL),(367,'tr-TR',NULL),(368,'tr-TR',NULL),(369,'tr-TR',NULL),(370,'tr-TR',NULL),(371,'tr-TR',NULL),(372,'tr-TR',NULL),(373,'tr-TR',NULL),(374,'tr-TR',NULL),(375,'tr-TR',NULL),(376,'tr-TR',NULL),(377,'tr-TR',NULL),(378,'tr-TR',NULL),(379,'tr-TR',NULL),(380,'tr-TR',NULL),(381,'tr-TR',NULL),(382,'tr-TR',NULL),(383,'tr-TR',NULL),(384,'tr-TR',NULL),(385,'tr-TR',NULL),(386,'tr-TR',NULL),(387,'tr-TR',NULL),(388,'tr-TR',NULL),(389,'tr-TR',NULL),(390,'tr-TR',NULL),(391,'tr-TR',NULL),(392,'tr-TR',NULL),(393,'tr-TR',NULL),(394,'tr-TR',NULL),(395,'tr-TR',NULL),(396,'tr-TR',NULL),(397,'tr-TR',NULL),(398,'tr-TR',NULL),(399,'tr-TR',NULL),(400,'tr-TR',NULL),(401,'tr-TR',NULL),(402,'tr-TR',NULL),(403,'tr-TR',NULL),(404,'tr-TR',NULL),(405,'tr-TR',NULL),(407,'tr-TR',NULL),(408,'tr-TR',NULL),(411,'tr-TR',NULL),(412,'tr-TR',NULL),(413,'tr-TR',NULL),(414,'tr-TR',NULL),(415,'tr-TR','Cinsiyet'),(416,'tr-TR',NULL),(417,'tr-TR',NULL),(418,'tr-TR','Yükleniyor ...'),(419,'tr-TR','Geri Bildirimi Görüntüle'),(420,'tr-TR','Kullanıcıyı Görüntüle'),(421,'tr-TR','{venue} salonunu şununla değiştir:'),(422,'tr-TR','Bir Salon Seç ...'),(423,'tr-TR',NULL),(424,'tr-TR',NULL),(425,'tr-TR','Bir Takım Seç ...'),(426,'tr-TR','Bir Dil Seç ...'),(427,'tr-TR','Bir Jüri Seç ...'),(428,'tr-TR','Jürileri Değiştir'),(429,'tr-TR',NULL),(430,'tr-TR','ile'),(431,'tr-TR','bununla ...'),(432,'tr-TR','Bir Önerge Etiketi Ara ...'),(433,'tr-TR','Sıralama'),(434,'tr-TR','Toplam'),(435,'tr-TR',NULL),(436,'tr-TR','Salon'),(437,'tr-TR','Final Turları'),(438,'tr-TR',NULL),(439,'tr-TR',NULL),(440,'tr-TR',NULL),(441,'tr-TR',NULL),(442,'tr-TR',NULL),(443,'tr-TR',NULL),(444,'tr-TR',NULL),(445,'tr-TR',NULL),(446,'tr-TR',NULL),(447,'tr-TR',NULL),(448,'tr-TR',NULL),(449,'tr-TR',NULL),(450,'tr-TR',NULL),(451,'tr-TR',NULL),(452,'tr-TR',NULL),(453,'tr-TR',NULL),(454,'tr-TR',NULL),(455,'tr-TR',NULL),(456,'tr-TR',NULL),(457,'tr-TR',NULL),(458,'tr-TR',NULL),(459,'tr-TR',NULL),(460,'tr-TR',NULL),(461,'tr-TR',NULL),(462,'tr-TR','Teşekkürler'),(463,'tr-TR','Teşekkürler!'),(464,'tr-TR',NULL),(465,'tr-TR',NULL),(466,'tr-TR',NULL),(467,'tr-TR',NULL),(468,'tr-TR',NULL),(469,'tr-TR',NULL),(470,'tr-TR',NULL),(471,'tr-TR',NULL),(472,'tr-TR',NULL),(473,'tr-TR',NULL),(474,'tr-TR','Jüri Geri Bildirimi'),(475,'tr-TR','Geri Bildirim Yolla'),(476,'tr-TR',NULL),(477,'tr-TR','Dil Durumunu Gözden Geçir'),(478,'tr-TR',NULL),(479,'tr-TR',NULL),(480,'tr-TR','{tournament} - Yönetici'),(481,'tr-TR','Salonları Listele'),(482,'tr-TR','Salon Oluştur'),(483,'tr-TR','Salonları İçeri Aktar'),(484,'tr-TR','Takımları Listele'),(485,'tr-TR','Takım Oluştur'),(486,'tr-TR','Takımları İçeri Aktar'),(487,'tr-TR',NULL),(488,'tr-TR',NULL),(489,'tr-TR',NULL),(490,'tr-TR',NULL),(491,'tr-TR',NULL),(492,'tr-TR',NULL),(493,'tr-TR',NULL),(494,'tr-TR',NULL),(495,'tr-TR',NULL),(496,'tr-TR',NULL),(497,'tr-TR',NULL),(498,'tr-TR',NULL),(499,'tr-TR',NULL),(500,'tr-TR',NULL),(501,'tr-TR',NULL),(502,'tr-TR',NULL),(503,'tr-TR',NULL),(504,'tr-TR',NULL),(505,'tr-TR',NULL),(506,'tr-TR',NULL),(507,'tr-TR',NULL),(508,'tr-TR',NULL),(509,'tr-TR',NULL),(510,'tr-TR',NULL),(511,'tr-TR',NULL),(512,'tr-TR',NULL),(513,'tr-TR',NULL),(514,'tr-TR',NULL),(515,'tr-TR',NULL),(516,'tr-TR',NULL),(517,'tr-TR',NULL),(518,'tr-TR',NULL),(519,'tr-TR',NULL),(520,'tr-TR',NULL),(521,'tr-TR',NULL),(522,'tr-TR',NULL),(524,'tr-TR',NULL),(525,'tr-TR',NULL),(526,'tr-TR',NULL),(527,'tr-TR',NULL),(529,'tr-TR',NULL),(530,'tr-TR',NULL),(531,'tr-TR',NULL),(532,'tr-TR',NULL),(533,'tr-TR',NULL),(534,'tr-TR',NULL),(535,'tr-TR',NULL),(536,'tr-TR',NULL),(537,'tr-TR',NULL),(538,'tr-TR',NULL),(539,'tr-TR',NULL),(540,'tr-TR',NULL),(541,'tr-TR',NULL),(542,'tr-TR',NULL),(543,'tr-TR',NULL),(544,'tr-TR',NULL),(545,'tr-TR',NULL),(546,'tr-TR','Takım Yorumları'),(547,'tr-TR',NULL),(548,'tr-TR',NULL),(549,'tr-TR',NULL),(550,'tr-TR',NULL),(551,'tr-TR',NULL),(552,'tr-TR',NULL),(553,'tr-TR',NULL),(554,'tr-TR',NULL),(555,'tr-TR',NULL),(556,'tr-TR',NULL),(557,'tr-TR',NULL),(558,'tr-TR',NULL),(559,'tr-TR',NULL),(560,'tr-TR',NULL),(561,'tr-TR',NULL),(562,'tr-TR',NULL),(563,'tr-TR',NULL),(564,'tr-TR',NULL),(565,'tr-TR',NULL),(566,'tr-TR',NULL),(567,'tr-TR','Münazara Topluluğu Geçmişi'),(568,'tr-TR','Geçmişe yeni topluluk ekle'),(569,'tr-TR','hala aktif'),(570,'tr-TR','Topluluk Bilgisini Güncelle'),(571,'tr-TR','{name}\'i yeni parola almaya zorla'),(572,'tr-TR','İptal'),(573,'tr-TR','Bir Turnuva Ara ...'),(574,'tr-TR','Yeni Parola Belirle'),(575,'tr-TR','Kullanıcıyı Güncelle'),(576,'tr-TR','Kullanıcıyı Sil'),(577,'tr-TR','Kullanıcı Oluştur'),(578,'tr-TR',NULL),(579,'tr-TR',NULL),(580,'tr-TR',NULL),(582,'tr-TR','Uygun dosya bulunamad?'),(583,'tr-TR','E?le?en sonuç bulunamad?'),(584,'tr-TR',NULL),(585,'tr-TR',NULL),(586,'tr-TR',NULL),(587,'tr-TR',NULL),(588,'tr-TR',NULL),(589,'tr-TR',NULL),(590,'tr-TR','Kullanıcı kaydedildi! Hoşgeldin {user}'),(591,'tr-TR','Giriş başarısız!'),(592,'tr-TR','Daha fazla yönlendirme için e-posta kutunuzu ziyaret edin'),(593,'tr-TR',NULL),(594,'tr-TR',NULL),(595,'tr-TR',NULL),(596,'tr-TR',NULL),(597,'tr-TR',NULL),(598,'tr-TR',NULL),(599,'tr-TR',NULL),(600,'tr-TR',NULL),(601,'tr-TR',NULL),(602,'tr-TR',NULL),(603,'tr-TR',NULL),(604,'tr-TR',NULL),(605,'tr-TR',NULL),(606,'tr-TR',NULL),(607,'tr-TR',NULL),(608,'tr-TR',NULL),(609,'tr-TR',NULL),(610,'tr-TR',NULL),(611,'tr-TR',NULL),(613,'tr-TR',NULL),(614,'tr-TR',NULL),(615,'tr-TR',NULL),(616,'tr-TR',NULL),(617,'tr-TR',NULL),(618,'tr-TR',NULL),(619,'tr-TR',NULL),(620,'tr-TR',NULL),(622,'tr-TR',NULL),(623,'tr-TR',NULL),(624,'tr-TR',NULL),(625,'tr-TR',NULL),(626,'tr-TR',NULL),(627,'tr-TR',NULL),(628,'tr-TR',NULL),(629,'tr-TR',NULL),(630,'tr-TR',NULL),(631,'tr-TR',NULL),(632,'tr-TR',NULL),(633,'tr-TR',NULL),(634,'tr-TR',NULL),(635,'tr-TR',NULL),(636,'tr-TR',NULL),(637,'tr-TR',NULL),(638,'tr-TR',NULL),(639,'tr-TR',NULL),(640,'tr-TR',NULL),(641,'tr-TR',NULL),(642,'tr-TR',NULL),(643,'tr-TR',NULL),(644,'tr-TR',NULL),(645,'tr-TR',NULL),(646,'tr-TR',NULL),(647,'tr-TR',NULL),(648,'tr-TR',NULL),(649,'tr-TR','Dil seçenekleri kaydedildi'),(650,'tr-TR','Dil seçeneklerini kaydetmede hata'),(651,'tr-TR','Kullanıcı bulunamadı!'),(652,'tr-TR','{object} başarıyla eklendi'),(653,'tr-TR','Başarıyla silindi'),(654,'tr-TR',NULL),(656,'tr-TR','Sonuçların kaydedilmesinde hata.<br>Lütfen basılı sonuç kağıdı isteyin.'),(657,'tr-TR','Sonuçlar kaydedildi. Sıradaki!'),(658,'tr-TR',NULL),(659,'tr-TR',NULL),(660,'tr-TR',NULL),(661,'tr-TR',NULL),(662,'tr-TR',NULL),(663,'tr-TR','Yeterli sayıda salon mevcut değil'),(664,'tr-TR','Gereğinden fazla sayıda salon var'),(665,'tr-TR',NULL),(666,'tr-TR',NULL),(667,'tr-TR',NULL),(668,'tr-TR',NULL),(669,'tr-TR',NULL),(670,'tr-TR',NULL),(671,'tr-TR','Jüri daha önce bu takımı gördü'),(672,'tr-TR','Jüri daha önce bu kombinasyonu izledi'),(673,'tr-TR',NULL),(674,'tr-TR',NULL),(675,'tr-TR','Jüri {adju} ve {team} aynı topluluğa mensuplar.'),(676,'tr-TR',NULL),(677,'tr-TR',NULL),(678,'tr-TR',NULL),(679,'tr-TR',NULL),(680,'tr-TR',NULL),(681,'tr-TR',NULL),(682,'tr-TR',NULL),(686,'tr-TR','Tanımlanmamış'),(687,'tr-TR','Kuzey Avrupa'),(688,'tr-TR','Batı Avrupa'),(689,'tr-TR','Güney Avrupa'),(690,'tr-TR','Doğu Avrupa'),(691,'tr-TR','Orta Asya'),(692,'tr-TR','Doğu Asya'),(693,'tr-TR','Batı Asya'),(694,'tr-TR','Güney Asya'),(695,'tr-TR','Güneydoğu Asya'),(696,'tr-TR','Avustralya ve Yeni Zelanda'),(697,'tr-TR','Mikronezya'),(698,'tr-TR','Melanezya'),(699,'tr-TR','Polinezya'),(700,'tr-TR','Kuzey Afrika'),(701,'tr-TR','Batı Afrika'),(702,'tr-TR','Orta Afrika'),(703,'tr-TR','Doğu Afrika'),(704,'tr-TR','Güney Afrika'),(705,'tr-TR','Kuzey Amerika'),(706,'tr-TR','Orta Amerika'),(707,'tr-TR','Karayipler'),(708,'tr-TR','Güney Amerika'),(709,'tr-TR','Antarktika'),(710,'tr-TR','Cezalı Jüri Üyesi'),(711,'tr-TR','Kötü Jüri Üyesi'),(712,'tr-TR','Vasat Jüri Üyesi'),(713,'tr-TR','Ortalama Jüri Üyesi'),(714,'tr-TR','Ortalama Salon Başkanı'),(715,'tr-TR','İyi Salon Başkanı'),(716,'tr-TR',NULL),(717,'tr-TR','<b>Bu turnuvanın takımları henüz eklenmemiş.</b><br>{add_button} ya da {import_button}'),(718,'tr-TR','Takım ekle'),(719,'tr-TR','CSV dosyası aracılığıyla içeri aktar'),(720,'tr-TR','Bu turnuvanın salonları henüz girilmemiş.<br>{add} ya da {import}'),(721,'tr-TR','Salon ekle'),(722,'tr-TR','CSV dosyası aracılığıyla içeri aktar'),(723,'tr-TR','<b>Bu turnuvanın jürileri henüz eklenmemiş.</b><br>{add_button} ya da {import_button}'),(724,'tr-TR','CSV dosyası aracılığıyla içeri aktar'),(725,'tr-TR',NULL),(726,'tr-TR',NULL),(727,'tr-TR',NULL),(728,'tr-TR',NULL),(729,'tr-TR',NULL),(730,'tr-TR',NULL),(731,'tr-TR',NULL),(732,'tr-TR',NULL),(733,'tr-TR',NULL),(734,'tr-TR',NULL),(735,'tr-TR',NULL),(736,'tr-TR',NULL),(737,'tr-TR',NULL),(738,'tr-TR',NULL),(739,'tr-TR',NULL),(740,'tr-TR',NULL),(741,'tr-TR',NULL),(742,'tr-TR',NULL),(743,'tr-TR',NULL),(744,'tr-TR',NULL),(745,'tr-TR',NULL),(746,'tr-TR',NULL),(747,'tr-TR',NULL),(748,'tr-TR',NULL),(749,'tr-TR',NULL),(750,'tr-TR',NULL),(751,'tr-TR',NULL),(753,'tr-TR',NULL),(754,'tr-TR',NULL),(755,'tr-TR',NULL),(756,'tr-TR',NULL),(757,'tr-TR',NULL),(758,'tr-TR',NULL),(759,'tr-TR',NULL),(760,'tr-TR',NULL),(761,'tr-TR',NULL),(762,'tr-TR',NULL),(764,'tr-TR',NULL),(765,'tr-TR',NULL),(766,'tr-TR',NULL),(767,'tr-TR',NULL),(770,'tr-TR',NULL),(771,'tr-TR',NULL),(772,'tr-TR',NULL),(773,'tr-TR',NULL),(774,'tr-TR',NULL),(775,'tr-TR',NULL),(777,'tr-TR',NULL),(778,'tr-TR',NULL),(783,'tr-TR',NULL),(784,'tr-TR',NULL),(785,'tr-TR',NULL),(787,'tr-TR',NULL),(788,'tr-TR',NULL),(789,'tr-TR',NULL),(790,'tr-TR',NULL),(791,'tr-TR',NULL),(792,'tr-TR',NULL),(793,'tr-TR',NULL),(794,'tr-TR',NULL),(795,'tr-TR',NULL),(796,'tr-TR',NULL),(1,'{lang}',NULL),(2,'{lang}',NULL),(3,'{lang}',NULL),(4,'{lang}',NULL),(5,'{lang}',NULL),(6,'{lang}',NULL),(7,'{lang}',NULL),(8,'{lang}',NULL),(9,'{lang}',NULL),(10,'{lang}',NULL),(11,'{lang}',NULL),(12,'{lang}',NULL),(13,'{lang}',NULL),(14,'{lang}',NULL),(15,'{lang}',NULL),(16,'{lang}',NULL),(17,'{lang}',NULL),(18,'{lang}',NULL),(19,'{lang}',NULL),(20,'{lang}',NULL),(21,'{lang}',NULL),(22,'{lang}',NULL),(23,'{lang}',NULL),(24,'{lang}',NULL),(25,'{lang}',NULL),(26,'{lang}',NULL),(27,'{lang}',NULL),(28,'{lang}',NULL),(29,'{lang}',NULL),(30,'{lang}',NULL),(31,'{lang}',NULL),(32,'{lang}',NULL),(33,'{lang}',NULL),(34,'{lang}',NULL),(35,'{lang}',NULL),(36,'{lang}',NULL),(37,'{lang}',NULL),(38,'{lang}',NULL),(39,'{lang}',NULL),(40,'{lang}',NULL),(41,'{lang}',NULL),(42,'{lang}',NULL),(43,'{lang}',NULL),(44,'{lang}',NULL),(45,'{lang}',NULL),(46,'{lang}',NULL),(47,'{lang}',NULL),(48,'{lang}',NULL),(49,'{lang}',NULL),(50,'{lang}',NULL),(51,'{lang}',NULL),(52,'{lang}',NULL),(53,'{lang}',NULL),(54,'{lang}',NULL),(55,'{lang}',NULL),(56,'{lang}',NULL),(57,'{lang}',NULL),(58,'{lang}',NULL),(59,'{lang}',NULL),(60,'{lang}',NULL),(61,'{lang}',NULL),(62,'{lang}',NULL),(63,'{lang}',NULL),(64,'{lang}',NULL),(65,'{lang}',NULL),(66,'{lang}',NULL),(67,'{lang}',NULL),(68,'{lang}',NULL),(69,'{lang}',NULL),(70,'{lang}',NULL),(71,'{lang}',NULL),(72,'{lang}',NULL),(73,'{lang}',NULL),(74,'{lang}',NULL),(75,'{lang}',NULL),(76,'{lang}',NULL),(77,'{lang}',NULL),(78,'{lang}',NULL),(79,'{lang}',NULL),(80,'{lang}',NULL),(81,'{lang}',NULL),(82,'{lang}',NULL),(83,'{lang}',NULL),(84,'{lang}',NULL),(85,'{lang}',NULL),(86,'{lang}',NULL),(87,'{lang}',NULL),(88,'{lang}',NULL),(89,'{lang}',NULL),(90,'{lang}',NULL),(91,'{lang}',NULL),(92,'{lang}',NULL),(93,'{lang}',NULL),(94,'{lang}',NULL),(95,'{lang}',NULL),(96,'{lang}',NULL),(97,'{lang}',NULL),(98,'{lang}',NULL),(99,'{lang}',NULL),(100,'{lang}',NULL),(101,'{lang}',NULL),(102,'{lang}',NULL),(103,'{lang}',NULL),(104,'{lang}',NULL),(105,'{lang}',NULL),(106,'{lang}',NULL),(107,'{lang}',NULL),(108,'{lang}',NULL),(109,'{lang}',NULL),(110,'{lang}',NULL),(111,'{lang}',NULL),(112,'{lang}',NULL),(113,'{lang}',NULL),(114,'{lang}',NULL),(115,'{lang}',NULL),(116,'{lang}',NULL),(117,'{lang}',NULL),(118,'{lang}',NULL),(121,'{lang}',NULL),(122,'{lang}',NULL),(124,'{lang}',NULL),(125,'{lang}',NULL),(126,'{lang}',NULL),(127,'{lang}',NULL),(128,'{lang}',NULL),(129,'{lang}',NULL),(130,'{lang}',NULL),(131,'{lang}',NULL),(132,'{lang}',NULL),(133,'{lang}',NULL),(134,'{lang}',NULL),(135,'{lang}',NULL),(136,'{lang}',NULL),(137,'{lang}',NULL),(138,'{lang}',NULL),(139,'{lang}',NULL),(140,'{lang}',NULL),(141,'{lang}',NULL),(142,'{lang}',NULL),(143,'{lang}',NULL),(144,'{lang}',NULL),(145,'{lang}',NULL),(146,'{lang}',NULL),(147,'{lang}',NULL),(148,'{lang}',NULL),(149,'{lang}',NULL),(150,'{lang}',NULL),(151,'{lang}',NULL),(152,'{lang}',NULL),(153,'{lang}',NULL),(154,'{lang}',NULL),(155,'{lang}',NULL),(157,'{lang}',NULL),(158,'{lang}',NULL),(159,'{lang}',NULL),(160,'{lang}',NULL),(161,'{lang}',NULL),(162,'{lang}',NULL),(163,'{lang}',NULL),(164,'{lang}',NULL),(165,'{lang}',NULL),(166,'{lang}',NULL),(167,'{lang}',NULL),(168,'{lang}',NULL),(169,'{lang}',NULL),(170,'{lang}',NULL),(171,'{lang}',NULL),(172,'{lang}',NULL),(173,'{lang}',NULL),(174,'{lang}',NULL),(175,'{lang}',NULL),(176,'{lang}',NULL),(177,'{lang}',NULL),(178,'{lang}',NULL),(179,'{lang}',NULL),(180,'{lang}',NULL),(181,'{lang}',NULL),(182,'{lang}',NULL),(183,'{lang}',NULL),(184,'{lang}',NULL),(185,'{lang}',NULL),(186,'{lang}',NULL),(187,'{lang}',NULL),(188,'{lang}',NULL),(189,'{lang}',NULL),(190,'{lang}',NULL),(191,'{lang}',NULL),(192,'{lang}',NULL),(193,'{lang}',NULL),(195,'{lang}',NULL),(196,'{lang}',NULL),(197,'{lang}',NULL),(198,'{lang}',NULL),(199,'{lang}',NULL),(200,'{lang}',NULL),(201,'{lang}',NULL),(202,'{lang}',NULL),(203,'{lang}',NULL),(204,'{lang}',NULL),(205,'{lang}',NULL),(206,'{lang}',NULL),(207,'{lang}',NULL),(208,'{lang}',NULL),(209,'{lang}',NULL),(210,'{lang}',NULL),(211,'{lang}',NULL),(212,'{lang}',NULL),(213,'{lang}',NULL),(214,'{lang}',NULL),(215,'{lang}',NULL),(216,'{lang}',NULL),(217,'{lang}',NULL),(218,'{lang}',NULL),(219,'{lang}',NULL),(220,'{lang}',NULL),(221,'{lang}',NULL),(222,'{lang}',NULL),(223,'{lang}',NULL),(224,'{lang}',NULL),(225,'{lang}',NULL),(226,'{lang}',NULL),(227,'{lang}',NULL),(228,'{lang}',NULL),(229,'{lang}',NULL),(230,'{lang}',NULL),(231,'{lang}',NULL),(232,'{lang}',NULL),(233,'{lang}',NULL),(234,'{lang}',NULL),(235,'{lang}',NULL),(236,'{lang}',NULL),(237,'{lang}',NULL),(238,'{lang}',NULL),(239,'{lang}',NULL),(240,'{lang}',NULL),(241,'{lang}',NULL),(242,'{lang}',NULL),(243,'{lang}',NULL),(244,'{lang}',NULL),(245,'{lang}',NULL),(246,'{lang}',NULL),(247,'{lang}',NULL),(248,'{lang}',NULL),(249,'{lang}',NULL),(250,'{lang}',NULL),(251,'{lang}',NULL),(252,'{lang}',NULL),(253,'{lang}',NULL),(254,'{lang}',NULL),(255,'{lang}',NULL),(256,'{lang}',NULL),(257,'{lang}',NULL),(258,'{lang}',NULL),(259,'{lang}',NULL),(260,'{lang}',NULL),(261,'{lang}',NULL),(262,'{lang}',NULL),(263,'{lang}',NULL),(264,'{lang}',NULL),(265,'{lang}',NULL),(266,'{lang}',NULL),(267,'{lang}',NULL),(268,'{lang}',NULL),(269,'{lang}',NULL),(270,'{lang}',NULL),(271,'{lang}',NULL),(272,'{lang}',NULL),(273,'{lang}',NULL),(274,'{lang}',NULL),(275,'{lang}',NULL),(276,'{lang}',NULL),(277,'{lang}',NULL),(278,'{lang}',NULL),(279,'{lang}',NULL),(280,'{lang}',NULL),(281,'{lang}',NULL),(282,'{lang}',NULL),(283,'{lang}',NULL),(284,'{lang}',NULL),(285,'{lang}',NULL),(286,'{lang}',NULL),(288,'{lang}',NULL),(289,'{lang}',NULL),(290,'{lang}',NULL),(291,'{lang}',NULL),(292,'{lang}',NULL),(293,'{lang}',NULL),(294,'{lang}',NULL),(295,'{lang}',NULL),(296,'{lang}',NULL),(297,'{lang}',NULL),(298,'{lang}',NULL),(299,'{lang}',NULL),(300,'{lang}',NULL),(301,'{lang}',NULL),(302,'{lang}',NULL),(303,'{lang}',NULL),(304,'{lang}',NULL),(305,'{lang}',NULL),(307,'{lang}',NULL),(308,'{lang}',NULL),(309,'{lang}',NULL),(310,'{lang}',NULL),(311,'{lang}',NULL),(312,'{lang}',NULL),(313,'{lang}',NULL),(314,'{lang}',NULL),(315,'{lang}',NULL),(316,'{lang}',NULL),(317,'{lang}',NULL),(318,'{lang}',NULL),(319,'{lang}',NULL),(320,'{lang}',NULL),(321,'{lang}',NULL),(322,'{lang}',NULL),(323,'{lang}',NULL),(325,'{lang}',NULL),(326,'{lang}',NULL),(327,'{lang}',NULL),(328,'{lang}',NULL),(329,'{lang}',NULL),(330,'{lang}',NULL),(331,'{lang}',NULL),(332,'{lang}',NULL),(333,'{lang}',NULL),(334,'{lang}',NULL),(335,'{lang}',NULL),(336,'{lang}',NULL),(337,'{lang}',NULL),(338,'{lang}',NULL),(339,'{lang}',NULL),(340,'{lang}',NULL),(341,'{lang}',NULL),(342,'{lang}',NULL),(343,'{lang}',NULL),(344,'{lang}',NULL),(345,'{lang}',NULL),(346,'{lang}',NULL),(347,'{lang}',NULL),(348,'{lang}',NULL),(349,'{lang}',NULL),(350,'{lang}',NULL),(351,'{lang}',NULL),(352,'{lang}',NULL),(353,'{lang}',NULL),(354,'{lang}',NULL),(355,'{lang}',NULL),(356,'{lang}',NULL),(357,'{lang}',NULL),(358,'{lang}',NULL),(359,'{lang}',NULL),(360,'{lang}',NULL),(361,'{lang}',NULL),(362,'{lang}',NULL),(363,'{lang}',NULL),(364,'{lang}',NULL),(365,'{lang}',NULL),(366,'{lang}',NULL),(367,'{lang}',NULL),(368,'{lang}',NULL),(369,'{lang}',NULL),(370,'{lang}',NULL),(371,'{lang}',NULL),(372,'{lang}',NULL),(373,'{lang}',NULL),(374,'{lang}',NULL),(375,'{lang}',NULL),(376,'{lang}',NULL),(377,'{lang}',NULL),(378,'{lang}',NULL),(379,'{lang}',NULL),(380,'{lang}',NULL),(381,'{lang}',NULL),(382,'{lang}',NULL),(383,'{lang}',NULL),(384,'{lang}',NULL),(385,'{lang}',NULL),(386,'{lang}',NULL),(387,'{lang}',NULL),(388,'{lang}',NULL),(389,'{lang}',NULL),(390,'{lang}',NULL),(391,'{lang}',NULL),(392,'{lang}',NULL),(393,'{lang}',NULL),(394,'{lang}',NULL),(395,'{lang}',NULL),(396,'{lang}',NULL),(397,'{lang}',NULL),(398,'{lang}',NULL),(399,'{lang}',NULL),(400,'{lang}',NULL),(401,'{lang}',NULL),(402,'{lang}',NULL),(403,'{lang}',NULL),(404,'{lang}',NULL),(405,'{lang}',NULL),(407,'{lang}',NULL),(408,'{lang}',NULL),(411,'{lang}',NULL),(412,'{lang}',NULL),(413,'{lang}',NULL),(414,'{lang}',NULL),(415,'{lang}',NULL),(416,'{lang}',NULL),(417,'{lang}',NULL),(418,'{lang}',NULL),(419,'{lang}',NULL),(420,'{lang}',NULL),(421,'{lang}',NULL),(422,'{lang}',NULL),(423,'{lang}',NULL),(424,'{lang}',NULL),(425,'{lang}',NULL),(426,'{lang}',NULL),(427,'{lang}',NULL),(428,'{lang}',NULL),(429,'{lang}',NULL),(430,'{lang}',NULL),(431,'{lang}',NULL),(432,'{lang}',NULL),(433,'{lang}',NULL),(434,'{lang}',NULL),(435,'{lang}',NULL),(436,'{lang}',NULL),(437,'{lang}',NULL),(438,'{lang}',NULL),(439,'{lang}',NULL),(440,'{lang}',NULL),(441,'{lang}',NULL),(442,'{lang}',NULL),(443,'{lang}',NULL),(444,'{lang}',NULL),(445,'{lang}',NULL),(446,'{lang}',NULL),(447,'{lang}',NULL),(448,'{lang}',NULL),(449,'{lang}',NULL),(450,'{lang}',NULL),(451,'{lang}',NULL),(452,'{lang}',NULL),(453,'{lang}',NULL),(454,'{lang}',NULL),(455,'{lang}',NULL),(456,'{lang}',NULL),(457,'{lang}',NULL),(458,'{lang}',NULL),(459,'{lang}',NULL),(460,'{lang}',NULL),(461,'{lang}',NULL),(462,'{lang}',NULL),(463,'{lang}',NULL),(464,'{lang}',NULL),(465,'{lang}',NULL),(466,'{lang}',NULL),(467,'{lang}',NULL),(468,'{lang}',NULL),(469,'{lang}',NULL),(470,'{lang}',NULL),(471,'{lang}',NULL),(472,'{lang}',NULL),(473,'{lang}',NULL),(474,'{lang}',NULL),(475,'{lang}',NULL),(476,'{lang}',NULL),(477,'{lang}',NULL),(478,'{lang}',NULL),(479,'{lang}',NULL),(480,'{lang}',NULL),(481,'{lang}',NULL),(482,'{lang}',NULL),(483,'{lang}',NULL),(484,'{lang}',NULL),(485,'{lang}',NULL),(486,'{lang}',NULL),(487,'{lang}',NULL),(488,'{lang}',NULL),(489,'{lang}',NULL),(490,'{lang}',NULL),(491,'{lang}',NULL),(492,'{lang}',NULL),(493,'{lang}',NULL),(494,'{lang}',NULL),(495,'{lang}',NULL),(496,'{lang}',NULL),(497,'{lang}',NULL),(498,'{lang}',NULL),(499,'{lang}',NULL),(500,'{lang}',NULL),(501,'{lang}',NULL),(502,'{lang}',NULL),(503,'{lang}',NULL),(504,'{lang}',NULL),(505,'{lang}',NULL),(506,'{lang}',NULL),(507,'{lang}',NULL),(508,'{lang}',NULL),(509,'{lang}',NULL),(510,'{lang}',NULL),(511,'{lang}',NULL),(512,'{lang}',NULL),(513,'{lang}',NULL),(514,'{lang}',NULL),(515,'{lang}',NULL),(516,'{lang}',NULL),(517,'{lang}',NULL),(518,'{lang}',NULL),(519,'{lang}',NULL),(520,'{lang}',NULL),(521,'{lang}',NULL),(522,'{lang}',NULL),(524,'{lang}',NULL),(525,'{lang}',NULL),(526,'{lang}',NULL),(527,'{lang}',NULL),(529,'{lang}',NULL),(530,'{lang}',NULL),(531,'{lang}',NULL),(532,'{lang}',NULL),(533,'{lang}',NULL),(534,'{lang}',NULL),(535,'{lang}',NULL),(536,'{lang}',NULL),(537,'{lang}',NULL),(538,'{lang}',NULL),(539,'{lang}',NULL),(540,'{lang}',NULL),(541,'{lang}',NULL),(542,'{lang}',NULL),(543,'{lang}',NULL),(544,'{lang}',NULL),(545,'{lang}',NULL),(546,'{lang}',NULL),(547,'{lang}',NULL),(548,'{lang}',NULL),(549,'{lang}',NULL),(550,'{lang}',NULL),(551,'{lang}',NULL),(552,'{lang}',NULL),(553,'{lang}',NULL),(554,'{lang}',NULL),(555,'{lang}',NULL),(556,'{lang}',NULL),(557,'{lang}',NULL),(558,'{lang}',NULL),(559,'{lang}',NULL),(560,'{lang}',NULL),(561,'{lang}',NULL),(562,'{lang}',NULL),(563,'{lang}',NULL),(564,'{lang}',NULL),(565,'{lang}',NULL),(566,'{lang}',NULL),(567,'{lang}',NULL),(568,'{lang}',NULL),(569,'{lang}',NULL),(570,'{lang}',NULL),(571,'{lang}',NULL),(572,'{lang}',NULL),(573,'{lang}',NULL),(574,'{lang}',NULL),(575,'{lang}',NULL),(576,'{lang}',NULL),(577,'{lang}',NULL),(578,'{lang}',NULL),(579,'{lang}',NULL),(580,'{lang}',NULL),(582,'{lang}',NULL),(583,'{lang}',NULL),(584,'{lang}',NULL),(585,'{lang}',NULL),(586,'{lang}',NULL),(587,'{lang}',NULL),(588,'{lang}',NULL),(589,'{lang}',NULL),(590,'{lang}',NULL),(591,'{lang}',NULL),(592,'{lang}',NULL),(593,'{lang}',NULL),(594,'{lang}',NULL),(595,'{lang}',NULL),(596,'{lang}',NULL),(597,'{lang}',NULL),(598,'{lang}',NULL),(599,'{lang}',NULL),(600,'{lang}',NULL),(601,'{lang}',NULL),(602,'{lang}',NULL),(603,'{lang}',NULL),(604,'{lang}',NULL),(605,'{lang}',NULL),(606,'{lang}',NULL),(607,'{lang}',NULL),(608,'{lang}',NULL),(609,'{lang}',NULL),(610,'{lang}',NULL),(611,'{lang}',NULL),(613,'{lang}',NULL),(614,'{lang}',NULL),(615,'{lang}',NULL),(616,'{lang}',NULL),(617,'{lang}',NULL),(618,'{lang}',NULL),(619,'{lang}',NULL),(620,'{lang}',NULL),(622,'{lang}',NULL),(623,'{lang}',NULL),(624,'{lang}',NULL),(625,'{lang}',NULL),(626,'{lang}',NULL),(627,'{lang}',NULL),(628,'{lang}',NULL),(629,'{lang}',NULL),(630,'{lang}',NULL),(631,'{lang}',NULL),(632,'{lang}',NULL),(633,'{lang}',NULL),(634,'{lang}',NULL),(635,'{lang}',NULL),(636,'{lang}',NULL),(637,'{lang}',NULL),(638,'{lang}',NULL),(639,'{lang}',NULL),(640,'{lang}',NULL),(641,'{lang}',NULL),(642,'{lang}',NULL),(643,'{lang}',NULL),(644,'{lang}',NULL),(645,'{lang}',NULL),(646,'{lang}',NULL),(647,'{lang}',NULL),(648,'{lang}',NULL),(649,'{lang}',NULL),(650,'{lang}',NULL),(651,'{lang}',NULL),(652,'{lang}',NULL),(653,'{lang}',NULL),(654,'{lang}',NULL),(656,'{lang}',NULL),(657,'{lang}',NULL),(658,'{lang}',NULL),(659,'{lang}',NULL),(660,'{lang}',NULL),(661,'{lang}',NULL),(662,'{lang}',NULL),(663,'{lang}',NULL),(664,'{lang}',NULL),(665,'{lang}',NULL),(666,'{lang}',NULL),(667,'{lang}',NULL),(668,'{lang}',NULL),(669,'{lang}',NULL),(670,'{lang}',NULL),(671,'{lang}',NULL),(672,'{lang}',NULL),(673,'{lang}',NULL),(674,'{lang}',NULL),(675,'{lang}',NULL),(676,'{lang}',NULL),(677,'{lang}',NULL),(678,'{lang}',NULL),(679,'{lang}',NULL),(680,'{lang}',NULL),(681,'{lang}',NULL),(682,'{lang}',NULL),(686,'{lang}',NULL),(687,'{lang}',NULL),(688,'{lang}',NULL),(689,'{lang}',NULL),(690,'{lang}',NULL),(691,'{lang}',NULL),(692,'{lang}',NULL),(693,'{lang}',NULL),(694,'{lang}',NULL),(695,'{lang}',NULL),(696,'{lang}',NULL),(697,'{lang}',NULL),(698,'{lang}',NULL),(699,'{lang}',NULL),(700,'{lang}',NULL),(701,'{lang}',NULL),(702,'{lang}',NULL),(703,'{lang}',NULL),(704,'{lang}',NULL),(705,'{lang}',NULL),(706,'{lang}',NULL),(707,'{lang}',NULL),(708,'{lang}',NULL),(709,'{lang}',NULL),(710,'{lang}',NULL),(711,'{lang}',NULL),(712,'{lang}',NULL),(713,'{lang}',NULL),(714,'{lang}',NULL),(715,'{lang}',NULL),(716,'{lang}',NULL),(717,'{lang}',NULL),(718,'{lang}',NULL),(719,'{lang}',NULL),(720,'{lang}',NULL),(721,'{lang}',NULL),(722,'{lang}',NULL),(723,'{lang}',NULL),(724,'{lang}',NULL),(725,'{lang}',NULL),(726,'{lang}',NULL),(727,'{lang}',NULL),(728,'{lang}',NULL),(729,'{lang}',NULL),(730,'{lang}',NULL),(731,'{lang}',NULL),(732,'{lang}',NULL),(733,'{lang}',NULL),(734,'{lang}',NULL),(735,'{lang}',NULL),(736,'{lang}',NULL),(737,'{lang}',NULL),(738,'{lang}',NULL),(739,'{lang}',NULL),(740,'{lang}',NULL),(741,'{lang}',NULL),(742,'{lang}',NULL),(743,'{lang}',NULL),(744,'{lang}',NULL),(745,'{lang}',NULL),(746,'{lang}',NULL),(747,'{lang}',NULL),(748,'{lang}',NULL),(749,'{lang}',NULL),(750,'{lang}',NULL),(751,'{lang}',NULL),(753,'{lang}',NULL),(754,'{lang}',NULL),(755,'{lang}',NULL),(756,'{lang}',NULL),(757,'{lang}',NULL),(758,'{lang}',NULL),(759,'{lang}',NULL),(760,'{lang}',NULL),(761,'{lang}',NULL),(762,'{lang}',NULL),(764,'{lang}',NULL),(765,'{lang}',NULL),(766,'{lang}',NULL),(767,'{lang}',NULL),(770,'{lang}',NULL),(771,'{lang}',NULL),(772,'{lang}',NULL),(773,'{lang}',NULL),(774,'{lang}',NULL),(775,'{lang}',NULL),(777,'{lang}',NULL),(778,'{lang}',NULL),(783,'{lang}',NULL),(784,'{lang}',NULL),(785,'{lang}',NULL),(787,'{lang}',NULL),(788,'{lang}',NULL),(789,'{lang}',NULL),(790,'{lang}',NULL),(791,'{lang}',NULL),(792,'{lang}',NULL),(793,'{lang}',NULL);
-/*!40000 ALTER TABLE `message` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO "message" VALUES (1,E'de-DE',E'ID');
+INSERT INTO "message" VALUES (2,E'de-DE',E'Name');
+INSERT INTO "message" VALUES (3,E'de-DE',E'Import: {modelClass}');
+INSERT INTO "message" VALUES (4,E'de-DE',E'Import');
+INSERT INTO "message" VALUES (5,E'de-DE',E'Verein');
+INSERT INTO "message" VALUES (6,E'de-DE',E'Update');
+INSERT INTO "message" VALUES (7,E'de-DE',E'Löschen');
+INSERT INTO "message" VALUES (8,E'de-DE',E'Bist du sicher, dass du das Element löschen möchtest?');
+INSERT INTO "message" VALUES (9,E'de-DE',E'Update: {modelClass}');
+INSERT INTO "message" VALUES (10,E'de-DE',E'Kombiniere \'{society}\' mit ...');
+INSERT INTO "message" VALUES (11,E'de-DE',E'Wähle den korrekten Verein ...');
+INSERT INTO "message" VALUES (12,E'de-DE',E'Erstelle {modelClass}');
+INSERT INTO "message" VALUES (13,E'de-DE',E'Betrachte {modelClass}');
+INSERT INTO "message" VALUES (14,E'de-DE',E'Aktualisiere {modelClass}');
+INSERT INTO "message" VALUES (15,E'de-DE',E'Lösche {modelClass}');
+INSERT INTO "message" VALUES (16,E'de-DE',E'Neues Element hinzufügen');
+INSERT INTO "message" VALUES (17,E'de-DE',E'Inhalt neu laden');
+INSERT INTO "message" VALUES (18,E'de-DE',E'Importiere von CSV Datei');
+INSERT INTO "message" VALUES (19,E'de-DE',E'Erstelle');
+INSERT INTO "message" VALUES (20,E'de-DE',E'Sprachen');
+INSERT INTO "message" VALUES (21,E'de-DE',E'Erstelle Sprache');
+INSERT INTO "message" VALUES (22,E'de-DE',E'Spezielle Anforderungen');
+INSERT INTO "message" VALUES (23,E'de-DE',E'Themen Tags');
+INSERT INTO "message" VALUES (24,E'de-DE',E'Kombiniere Themen Tag \'{tag}\' mit ...');
+INSERT INTO "message" VALUES (25,E'de-DE',E'Wähle den korrekten Tag ...');
+INSERT INTO "message" VALUES (26,E'de-DE',E'Suche');
+INSERT INTO "message" VALUES (27,E'de-DE',E'Zurücksetzen');
+INSERT INTO "message" VALUES (28,E'de-DE',E'Erstelle Themen Tag');
+INSERT INTO "message" VALUES (29,E'de-DE',E'API');
+INSERT INTO "message" VALUES (30,E'de-DE',E'Master');
+INSERT INTO "message" VALUES (31,E'de-DE',E'Nachrichten');
+INSERT INTO "message" VALUES (32,E'de-DE',E'Nachricht erstellen');
+INSERT INTO "message" VALUES (33,E'de-DE',E'{count} Tags geändert');
+INSERT INTO "message" VALUES (34,E'de-DE',E'Datei Syntax falsch');
+INSERT INTO "message" VALUES (35,E'de-DE',E'Themen-Tag');
+INSERT INTO "message" VALUES (36,E'de-DE',E'Runde');
+INSERT INTO "message" VALUES (37,E'de-DE',E'Abkürzung');
+INSERT INTO "message" VALUES (38,E'de-DE',E'Menge');
+INSERT INTO "message" VALUES (39,E'de-DE',E'Eröffnende Regierung');
+INSERT INTO "message" VALUES (40,E'de-DE',E'Eröffnende Opposition');
+INSERT INTO "message" VALUES (41,E'de-DE',E'Schließende Regierung');
+INSERT INTO "message" VALUES (42,E'de-DE',E'Schließende Opposition');
+INSERT INTO "message" VALUES (43,E'de-DE',E'Team');
+INSERT INTO "message" VALUES (44,E'de-DE',E'Aktiv');
+INSERT INTO "message" VALUES (45,E'de-DE',E'Turnier');
+INSERT INTO "message" VALUES (46,E'de-DE',E'RednerIn');
+INSERT INTO "message" VALUES (47,E'de-DE',E'Verein');
+INSERT INTO "message" VALUES (48,E'de-DE',E'Springerteam');
+INSERT INTO "message" VALUES (49,E'de-DE',E'Sprachstatus');
+INSERT INTO "message" VALUES (50,E'de-DE',E'Alles normal');
+INSERT INTO "message" VALUES (51,E'de-DE',E'Wurde durch Springerteam ersetzt');
+INSERT INTO "message" VALUES (52,E'de-DE',E'RednerIn {letter} erschien nicht');
+INSERT INTO "message" VALUES (53,E'de-DE',E'Schlüssel');
+INSERT INTO "message" VALUES (54,E'de-DE',E'Label');
+INSERT INTO "message" VALUES (55,E'de-DE',E'Wert');
+INSERT INTO "message" VALUES (56,E'de-DE',E'Teamposition darf nicht leer sein');
+INSERT INTO "message" VALUES (57,E'de-DE',E'KO-Runde');
+INSERT INTO "message" VALUES (58,E'de-DE',E'Tabmaster-BenutzerIn');
+INSERT INTO "message" VALUES (59,E'de-DE',E'BenutzerIn');
+INSERT INTO "message" VALUES (60,E'de-DE',E'ENL-Platzierung');
+INSERT INTO "message" VALUES (61,E'de-DE',E'ESL-Platzierung');
+INSERT INTO "message" VALUES (62,E'de-DE',E'Cache Ergebnisse');
+INSERT INTO "message" VALUES (63,E'de-DE',E'Voller Name');
+INSERT INTO "message" VALUES (64,E'de-DE',E'Abkürzung');
+INSERT INTO "message" VALUES (65,E'de-DE',E'Stadt');
+INSERT INTO "message" VALUES (66,E'de-DE',E'Land');
+INSERT INTO "message" VALUES (67,E'de-DE',E'ER Team');
+INSERT INTO "message" VALUES (68,E'de-DE',E'EO Team');
+INSERT INTO "message" VALUES (69,E'de-DE',E'SR Team');
+INSERT INTO "message" VALUES (70,E'de-DE',E'SO Team');
+INSERT INTO "message" VALUES (71,E'de-DE',E'Jury');
+INSERT INTO "message" VALUES (72,E'de-DE',E'Raum');
+INSERT INTO "message" VALUES (73,E'de-DE',E'ER Feedback');
+INSERT INTO "message" VALUES (74,E'de-DE',E'EO Feedback');
+INSERT INTO "message" VALUES (75,E'de-DE',E'SR Feedback');
+INSERT INTO "message" VALUES (76,E'de-DE',E'SO Feedback');
+INSERT INTO "message" VALUES (77,E'de-DE',E'Zeit');
+INSERT INTO "message" VALUES (78,E'de-DE',E'Thema');
+INSERT INTO "message" VALUES (79,E'de-DE',E'Sprache');
+INSERT INTO "message" VALUES (80,E'de-DE',E'Datum');
+INSERT INTO "message" VALUES (81,E'de-DE',E'Infotext zum Thema');
+INSERT INTO "message" VALUES (82,E'de-DE',E'Link');
+INSERT INTO "message" VALUES (83,E'de-DE',E'von BenutzerIn');
+INSERT INTO "message" VALUES (84,E'de-DE',E'Übersetzung');
+INSERT INTO "message" VALUES (85,E'de-DE',E'JurorIn');
+INSERT INTO "message" VALUES (86,E'de-DE',E'Antwort');
+INSERT INTO "message" VALUES (87,E'de-DE',E'Feedback');
+INSERT INTO "message" VALUES (88,E'de-DE',E'Frage');
+INSERT INTO "message" VALUES (89,E'de-DE',E'Erstellt');
+INSERT INTO "message" VALUES (90,E'de-DE',E'Läuft');
+INSERT INTO "message" VALUES (91,E'de-DE',E'Geschlossen');
+INSERT INTO "message" VALUES (92,E'de-DE',E'Versteckt');
+INSERT INTO "message" VALUES (93,E'de-DE',E'Veranstaltet von');
+INSERT INTO "message" VALUES (94,E'de-DE',E'Turniername');
+INSERT INTO "message" VALUES (95,E'de-DE',E'Beginnt am');
+INSERT INTO "message" VALUES (96,E'de-DE',E'Endet am');
+INSERT INTO "message" VALUES (97,E'de-DE',E'Zeitzone');
+INSERT INTO "message" VALUES (98,E'de-DE',E'Logo');
+INSERT INTO "message" VALUES (99,E'de-DE',E'URL-Kürzel');
+INSERT INTO "message" VALUES (100,E'de-DE',E'Tab-\r\nAlgorithmus');
+INSERT INTO "message" VALUES (101,E'de-DE',E'Voraussichtliche Rundenanzahl');
+INSERT INTO "message" VALUES (102,E'de-DE',E'Zeige ESL-Platzierung');
+INSERT INTO "message" VALUES (103,E'de-DE',E'Es gibt ein Finale');
+INSERT INTO "message" VALUES (104,E'de-DE',E'Es gibt ein Halbfinale');
+INSERT INTO "message" VALUES (105,E'de-DE',E'Es gibt ein Viertelfinale');
+INSERT INTO "message" VALUES (106,E'de-DE',E'Es gibt ein Achtelfinale');
+INSERT INTO "message" VALUES (107,E'de-DE',E'Zugriffsschlüssel');
+INSERT INTO "message" VALUES (108,E'de-DE',E'TeilnehmerInnenschild');
+INSERT INTO "message" VALUES (109,E'de-DE',E'Alpha 2');
+INSERT INTO "message" VALUES (110,E'de-DE',E'Alpha 3');
+INSERT INTO "message" VALUES (111,E'de-DE',E'Region');
+INSERT INTO "message" VALUES (112,E'de-DE',E'Sprachcode');
+INSERT INTO "message" VALUES (113,E'de-DE',E'Abdeckung');
+INSERT INTO "message" VALUES (114,E'de-DE',E'Letzte Aktualisierung');
+INSERT INTO "message" VALUES (115,E'de-DE',E'Stärke');
+INSERT INTO "message" VALUES (116,E'de-DE',E'Kann hauptjurieren');
+INSERT INTO "message" VALUES (117,E'de-DE',E'Werden beobachtet');
+INSERT INTO "message" VALUES (118,E'de-DE',E'Nicht bewertet');
+INSERT INTO "message" VALUES (121,E'de-DE',E'Kann jurieren');
+INSERT INTO "message" VALUES (122,E'de-DE',E'Ordentlich');
+INSERT INTO "message" VALUES (124,E'de-DE',E'Hohes Potential');
+INSERT INTO "message" VALUES (125,E'de-DE',E'HauptjurorIn');
+INSERT INTO "message" VALUES (126,E'de-DE',E'Gut');
+INSERT INTO "message" VALUES (127,E'de-DE',E'Breakend');
+INSERT INTO "message" VALUES (128,E'de-DE',E'ChefjurorIn');
+INSERT INTO "message" VALUES (129,E'de-DE',E'Beginn');
+INSERT INTO "message" VALUES (130,E'de-DE',E'Ende');
+INSERT INTO "message" VALUES (131,E'de-DE',E'Rednerpunkte');
+INSERT INTO "message" VALUES (132,E'de-DE',E'Diese Email-Adresse ist bereits vergeben.');
+INSERT INTO "message" VALUES (133,E'de-DE',E'DebattantIn');
+INSERT INTO "message" VALUES (134,E'de-DE',E'Auth-Schlüssel');
+INSERT INTO "message" VALUES (135,E'de-DE',E'Passwort-Hash');
+INSERT INTO "message" VALUES (136,E'de-DE',E'Passwort-Reset-Schlüssel');
+INSERT INTO "message" VALUES (137,E'de-DE',E'Email');
+INSERT INTO "message" VALUES (138,E'de-DE',E'Account-Rolle');
+INSERT INTO "message" VALUES (139,E'de-DE',E'Account-Status');
+INSERT INTO "message" VALUES (140,E'de-DE',E'Letzte Änderung');
+INSERT INTO "message" VALUES (141,E'de-DE',E'Vorname');
+INSERT INTO "message" VALUES (142,E'de-DE',E'Nachname');
+INSERT INTO "message" VALUES (143,E'de-DE',E'Bild');
+INSERT INTO "message" VALUES (144,E'de-DE',E'Platzhalter');
+INSERT INTO "message" VALUES (145,E'de-DE',E'TabmasterIn');
+INSERT INTO "message" VALUES (146,E'de-DE',E'Admin');
+INSERT INTO "message" VALUES (147,E'de-DE',E'Gelöscht');
+INSERT INTO "message" VALUES (148,E'de-DE',E'Nicht bekanntgegeben');
+INSERT INTO "message" VALUES (149,E'de-DE',E'Weiblich');
+INSERT INTO "message" VALUES (150,E'de-DE',E'Männlich');
+INSERT INTO "message" VALUES (151,E'de-DE',E'Andere');
+INSERT INTO "message" VALUES (152,E'de-DE',E'mixed');
+INSERT INTO "message" VALUES (153,E'de-DE',E'Noch nicht gesetzt');
+INSERT INTO "message" VALUES (154,E'de-DE',E'Interview wird benötigt');
+INSERT INTO "message" VALUES (155,E'de-DE',E'EPL');
+INSERT INTO "message" VALUES (157,E'de-DE',E'ESL');
+INSERT INTO "message" VALUES (158,E'de-DE',E'Englisch als zweite Sprache');
+INSERT INTO "message" VALUES (159,E'de-DE',E'EFL');
+INSERT INTO "message" VALUES (160,E'de-DE',E'English als Fremdsprache');
+INSERT INTO "message" VALUES (161,E'de-DE',E'Nicht gesetzt');
+INSERT INTO "message" VALUES (162,E'de-DE',E'Fehler beim Speichern von InSociety für {user_name\r\n}');
+INSERT INTO "message" VALUES (163,E'de-DE',E'Fehler beim Speichern von BenutzerIn {user_name}');
+INSERT INTO "message" VALUES (164,E'de-DE',E'{tournament_name}: BenutzerInnen-Account für {user_name}');
+INSERT INTO "message" VALUES (165,E'de-DE',E'Diese URL-Abkürzung ist nicht erlaubt.');
+INSERT INTO "message" VALUES (166,E'de-DE',E'Veröffentlicht');
+INSERT INTO "message" VALUES (167,E'de-DE',E'Angezeigt');
+INSERT INTO "message" VALUES (168,E'de-DE',E'Begann');
+INSERT INTO "message" VALUES (169,E'de-DE',E'Jurierend');
+INSERT INTO "message" VALUES (170,E'de-DE',E'Beendet');
+INSERT INTO "message" VALUES (171,E'de-DE',E'Haupt');
+INSERT INTO "message" VALUES (172,E'de-DE',E'EinsteigerInnen');
+INSERT INTO "message" VALUES (173,E'de-DE',E'Finale');
+INSERT INTO "message" VALUES (174,E'de-DE',E'Halbfinale');
+INSERT INTO "message" VALUES (175,E'de-DE',E'Viertelfinale');
+INSERT INTO "message" VALUES (176,E'de-DE',E'Achtelfinale');
+INSERT INTO "message" VALUES (177,E'de-DE',E'Runde #{num}');
+INSERT INTO "message" VALUES (178,E'de-DE',E'Vorrunde');
+INSERT INTO "message" VALUES (179,E'de-DE',E'Energie');
+INSERT INTO "message" VALUES (180,E'de-DE',E'Infotext');
+INSERT INTO "message" VALUES (181,E'de-DE',E'Vorbereitungszeit begann');
+INSERT INTO "message" VALUES (182,E'de-DE',E'Letzte Temperatur');
+INSERT INTO "message" VALUES (183,E'de-DE',E'ms zur Berechnung');
+INSERT INTO "message" VALUES (184,E'de-DE',E'Nicht genug Teams für einen Raum - {aktiv: {teams_count})');
+INSERT INTO "message" VALUES (185,E'de-DE',E'Mindestens 2 JurorInnen sind nötig - (aktive: {count_adju})');
+INSERT INTO "message" VALUES (186,E'de-DE',E'Anzahl der Teams muss durch 4 dividierbar sein ;) - (aktive: {count_teams})');
+INSERT INTO "message" VALUES (187,E'de-DE',E'Nicht genug aktive Räume - (aktive: {active_rooms} benötigt: {required})');
+INSERT INTO "message" VALUES (188,E'de-DE',E'Nicht genug JurorInnen - (aktive: {active} benötigt: {required})');
+INSERT INTO "message" VALUES (189,E'de-DE',E'Nicht genug freie JurorInnen bei dieser vorkonfigurierten Jurysetzung. (füllbare Räume: {active} mindestens benötigt: {required})');
+INSERT INTO "message" VALUES (190,E'de-DE',E'Kann Jury nicht speichern! Fehler: {message}');
+INSERT INTO "message" VALUES (191,E'de-DE',E'Kann Debatte nicht speichern! Fehler: {message}');
+INSERT INTO "message" VALUES (192,E'de-DE',E'Kann Debatte nicht speichern! Fehler:<br>{errors}');
+INSERT INTO "message" VALUES (193,E'de-DE',E'Keine Debatte #{num} zum Aktualisieren gefunden');
+INSERT INTO "message" VALUES (195,E'de-DE',E'Typ');
+INSERT INTO "message" VALUES (196,E'de-DE',E'Parameter falls gebraucht');
+INSERT INTO "message" VALUES (197,E'de-DE',E'Passt zu Team -> HauptjurorIn');
+INSERT INTO "message" VALUES (198,E'de-DE',E'Passt zu HauptjurorIn -> NebenjurorIn');
+INSERT INTO "message" VALUES (199,E'de-DE',E'Passt zu NebenjurorIn -> HauptjurorIn');
+INSERT INTO "message" VALUES (200,E'de-DE',E'Nicht gut');
+INSERT INTO "message" VALUES (201,E'de-DE',E'Sehr gut');
+INSERT INTO "message" VALUES (202,E'de-DE',E'Exzellent');
+INSERT INTO "message" VALUES (203,E'de-DE',E'Sternen-Wertung (1-5) Feld');
+INSERT INTO "message" VALUES (204,E'de-DE',E'Kurzes Textfeld');
+INSERT INTO "message" VALUES (205,E'de-DE',E'Langes Textfeld');
+INSERT INTO "message" VALUES (206,E'de-DE',E'Nummernfeld');
+INSERT INTO "message" VALUES (207,E'de-DE',E'Kontrollboxfeld');
+INSERT INTO "message" VALUES (208,E'de-DE',E'Debatte');
+INSERT INTO "message" VALUES (209,E'de-DE',E'Feedback für ID');
+INSERT INTO "message" VALUES (210,E'de-DE',E'JurorInnen-Konflikt von ID');
+INSERT INTO "message" VALUES (211,E'de-DE',E'JurorInnen-Konflikt mit ID');
+INSERT INTO "message" VALUES (212,E'de-DE',E'Gruppe');
+INSERT INTO "message" VALUES (213,E'de-DE',E'Aktiver Raum');
+INSERT INTO "message" VALUES (214,E'de-DE',E'NebenjurorIn');
+INSERT INTO "message" VALUES (215,E'de-DE',E'Verwendet');
+INSERT INTO "message" VALUES (216,E'de-DE',E'Ist vorkonfigurierte Jury');
+INSERT INTO "message" VALUES (217,E'de-DE',E'Jury #{id} beinhaltet {amount} HauptjurorInnen');
+INSERT INTO "message" VALUES (218,E'de-DE',E'Kategorie');
+INSERT INTO "message" VALUES (219,E'de-DE',E'Nachricht');
+INSERT INTO "message" VALUES (220,E'de-DE',E'Funktion');
+INSERT INTO "message" VALUES (221,E'de-DE',E'Altes Thema');
+INSERT INTO "message" VALUES (222,E'de-DE',E'Fragen');
+INSERT INTO "message" VALUES (223,E'de-DE',E'Konflikt mit');
+INSERT INTO "message" VALUES (224,E'de-DE',E'Grund');
+INSERT INTO "message" VALUES (225,E'de-DE',E'Teamkonflikt');
+INSERT INTO "message" VALUES (226,E'de-DE',E'JurorInnenkonflikt');
+INSERT INTO "message" VALUES (227,E'de-DE',E'Kein Typ gefunden');
+INSERT INTO "message" VALUES (228,E'de-DE',E'ER A RednerInnenpunkte');
+INSERT INTO "message" VALUES (229,E'de-DE',E'ER B RednerInnenpunkte');
+INSERT INTO "message" VALUES (230,E'de-DE',E'ER Platzierung');
+INSERT INTO "message" VALUES (231,E'de-DE',E'EO A RednerInnenpunkte');
+INSERT INTO "message" VALUES (232,E'de-DE',E'EO B RednerInnenpunkte');
+INSERT INTO "message" VALUES (233,E'de-DE',E'EO Platzierung');
+INSERT INTO "message" VALUES (234,E'de-DE',E'SR A RednerInnenpunkte');
+INSERT INTO "message" VALUES (235,E'de-DE',E'SR B RednerInnenpunkte');
+INSERT INTO "message" VALUES (236,E'de-DE',E'SR Platzierung');
+INSERT INTO "message" VALUES (237,E'de-DE',E'SO A RednerInnenpunkte');
+INSERT INTO "message" VALUES (238,E'de-DE',E'SO B RednerInnenpunkte');
+INSERT INTO "message" VALUES (239,E'de-DE',E'SO Platzierung');
+INSERT INTO "message" VALUES (240,E'de-DE',E'Überprüft');
+INSERT INTO "message" VALUES (241,E'de-DE',E'Eingegeben von BenutzerIn ID');
+INSERT INTO "message" VALUES (242,E'de-DE',E'Gleiche Platzierungen existieren');
+INSERT INTO "message" VALUES (243,E'de-DE',E'Ironman durch');
+INSERT INTO "message" VALUES (244,E'de-DE',E'CJ');
+INSERT INTO "message" VALUES (245,E'de-DE',E'Passwort-Reset-Schlüssel darf nicht leer sein.');
+INSERT INTO "message" VALUES (246,E'de-DE',E'Falscher Passwort-Reset-Schlüssel.');
+INSERT INTO "message" VALUES (247,E'de-DE',E'Komma ( , ) getrennte Datei');
+INSERT INTO "message" VALUES (248,E'de-DE',E'Strickpunkt ( ; ) getrennte Datei');
+INSERT INTO "message" VALUES (249,E'de-DE',E'Tag ( ->| ) getrennte Datei');
+INSERT INTO "message" VALUES (250,E'de-DE',E'CSV-Datei');
+INSERT INTO "message" VALUES (251,E'de-DE',E'Trennzeichen');
+INSERT INTO "message" VALUES (252,E'de-DE',E'Markiere als Test-Datenimport (es werden keine Emails versendet)');
+INSERT INTO "message" VALUES (253,E'de-DE',E'BenutzerInnenname');
+INSERT INTO "message" VALUES (254,E'de-DE',E'Profilbild');
+INSERT INTO "message" VALUES (255,E'de-DE',E'Derzeitiger Verein');
+INSERT INTO "message" VALUES (256,E'de-DE',E'Mit welchem Geschlecht identifizierst du dich am meisten');
+INSERT INTO "message" VALUES (257,E'de-DE',E'Diese URL ist nicht erlaubt.');
+INSERT INTO "message" VALUES (258,E'de-DE',E'{adju} ist registriert!');
+INSERT INTO "message" VALUES (259,E'de-DE',E'{adju} wurde bereits registriert!');
+INSERT INTO "message" VALUES (260,E'de-DE',E'{id) ist nicht gültig! Kein Juror!');
+INSERT INTO "message" VALUES (261,E'de-DE',E'{speaker} wurde registriert!');
+INSERT INTO "message" VALUES (262,E'de-DE',E'{speaker} wurde bereits registriert!');
+INSERT INTO "message" VALUES (263,E'de-DE',E'{id) ist nicht gültig! Kein Team!');
+INSERT INTO "message" VALUES (264,E'de-DE',E'Keine gültige Eingabe');
+INSERT INTO "message" VALUES (265,E'de-DE',E'Überprüfungscode');
+INSERT INTO "message" VALUES (266,E'de-DE',E'DebReg');
+INSERT INTO "message" VALUES (267,E'de-DE',E'Passwort zurücksetzen für {user}');
+INSERT INTO "message" VALUES (268,E'de-DE',E'Benutzerin mit dieser Email-Adresse nicht gefunden');
+INSERT INTO "message" VALUES (269,E'de-DE',E'{object} hinzufügen');
+INSERT INTO "message" VALUES (270,E'de-DE',E'Verein erstellen');
+INSERT INTO "message" VALUES (271,E'de-DE',E'Hey cool! Du hast einen unbekannten Verein hinzugefügt!');
+INSERT INTO "message" VALUES (272,E'de-DE',E'Bevor wir dich verknüpfen können gib uns doch bitte noch einige Informationen zu deinem Verein:');
+INSERT INTO "message" VALUES (273,E'de-DE',E'Suche nach Land ...');
+INSERT INTO "message" VALUES (274,E'de-DE',E'Neuen Verein hinzufügen');
+INSERT INTO "message" VALUES (275,E'de-DE',E'Suche nach Verein ...');
+INSERT INTO "message" VALUES (276,E'de-DE',E'Füge Datum des Beginns hinzu ...');
+INSERT INTO "message" VALUES (277,E'de-DE',E'Füge Datum des Endes hinzu, falls passend ...');
+INSERT INTO "message" VALUES (278,E'de-DE',E'Sprachen-Beauftragte');
+INSERT INTO "message" VALUES (279,E'de-DE',E'Beauftragte/r');
+INSERT INTO "message" VALUES (280,E'de-DE',E'Jedes {object} ...');
+INSERT INTO "message" VALUES (281,E'de-DE',E'Sprachstatus-Bericht');
+INSERT INTO "message" VALUES (282,E'de-DE',E'Status');
+INSERT INTO "message" VALUES (283,E'de-DE',E'Beantrage ein Interview');
+INSERT INTO "message" VALUES (284,E'de-DE',E'Setze ENL');
+INSERT INTO "message" VALUES (285,E'de-DE',E'Setze ESL');
+INSERT INTO "message" VALUES (286,E'de-DE',E'Sprachen-Beauftragte/r');
+INSERT INTO "message" VALUES (288,E'de-DE',E'Hinzufügen');
+INSERT INTO "message" VALUES (289,E'de-DE',E'Suchen nach NutzerIn ...');
+INSERT INTO "message" VALUES (290,E'de-DE',E'Einchecken');
+INSERT INTO "message" VALUES (291,E'de-DE',E'Übermitteln');
+INSERT INTO "message" VALUES (292,E'de-DE',E'TeilnehmerInnenschilder erstellen');
+INSERT INTO "message" VALUES (293,E'de-DE',E'Nur für BenutzerIn ...');
+INSERT INTO "message" VALUES (294,E'de-DE',E'TeilnehmerInnenschilder drucken');
+INSERT INTO "message" VALUES (295,E'de-DE',E'Strichcode generieren');
+INSERT INTO "message" VALUES (296,E'de-DE',E'Nach BenutzerIn suchen ... oder leer lassen');
+INSERT INTO "message" VALUES (297,E'de-DE',E'Strichcodes drucken');
+INSERT INTO "message" VALUES (298,E'de-DE',E'Teams');
+INSERT INTO "message" VALUES (299,E'de-DE',E'Teamname');
+INSERT INTO "message" VALUES (300,E'de-DE',E'RednerIn A');
+INSERT INTO "message" VALUES (301,E'de-DE',E'RednerIn B');
+INSERT INTO "message" VALUES (302,E'de-DE',E'So einsenden');
+INSERT INTO "message" VALUES (303,E'de-DE',E'Thema:');
+INSERT INTO "message" VALUES (304,E'de-DE',E'Jury:');
+INSERT INTO "message" VALUES (305,E'de-DE',E'Aktiv schalten');
+INSERT INTO "message" VALUES (307,E'de-DE',E'Nach BenutzerIn suchen ...');
+INSERT INTO "message" VALUES (308,E'de-DE',E'Turniere');
+INSERT INTO "message" VALUES (309,E'de-DE',E'Überblick');
+INSERT INTO "message" VALUES (310,E'de-DE',E'Themen');
+INSERT INTO "message" VALUES (311,E'de-DE',E'Teamtab');
+INSERT INTO "message" VALUES (312,E'de-DE',E'RednerInnentab');
+INSERT INTO "message" VALUES (313,E'de-DE',E'KO-Runden');
+INSERT INTO "message" VALUES (314,E'de-DE',E'Breakende JurorInnen');
+INSERT INTO "message" VALUES (315,E'de-DE',E'So einsenden!');
+INSERT INTO "message" VALUES (316,E'de-DE',E'DebReg-Turnier');
+INSERT INTO "message" VALUES (317,E'de-DE',E'Zeige vergangene Turniere');
+INSERT INTO "message" VALUES (318,E'de-DE',E'JurorInnen');
+INSERT INTO "message" VALUES (319,E'de-DE',E'Ergebnis');
+INSERT INTO "message" VALUES (320,E'de-DE',E'gemeinsam mit {teammate}');
+INSERT INTO "message" VALUES (321,E'de-DE',E'als Ironman');
+INSERT INTO "message" VALUES (322,E'de-DE',E'Du bist als Team <br> \'{team}\' {with} für {society} registriert');
+INSERT INTO "message" VALUES (323,E'de-DE',E'Du bist als JurorIn für {society} registriert');
+INSERT INTO "message" VALUES (325,E'de-DE',E'Registrierungsinformationen');
+INSERT INTO "message" VALUES (326,E'de-DE',E'Informationen hinzufügen');
+INSERT INTO "message" VALUES (327,E'de-DE',E'Runde #{num} Info');
+INSERT INTO "message" VALUES (328,E'de-DE',E'Du bist <b>{pos}</b> im Raum <b>{room}</b>.');
+INSERT INTO "message" VALUES (329,E'de-DE',E'Runde beginnt um: <b>{time}</b>');
+INSERT INTO "message" VALUES (330,E'de-DE',E'Infotext');
+INSERT INTO "message" VALUES (331,E'de-DE',E'Runde #{num} Teams');
+INSERT INTO "message" VALUES (332,E'de-DE',E'Mein super geniales Turnier ... z.B. Vienna IV');
+INSERT INTO "message" VALUES (333,E'de-DE',E'Wähle die CheforganisatorInnen aus ...');
+INSERT INTO "message" VALUES (334,E'de-DE',E'Wähle das Datum des Beginns...');
+INSERT INTO "message" VALUES (335,E'de-DE',E'Wähle das Datum des Endes ...');
+INSERT INTO "message" VALUES (336,E'de-DE',E'ChefjurorInnen');
+INSERT INTO "message" VALUES (337,E'de-DE',E'Wähle deine ChefjurorInnen ...');
+INSERT INTO "message" VALUES (338,E'de-DE',E'Wähle deinen Tabmaster ...');
+INSERT INTO "message" VALUES (339,E'de-DE',E'Turnierarchiv');
+INSERT INTO "message" VALUES (340,E'de-DE',E'Der obige Fehler ist aufgetreten während der Server deine Anfrage bearbeitet hat.');
+INSERT INTO "message" VALUES (341,E'de-DE',E'Bitte kontaktiere uns, wenn du der Meinung bist, dass dies ein Serverfehler ist. Danke!');
+INSERT INTO "message" VALUES (342,E'de-DE',E'Passwort wiederherstellen');
+INSERT INTO "message" VALUES (343,E'de-DE',E'Bitte wähle dein neues Passwort:');
+INSERT INTO "message" VALUES (344,E'de-DE',E'Speichern');
+INSERT INTO "message" VALUES (345,E'de-DE',E'Registrieren');
+INSERT INTO "message" VALUES (346,E'de-DE',E'Bitte fülle die folgenden Felder aus, um dich zu registrieren:');
+INSERT INTO "message" VALUES (347,E'de-DE',E'Die meisten Zuweisungsalgorithmen dieses Systems versuchen, unter anderem eine diverse Jury zu generieren. Damit dies funktionieren kann, würden wir dich bitten, eine Option aus der Liste auszuwählen. Wir sind uns bewusst, dass durch unsere Auswahl nicht jede persönliche Präferenz abgedeckt werden kann und entschuldigen uns für fehlende Optionen. Wenn du den Eindruck hast, dass keine dieser Optionen anwendbar ist, wähle bitte <Not Revealing>. Diese Option wird niemals regulären NutzerInnen angezeigt und dient einzig Berechnungszwecken!');
+INSERT INTO "message" VALUES (348,E'de-DE',E'Einloggen');
+INSERT INTO "message" VALUES (349,E'de-DE',E'Bitte fülle die folgenden Felder aus um dich einzuloggen:');
+INSERT INTO "message" VALUES (350,E'de-DE',E'Falls du dein Passwort vergessen hast, kannst du {resetIt}');
+INSERT INTO "message" VALUES (351,E'de-DE',E'es resetten');
+INSERT INTO "message" VALUES (352,E'de-DE',E'Passwortreset anfordern');
+INSERT INTO "message" VALUES (353,E'de-DE',E'Bitte gib deine Email-Adresse ein. Wir werden dir einen Link zum Resetten deines Passworts zusenden.');
+INSERT INTO "message" VALUES (354,E'de-DE',E'Senden');
+INSERT INTO "message" VALUES (355,E'de-DE',E'Räume-CSV');
+INSERT INTO "message" VALUES (356,E'de-DE',E'JurorInnen-CSV');
+INSERT INTO "message" VALUES (357,E'de-DE',E'Team-CSV');
+INSERT INTO "message" VALUES (358,E'de-DE',E'erstellt');
+INSERT INTO "message" VALUES (359,E'de-DE',E'Beispiel einer Raum-CSV');
+INSERT INTO "message" VALUES (360,E'de-DE',E'Beispiel einer Team-CSV');
+INSERT INTO "message" VALUES (361,E'de-DE',E'Beispiel einer JurorInnen-CSV');
+INSERT INTO "message" VALUES (362,E'de-DE',E'Aktuelles BPS-Turnier {count, plural, =0{Tournament} =1{Tournament} other{Tournaments}}');
+INSERT INTO "message" VALUES (363,E'de-DE',E'Willkommen bei {appName}!');
+INSERT INTO "message" VALUES (364,E'de-DE',E'Zeige Turniere');
+INSERT INTO "message" VALUES (365,E'de-DE',E'Erstelle Turnier');
+INSERT INTO "message" VALUES (366,E'de-DE',E'Ehe wir dich registrieren können vervollständige bitte die Informationen zu deinem Verein:');
+INSERT INTO "message" VALUES (367,E'de-DE',E'Kontakt');
+INSERT INTO "message" VALUES (368,E'de-DE',E'Vorkonfigurierte Jury #');
+INSERT INTO "message" VALUES (369,E'de-DE',E'Jury');
+INSERT INTO "message" VALUES (370,E'de-DE',E'Durchschnittliche Jury-Stärke');
+INSERT INTO "message" VALUES (371,E'de-DE',E'Erstelle Jury');
+INSERT INTO "message" VALUES (372,E'de-DE',E'Vorkonfigurierte Jury für die nächste Runde');
+INSERT INTO "message" VALUES (373,E'de-DE',E'Erstelle {object} ...');
+INSERT INTO "message" VALUES (374,E'de-DE',E'Platz');
+INSERT INTO "message" VALUES (375,E'de-DE',E'Teampunkte');
+INSERT INTO "message" VALUES (376,E'de-DE',E'#{number}');
+INSERT INTO "message" VALUES (377,E'de-DE',E'Keine breakenden Juroren definiert');
+INSERT INTO "message" VALUES (378,E'de-DE',E'Verteilung der RednerInnenpunkte');
+INSERT INTO "message" VALUES (379,E'de-DE',E'Lauf');
+INSERT INTO "message" VALUES (380,E'de-DE',E'Eröffnende Regierung');
+INSERT INTO "message" VALUES (381,E'de-DE',E'Eröffnende Opposition');
+INSERT INTO "message" VALUES (382,E'de-DE',E'Schließende Regierung');
+INSERT INTO "message" VALUES (383,E'de-DE',E'Schließende Opposition');
+INSERT INTO "message" VALUES (384,E'de-DE',E'Zeige Infotext');
+INSERT INTO "message" VALUES (385,E'de-DE',E'Zeige Thema');
+INSERT INTO "message" VALUES (386,E'de-DE',E'Fehlende Personen');
+INSERT INTO "message" VALUES (387,E'de-DE',E'Markiere fehlende Personen als inaktiv');
+INSERT INTO "message" VALUES (388,E'de-DE',E'Ergebnisse');
+INSERT INTO "message" VALUES (389,E'de-DE',E'Runner Ansicht für Runde #{number}');
+INSERT INTO "message" VALUES (390,E'de-DE',E'Automatische Aktualisierung <i id=\'pjax-status\' class=\'\'></i>');
+INSERT INTO "message" VALUES (391,E'de-DE',E'Aktualisiere individuellen Konflikt');
+INSERT INTO "message" VALUES (392,E'de-DE',E'Individueller Konflikt');
+INSERT INTO "message" VALUES (393,E'de-DE',E'Es sind noch nicht alle DebattantInnen im System. :)');
+INSERT INTO "message" VALUES (394,E'de-DE',E'Erstelle Konflikt');
+INSERT INTO "message" VALUES (395,E'de-DE',E'Aktualisiere Konflikt');
+INSERT INTO "message" VALUES (396,E'de-DE',E'Energie-Einstellungen');
+INSERT INTO "message" VALUES (397,E'de-DE',E'Aktualisiere Energie Einstellungen');
+INSERT INTO "message" VALUES (398,E'de-DE',E'Runde #{number}');
+INSERT INTO "message" VALUES (399,E'de-DE',E'Runden');
+INSERT INTO "message" VALUES (400,E'de-DE',E'Aktionen');
+INSERT INTO "message" VALUES (401,E'de-DE',E'Veröffentliche Tab');
+INSERT INTO "message" VALUES (402,E'de-DE',E'Erneute Draw-Erstellung versuchen');
+INSERT INTO "message" VALUES (403,E'de-DE',E'Aktualisiere Runde');
+INSERT INTO "message" VALUES (404,E'de-DE',E'Drowpdown-Menü umschalten');
+INSERT INTO "message" VALUES (405,E'de-DE',E'Verbessere weiter um');
+INSERT INTO "message" VALUES (407,E'de-DE',E'Bist du sicher, dass du die Runde neu anlegen möchtest? Alle Informationen gehen dabei verloren!');
+INSERT INTO "message" VALUES (408,E'de-DE',E'Drucke Laufzettel');
+INSERT INTO "message" VALUES (411,E'de-DE',E'Rundenstatus');
+INSERT INTO "message" VALUES (412,E'de-DE',E'Durchschnittliche Energie');
+INSERT INTO "message" VALUES (413,E'de-DE',E'Erstellungszeit');
+INSERT INTO "message" VALUES (414,E'de-DE',E'Farbpalette');
+INSERT INTO "message" VALUES (415,E'de-DE',E'Geschlecht');
+INSERT INTO "message" VALUES (416,E'de-DE',E'Regionen');
+INSERT INTO "message" VALUES (417,E'de-DE',E'Punkte');
+INSERT INTO "message" VALUES (418,E'de-DE',E'Laden ...');
+INSERT INTO "message" VALUES (419,E'de-DE',E'Zeige Feedback');
+INSERT INTO "message" VALUES (420,E'de-DE',E'Zeige BenutzerIn');
+INSERT INTO "message" VALUES (421,E'de-DE',E'Tausche Raum {venue} mit');
+INSERT INTO "message" VALUES (422,E'de-DE',E'Wähle einen Raum ...');
+INSERT INTO "message" VALUES (423,E'de-DE',E'Aktualisiere {modelClass} #{number}');
+INSERT INTO "message" VALUES (424,E'de-DE',E'Energielevel');
+INSERT INTO "message" VALUES (425,E'de-DE',E'Wähle ein Team ...');
+INSERT INTO "message" VALUES (426,E'de-DE',E'Wähle eine Sprache ...');
+INSERT INTO "message" VALUES (427,E'de-DE',E'Wähle JurorIn ...');
+INSERT INTO "message" VALUES (428,E'de-DE',E'Tausche JurorInnen');
+INSERT INTO "message" VALUES (429,E'de-DE',E'Tausche JurorIn ...');
+INSERT INTO "message" VALUES (430,E'de-DE',E'mit');
+INSERT INTO "message" VALUES (431,E'de-DE',E'JurorIn ...');
+INSERT INTO "message" VALUES (432,E'de-DE',E'Suche nach Themen-Tag ...');
+INSERT INTO "message" VALUES (433,E'de-DE',E'Rang');
+INSERT INTO "message" VALUES (434,E'de-DE',E'Gesamt');
+INSERT INTO "message" VALUES (435,E'de-DE',E'Debatten-ID');
+INSERT INTO "message" VALUES (436,E'de-DE',E'Raum');
+INSERT INTO "message" VALUES (437,E'de-DE',E'KO-Runden');
+INSERT INTO "message" VALUES (438,E'de-DE',E'Themenarchiv');
+INSERT INTO "message" VALUES (439,E'de-DE',E'Systemexternes Thema');
+INSERT INTO "message" VALUES (440,E'de-DE',E'Dein geniales Turnier');
+INSERT INTO "message" VALUES (441,E'de-DE',E'Füge ein Datum ein ...');
+INSERT INTO "message" VALUES (442,E'de-DE',E'Runde #1 oder Finale');
+INSERT INTO "message" VALUES (443,E'de-DE',E'DHW ...');
+INSERT INTO "message" VALUES (444,E'de-DE',E'http://bitte.quelle.angeben.de');
+INSERT INTO "message" VALUES (445,E'de-DE',E'{modelClass} manuell einfügen');
+INSERT INTO "message" VALUES (446,E'de-DE',E'Optionen');
+INSERT INTO "message" VALUES (447,E'de-DE',E'Weiter');
+INSERT INTO "message" VALUES (448,E'de-DE',E'Noch keine Ergebnisse!');
+INSERT INTO "message" VALUES (449,E'de-DE',E'Ergebnisse in Raum: {venue}');
+INSERT INTO "message" VALUES (450,E'de-DE',E'Ergebnisse für {venue}');
+INSERT INTO "message" VALUES (451,E'de-DE',E'Tabellenansicht');
+INSERT INTO "message" VALUES (452,E'de-DE',E'Ergebnisse für {label}');
+INSERT INTO "message" VALUES (453,E'de-DE',E'Wechseln zur Raumansicht');
+INSERT INTO "message" VALUES (454,E'de-DE',E'Ergebnis des Springerteams');
+INSERT INTO "message" VALUES (455,E'de-DE',E'Zeige Details zum Ergebnis');
+INSERT INTO "message" VALUES (456,E'de-DE',E'Korregiere Ergebnis');
+INSERT INTO "message" VALUES (457,E'de-DE',E'Raumansicht');
+INSERT INTO "message" VALUES (458,E'de-DE',E'Wechseln zur Tabellenansicht');
+INSERT INTO "message" VALUES (459,E'de-DE',E'Bestätige Daten für {venue}');
+INSERT INTO "message" VALUES (460,E'de-DE',E'beginne neu');
+INSERT INTO "message" VALUES (461,E'de-DE',E'Runde {number}');
+INSERT INTO "message" VALUES (462,E'de-DE',E'Vielen Dank');
+INSERT INTO "message" VALUES (463,E'de-DE',E'Vielen Dank!');
+INSERT INTO "message" VALUES (464,E'de-DE',E'Ergebnisse erfolgreich gespeichert');
+INSERT INTO "message" VALUES (465,E'de-DE',E'Geschwindigkeits-Bonus!');
+INSERT INTO "message" VALUES (466,E'de-DE',E'Schneller! Hopp hopp!');
+INSERT INTO "message" VALUES (467,E'de-DE',E'Faulpelze! Ihr seid Letzter!');
+INSERT INTO "message" VALUES (468,E'de-DE',E'Du bist <b>#{place}</b> von {max}');
+INSERT INTO "message" VALUES (469,E'de-DE',E'Feedback übermitteln');
+INSERT INTO "message" VALUES (470,E'de-DE',E'Zurück zum Turnier');
+INSERT INTO "message" VALUES (471,E'de-DE',E'Feedbacks');
+INSERT INTO "message" VALUES (472,E'de-DE',E'Ziel-JurorIn');
+INSERT INTO "message" VALUES (473,E'de-DE',E'JurorInnen-Name ...');
+INSERT INTO "message" VALUES (474,E'de-DE',E'JurorIn-Feedback');
+INSERT INTO "message" VALUES (475,E'de-DE',E'Übermittle Feedback');
+INSERT INTO "message" VALUES (476,E'de-DE',E'{tournament} - Sprachen-Beauftragte/r');
+INSERT INTO "message" VALUES (477,E'de-DE',E'Sprachstatus überprüfen');
+INSERT INTO "message" VALUES (478,E'de-DE',E'enthält geheime Alientechnologie');
+INSERT INTO "message" VALUES (479,E'de-DE',E'Fehler berichten');
+INSERT INTO "message" VALUES (480,E'de-DE',E'{tournament} - Manager');
+INSERT INTO "message" VALUES (481,E'de-DE',E'Räume auflisten');
+INSERT INTO "message" VALUES (482,E'de-DE',E'Raum erstellen');
+INSERT INTO "message" VALUES (483,E'de-DE',E'Raum importieren');
+INSERT INTO "message" VALUES (484,E'de-DE',E'Teams auflisten');
+INSERT INTO "message" VALUES (485,E'de-DE',E'Team erstellen');
+INSERT INTO "message" VALUES (486,E'de-DE',E'Team importieren');
+INSERT INTO "message" VALUES (487,E'de-DE',E'Teamkonflikt');
+INSERT INTO "message" VALUES (488,E'de-DE',E'JurorInnen auflisten');
+INSERT INTO "message" VALUES (489,E'de-DE',E'JurorIn erstellen');
+INSERT INTO "message" VALUES (490,E'de-DE',E'JurorIn importieren');
+INSERT INTO "message" VALUES (491,E'de-DE',E'Vorkonfigurierte Jury zeigen');
+INSERT INTO "message" VALUES (492,E'de-DE',E'Vorkonfigurierte Jury erstellen');
+INSERT INTO "message" VALUES (493,E'de-DE',E'JurorInnenkonflikt');
+INSERT INTO "message" VALUES (494,E'de-DE',E'Turnier aktualisieren');
+INSERT INTO "message" VALUES (495,E'de-DE',E'Teamübersicht anzeigen');
+INSERT INTO "message" VALUES (496,E'de-DE',E'RednerInnenübersicht anzeigen');
+INSERT INTO "message" VALUES (497,E'de-DE',E'KO-Rundenübersicht anzeigen');
+INSERT INTO "message" VALUES (498,E'de-DE',E'Das Tab zu veröffentlichen wird das Turnier schließen und archivieren! Bist du sicher, dass du fortfahren möchtest?');
+INSERT INTO "message" VALUES (499,E'de-DE',E'Fehlende/r BenutzerIn');
+INSERT INTO "message" VALUES (500,E'de-DE',E'Eincheck-Formular');
+INSERT INTO "message" VALUES (501,E'de-DE',E'Teilnehmerschilder drucken');
+INSERT INTO "message" VALUES (502,E'de-DE',E'Einchecken zurücksetzen');
+INSERT INTO "message" VALUES (503,E'de-DE',E'Bist du sicher, dass du das Einchecken zurücksetzen möchtest?');
+INSERT INTO "message" VALUES (504,E'de-DE',E'Sync mit DebReg');
+INSERT INTO "message" VALUES (505,E'de-DE',E'Migriere zu Tabbie1');
+INSERT INTO "message" VALUES (506,E'de-DE',E'Extreme Vorsicht, junger Padawan!');
+INSERT INTO "message" VALUES (507,E'de-DE',E'Runden auflisten');
+INSERT INTO "message" VALUES (508,E'de-DE',E'Runde erstellen');
+INSERT INTO "message" VALUES (509,E'de-DE',E'Energie-Optionen');
+INSERT INTO "message" VALUES (510,E'de-DE',E'Ergebnisse anzeigen');
+INSERT INTO "message" VALUES (511,E'de-DE',E'Laufzettel einfügen');
+INSERT INTO "message" VALUES (512,E'de-DE',E'Cache korrigieren');
+INSERT INTO "message" VALUES (513,E'de-DE',E'Fragen einrichten');
+INSERT INTO "message" VALUES (514,E'de-DE',E'Jedes Feedback');
+INSERT INTO "message" VALUES (515,E'de-DE',E'Feedback für JurorIn');
+INSERT INTO "message" VALUES (516,E'de-DE',E'Über');
+INSERT INTO "message" VALUES (517,E'de-DE',E'Anleitung');
+INSERT INTO "message" VALUES (518,E'de-DE',E'BenutzerInnen');
+INSERT INTO "message" VALUES (519,E'de-DE',E'Registrieren');
+INSERT INTO "message" VALUES (520,E'de-DE',E'{user}s Profil');
+INSERT INTO "message" VALUES (521,E'de-DE',E'{user}s Verlauf');
+INSERT INTO "message" VALUES (522,E'de-DE',E'Ausloggen');
+INSERT INTO "message" VALUES (524,E'de-DE',E'Aktualisiere {label}');
+INSERT INTO "message" VALUES (525,E'de-DE',E'Nächster Schritt');
+INSERT INTO "message" VALUES (526,E'de-DE',E'Raum {number}');
+INSERT INTO "message" VALUES (527,E'de-DE',E'Räume');
+INSERT INTO "message" VALUES (529,E'de-DE',E'Konflikte');
+INSERT INTO "message" VALUES (530,E'de-DE',E'Importiere Konflikte');
+INSERT INTO "message" VALUES (531,E'de-DE',E'Akzeptieren');
+INSERT INTO "message" VALUES (532,E'de-DE',E'Ablehnen');
+INSERT INTO "message" VALUES (533,E'de-DE',E'Suche nach Team ...');
+INSERT INTO "message" VALUES (534,E'de-DE',E'Suche nach JurorIn ...');
+INSERT INTO "message" VALUES (535,E'de-DE',E'JurorInnenkonflikt hinzufügen');
+INSERT INTO "message" VALUES (536,E'de-DE',E'{modelClass} zusätzlich erstellen');
+INSERT INTO "message" VALUES (537,E'de-DE',E'Team aktualisieren');
+INSERT INTO "message" VALUES (538,E'de-DE',E'Team löschen');
+INSERT INTO "message" VALUES (539,E'de-DE',E'(not set)');
+INSERT INTO "message" VALUES (540,E'de-DE',NULL);
+INSERT INTO "message" VALUES (541,E'de-DE',E'Team mit JurorIn in Konflikt setzen');
+INSERT INTO "message" VALUES (542,E'de-DE',E'Team aktualisieren');
+INSERT INTO "message" VALUES (543,E'de-DE',E'Team löschen');
+INSERT INTO "message" VALUES (544,E'de-DE',E'{modelClass}s Verlauf');
+INSERT INTO "message" VALUES (545,E'de-DE',E'Verlauf');
+INSERT INTO "message" VALUES (546,E'de-DE',E'Team-Überblick');
+INSERT INTO "message" VALUES (547,E'de-DE',E'EPL-Platzierung');
+INSERT INTO "message" VALUES (548,E'de-DE',E'RednerInnenpunkte des Teams');
+INSERT INTO "message" VALUES (549,E'de-DE',E'Aktuell ist kein veröffentlichtes Tab verfügbar');
+INSERT INTO "message" VALUES (550,E'de-DE',E'Kann hauptjurieren');
+INSERT INTO "message" VALUES (551,E'de-DE',E'Sollte nicht hauptjurieren');
+INSERT INTO "message" VALUES (552,E'de-DE',E'Break');
+INSERT INTO "message" VALUES (553,E'de-DE',E'Nicht breakend');
+INSERT INTO "message" VALUES (554,E'de-DE',E'Unter Beobachtung');
+INSERT INTO "message" VALUES (555,E'de-DE',E'Nicht unter Beobachtung');
+INSERT INTO "message" VALUES (556,E'de-DE',E'Beobachtung\r\n umschalten');
+INSERT INTO "message" VALUES (557,E'de-DE',E'Breakend umschalten');
+INSERT INTO "message" VALUES (558,E'de-DE',E'Beobachterstatus zurücksetzen');
+INSERT INTO "message" VALUES (559,E'de-DE',E'Suche nach {object} ...');
+INSERT INTO "message" VALUES (560,E'de-DE',E'Hauptjuriert');
+INSERT INTO "message" VALUES (561,E'de-DE',E'Punkte-Tendenz');
+INSERT INTO "message" VALUES (562,E'de-DE',E'Aktualisiere BenutzerInnen-Profil');
+INSERT INTO "message" VALUES (563,E'de-DE',E'Individuelle Konflikte');
+INSERT INTO "message" VALUES (564,E'de-DE',E'Aktualisiere Konflikt-Informationen');
+INSERT INTO "message" VALUES (565,E'de-DE',E'Lösche Konflikt');
+INSERT INTO "message" VALUES (566,E'de-DE',E'Dem System sind keine Konflikte bekannt.');
+INSERT INTO "message" VALUES (567,E'de-DE',E'Besuchte Debattiervereine');
+INSERT INTO "message" VALUES (568,E'de-DE',E'Verein zum Verlauf hinzufügen');
+INSERT INTO "message" VALUES (569,E'de-DE',E'nach wie vor aktiv');
+INSERT INTO "message" VALUES (570,E'de-DE',E'Aktualisiere Informationen zu besuchten Vereinen');
+INSERT INTO "message" VALUES (571,E'de-DE',E'Für {name} ein neues Passwort erzwingen');
+INSERT INTO "message" VALUES (572,E'de-DE',E'Abbrechen');
+INSERT INTO "message" VALUES (573,E'de-DE',E'Suche nach einem Turnier ...');
+INSERT INTO "message" VALUES (574,E'de-DE',E'Neues Passwort festlegen');
+INSERT INTO "message" VALUES (575,E'de-DE',E'BenutzerIn aktualisieren');
+INSERT INTO "message" VALUES (576,E'de-DE',E'BenutzerIn löschen');
+INSERT INTO "message" VALUES (577,E'de-DE',E'BenutzerIn erstellen');
+INSERT INTO "message" VALUES (578,E'de-DE',E'Keine zutreffende Bedingung');
+INSERT INTO "message" VALUES (579,E'de-DE',E'Jury bestand Überprüfung nicht. Alt: {old} / Neu: {new}');
+INSERT INTO "message" VALUES (580,E'de-DE',E'Kann {object} nicht speichern! Fehler: {message}');
+INSERT INTO "message" VALUES (582,E'de-DE',E'Keine Datei verfügbar');
+INSERT INTO "message" VALUES (583,E'de-DE',E'Keine passenden Einträge gefunden');
+INSERT INTO "message" VALUES (584,E'de-DE',E'Vielen Dank für deine Eingabe.');
+INSERT INTO "message" VALUES (585,E'de-DE',E'Fehler beim Speichern der Jury:');
+INSERT INTO "message" VALUES (586,E'de-DE',E'Jury gelöscht');
+INSERT INTO "message" VALUES (587,E'de-DE',E'Willkommen! Dies ist das erste Mal, dass du dich anmeldest. Bitte stelle sicher, dass all deine Informationen zutreffen.');
+INSERT INTO "message" VALUES (588,E'de-DE',E'Ein neuer Verein wurde gespeichert');
+INSERT INTO "message" VALUES (589,E'de-DE',E'Beim Entgegennehmen deiner vorherigen Eingabe ist ein Fehler aufgetreten. Bitte versuche es noch einmal.');
+INSERT INTO "message" VALUES (590,E'de-DE',E'BenutzerIn registriert! Willkommen, {user}!');
+INSERT INTO "message" VALUES (591,E'de-DE',E'Anmeldung fehlgeschlagen');
+INSERT INTO "message" VALUES (592,E'de-DE',E'Bitte überprüfe für weitere Anweisungen deine Emails.');
+INSERT INTO "message" VALUES (593,E'de-DE',E'Bitte entschuldige - für die angegebene Email-Adresse können wir kein Passwort zurücksetzen.<br>{message}');
+INSERT INTO "message" VALUES (594,E'de-DE',E'Das neue Passwort wurde gespeichert.');
+INSERT INTO "message" VALUES (595,E'de-DE',E'Neues Passwort festgelegt.');
+INSERT INTO "message" VALUES (596,E'de-DE',E'Fehler beim Speichern des neuen Passworts.');
+INSERT INTO "message" VALUES (597,E'de-DE',E'Verknüpfung mit Verein nicht gespeichert');
+INSERT INTO "message" VALUES (598,E'de-DE',E'BenutzerIn erfolgreich gespeichert');
+INSERT INTO "message" VALUES (599,E'de-DE',E'BenutzerIn nicht gespeichert!');
+INSERT INTO "message" VALUES (600,E'de-DE',E'Verbindung zu Verein nicht gespeichert!');
+INSERT INTO "message" VALUES (601,E'de-DE',E'BenutzerIn erfolgreich aktualisiert!');
+INSERT INTO "message" VALUES (602,E'de-DE',E'Bitte gib ein neues Passwort ein!');
+INSERT INTO "message" VALUES (603,E'de-DE',E'BenutzerIn gelöscht');
+INSERT INTO "message" VALUES (604,E'de-DE',E'Kann aufgrund von {error} nicht gelöscht werden.');
+INSERT INTO "message" VALUES (605,E'de-DE',E'Konnte nicht gelöscht werden, da bereits in Gebrauch.<br> {ex}');
+INSERT INTO "message" VALUES (606,E'de-DE',E'Checking Flags zurücksetzen');
+INSERT INTO "message" VALUES (607,E'de-DE',E'Es gab keinen Bedarf zurückzusetzen.');
+INSERT INTO "message" VALUES (608,E'de-DE',E'Bitte lege erst die breakenden JurorInnen fest - benutze hierfür das Sternensymbol in der Aktionsspalte.');
+INSERT INTO "message" VALUES (609,E'de-DE',E'Konnte Team nicht erstellen.');
+INSERT INTO "message" VALUES (610,E'de-DE',E'Fehler beim Speichern des Vereinsverhältnisses für {society}.');
+INSERT INTO "message" VALUES (611,E'de-DE',E'Fehler beim Speichern von Team {name}!');
+INSERT INTO "message" VALUES (613,E'de-DE',E'Kann Turnierverknüpfung nicht speichern.');
+INSERT INTO "message" VALUES (614,E'de-DE',E'Kann Frage nicht löschen.');
+INSERT INTO "message" VALUES (615,E'de-DE',E'Vereinsverknüpfung wurde erfolgreich erstellt');
+INSERT INTO "message" VALUES (616,E'de-DE',E'Verein konnte nicht gespeichert werden');
+INSERT INTO "message" VALUES (617,E'de-DE',E'Fehler beim wakeup');
+INSERT INTO "message" VALUES (618,E'de-DE',E'Vereinsinformationen aktualisiert');
+INSERT INTO "message" VALUES (619,E'de-DE',E'Das Tab ist veröffentlicht, das Turnier geschlossen. Auf zu einem Drink!');
+INSERT INTO "message" VALUES (620,E'de-DE',E'Kein/e HauptjurorIn im Panel gefunden - falscher Typ?');
+INSERT INTO "message" VALUES (622,E'de-DE',E'Kein gültiger Typ');
+INSERT INTO "message" VALUES (623,E'de-DE',E'{object} erfolgreich eingegeben');
+INSERT INTO "message" VALUES (624,E'de-DE',E'{object} erstellt');
+INSERT INTO "message" VALUES (625,E'de-DE',E'Individueller Konflikt');
+INSERT INTO "message" VALUES (626,E'de-DE',E'Individueller Konflikt konnte nicht gespeichert werden');
+INSERT INTO "message" VALUES (627,E'de-DE',E'{object} aktualisiert');
+INSERT INTO "message" VALUES (628,E'de-DE',E'{object} konnte nicht gespeichert werden');
+INSERT INTO "message" VALUES (629,E'de-DE',E'{object} gelöscht');
+INSERT INTO "message" VALUES (630,E'de-DE',E'{tournament} auf Tabbie2');
+INSERT INTO "message" VALUES (631,E'de-DE',E'{tournament} findet vom {start} bis zum {end} statt und wird ausgetragen von {host} in {country}.');
+INSERT INTO "message" VALUES (632,E'de-DE',E'Turnier erfolgreich erstellt');
+INSERT INTO "message" VALUES (633,E'de-DE',E'Turnier wurde erstellt doch die Energie-Konfiguration schluf fehl!');
+INSERT INTO "message" VALUES (634,E'de-DE',E'Kann Turnier nicht speichern!');
+INSERT INTO "message" VALUES (635,E'de-DE',E'DebReg Synchronisation erfolgreich');
+INSERT INTO "message" VALUES (636,E'de-DE',E'Räume getauscht');
+INSERT INTO "message" VALUES (637,E'de-DE',E'Fehler beim Wechseln');
+INSERT INTO "message" VALUES (638,E'de-DE',E'Neue Räume festgelegt');
+INSERT INTO "message" VALUES (639,E'de-DE',E'Fehler beim Festlegen eines neuen Raumes');
+INSERT INTO "message" VALUES (640,E'de-DE',E'Kann Runde nicht erstellen: Anzahl der Teams ist nicht durch 4 teilbar');
+INSERT INTO "message" VALUES (641,E'de-DE',E'Erfolgreich neu gesetzt in {secs}s');
+INSERT INTO "message" VALUES (642,E'de-DE',E'Energie in {secs}s um {diff} Punkte verbessert');
+INSERT INTO "message" VALUES (643,E'de-DE',E'JurorIn {n1} und {n2} getauscht');
+INSERT INTO "message" VALUES (644,E'de-DE',E'Konnte nicht tauschen, da: {a_panel}<br>und<br>{b_panel}');
+INSERT INTO "message" VALUES (645,E'de-DE',E'Zeige Runde {number}');
+INSERT INTO "message" VALUES (646,E'de-DE',E'Für diesen Raum konnten keine Debatten gefunden werden');
+INSERT INTO "message" VALUES (647,E'de-DE',E'Diese Spracheinstellung ist ungültig.');
+INSERT INTO "message" VALUES (648,E'de-DE',E'Team zu {status} aufgewertet');
+INSERT INTO "message" VALUES (649,E'de-DE',E'Spracheinstellungen gespeichert');
+INSERT INTO "message" VALUES (650,E'de-DE',E'Fehler beim Speichern der Spracheinstellungen');
+INSERT INTO "message" VALUES (651,E'de-DE',E'BenutzerIn nicht gefunden!');
+INSERT INTO "message" VALUES (652,E'de-DE',E'{object} erfolgreich hinzugefügt');
+INSERT INTO "message" VALUES (653,E'de-DE',E'Löschen erfolgreich');
+INSERT INTO "message" VALUES (654,E'de-DE',E'Die Syntax der Datei ist falsch! Erwartet werden 3 Spalten.');
+INSERT INTO "message" VALUES (656,E'de-DE',E'Fehler beim Speichern der Ergebnisse.<br>Bitte frage einen Laufzettel aus Papier an!');
+INSERT INTO "message" VALUES (657,E'de-DE',E'Ergebnis gespeichert. Auf zum Nächsten!');
+INSERT INTO "message" VALUES (658,E'de-DE',E'Debatte #{id} existiert nicht');
+INSERT INTO "message" VALUES (659,E'de-DE',E'Korrigiere die Teampunkte des Teams {team} von {old_points} auf {new_points}');
+INSERT INTO "message" VALUES (660,E'de-DE',E'Korrigiere die RednerInnenpunkte von RednerIn {pos} des Teams {team} von {old_points} auf {new_points}');
+INSERT INTO "message" VALUES (661,E'de-DE',E'Cache ist in Bestform. Keine Veränderungen nötig!');
+INSERT INTO "message" VALUES (662,E'de-DE',E'Kann Entscheidung zum Konflikt nicht speichern. {reason}');
+INSERT INTO "message" VALUES (663,E'de-DE',E'Nicht genügend Räume');
+INSERT INTO "message" VALUES (664,E'de-DE',E'Zu viele Räume');
+INSERT INTO "message" VALUES (665,E'de-DE',E'Maximiere Wiederholungen zum Verbessern der JurorInnenzuweisung');
+INSERT INTO "message" VALUES (666,E'de-DE',E'Strafwert für Teams und JurorInnen aus gleichen Vereinen');
+INSERT INTO "message" VALUES (667,E'de-DE',E'Beide JurorInnen sind im Konflikt');
+INSERT INTO "message" VALUES (668,E'de-DE',E'Team ist mit JurorIn im Konflikt.');
+INSERT INTO "message" VALUES (669,E'de-DE',E'JurorIn darf nicht hauptjurieren.');
+INSERT INTO "message" VALUES (670,E'de-DE',E'HauptjurorIn ist für die aktuelle Situation suboptimal.');
+INSERT INTO "message" VALUES (671,E'de-DE',E'JuroIn hat das Team bereits gesehen.');
+INSERT INTO "message" VALUES (672,E'de-DE',E'JurorIn hat bereits in dieser Konstellation juriert.');
+INSERT INTO "message" VALUES (673,E'de-DE',E'Die Jury hat eine dem Raum unangemessene Stärke.');
+INSERT INTO "message" VALUES (674,E'de-DE',E'Richards Geheimzutat');
+INSERT INTO "message" VALUES (675,E'de-DE',E'JurorIn {adju} und {team} in gleichem Verein.');
+INSERT INTO "message" VALUES (676,E'de-DE',E'Die JurorInnen {adju1} und {adju2} stehen manuell im Konflikt.');
+INSERT INTO "message" VALUES (677,E'de-DE',E'JurorIn {adju} und Team {team} stehen manuell im Konflikt.');
+INSERT INTO "message" VALUES (678,E'de-DE',E'JurorIn {adju} wurde als Nicht-HauptjurorIn markiert.');
+INSERT INTO "message" VALUES (679,E'de-DE',E'HauptjurorIn ist um {points} suboptimal.');
+INSERT INTO "message" VALUES (680,E'de-DE',E'Die JurorInnen {adju1} und {adju2} haben zuvor x{occ} gemeinsam juriert.');
+INSERT INTO "message" VALUES (681,E'de-DE',E'JurorIn {adju} hat das Team {team} zuvor x {occ} juriert.');
+INSERT INTO "message" VALUES (682,E'de-DE',E'Steilheits-Vergleich: {comparison_factor}, Differenz: {roomDifference}, Steilheits-Strafe: {steepnessPenalty}');
+INSERT INTO "message" VALUES (686,E'de-DE',E'Unbestimmt');
+INSERT INTO "message" VALUES (687,E'de-DE',E'Nordeuropa');
+INSERT INTO "message" VALUES (688,E'de-DE',E'Westeuropa');
+INSERT INTO "message" VALUES (689,E'de-DE',E'Südeuropa');
+INSERT INTO "message" VALUES (690,E'de-DE',E'Osteuropa');
+INSERT INTO "message" VALUES (691,E'de-DE',E'Zentralasien');
+INSERT INTO "message" VALUES (692,E'de-DE',E'Ostasien');
+INSERT INTO "message" VALUES (693,E'de-DE',E'Westasien');
+INSERT INTO "message" VALUES (694,E'de-DE',E'Südasien');
+INSERT INTO "message" VALUES (695,E'de-DE',E'Süd-Ostasien');
+INSERT INTO "message" VALUES (696,E'de-DE',E'Australien & Neuseeland');
+INSERT INTO "message" VALUES (697,E'de-DE',E'Mikronesien');
+INSERT INTO "message" VALUES (698,E'de-DE',E'Melanesien');
+INSERT INTO "message" VALUES (699,E'de-DE',E'Polynesien');
+INSERT INTO "message" VALUES (700,E'de-DE',E'Nordafrika');
+INSERT INTO "message" VALUES (701,E'de-DE',E'Westafrika');
+INSERT INTO "message" VALUES (702,E'de-DE',E'Zentralafrika');
+INSERT INTO "message" VALUES (703,E'de-DE',E'Ostafrika');
+INSERT INTO "message" VALUES (704,E'de-DE',E'Südafrika');
+INSERT INTO "message" VALUES (705,E'de-DE',E'Nordamerika');
+INSERT INTO "message" VALUES (706,E'de-DE',E'Mittelamerika');
+INSERT INTO "message" VALUES (707,E'de-DE',E'Karibik');
+INSERT INTO "message" VALUES (708,E'de-DE',E'Südamerika');
+INSERT INTO "message" VALUES (709,E'de-DE',E'Antarktis');
+INSERT INTO "message" VALUES (710,E'de-DE',E'Bestrafte/r JurorIn');
+INSERT INTO "message" VALUES (711,E'de-DE',E'Schlechte/r JurorIn');
+INSERT INTO "message" VALUES (712,E'de-DE',E'Ordentliche/r JurorIn');
+INSERT INTO "message" VALUES (713,E'de-DE',E'Durchschnittliche/r JurorIn');
+INSERT INTO "message" VALUES (714,E'de-DE',E'Durchschnittliche/r HauptjurorIn');
+INSERT INTO "message" VALUES (715,E'de-DE',E'Gute/r HauptjurorIn');
+INSERT INTO "message" VALUES (716,E'de-DE',E'Breakende/r HauptjurorIn');
+INSERT INTO "message" VALUES (717,E'de-DE',E'<b>Dieses Turnier hat noch keine Teams.</b><br>{add_button} oder {import_button}');
+INSERT INTO "message" VALUES (718,E'de-DE',E'Ein Team hinzufügen');
+INSERT INTO "message" VALUES (719,E'de-DE',E'Importiere sie als CSV-Datei');
+INSERT INTO "message" VALUES (720,E'de-DE',E'<b>Dieses Turnier hat noch keine Räume.</b><br>{add} oder {import}');
+INSERT INTO "message" VALUES (721,E'de-DE',E'Einen Raum hinzufügen');
+INSERT INTO "message" VALUES (722,E'de-DE',E'Importiere sie als CSV-Datei');
+INSERT INTO "message" VALUES (723,E'de-DE',E'<b>Diese Turnier hat keine Juroren.</b><br>{add_button} oder {import_button}');
+INSERT INTO "message" VALUES (724,E'de-DE',E'Importiere sie als CSV-Datei');
+INSERT INTO "message" VALUES (725,E'de-DE',E'Für diese Runde wurden bereits Ergebnisse eingetragen. Neusetzung nicht möglich!');
+INSERT INTO "message" VALUES (726,E'de-DE',E'Für diese Runde wurden bereits Ergebnisse eingetragen. Verbessern nicht möglich!');
+INSERT INTO "message" VALUES (727,E'de-DE',E'Feedback #{num}');
+INSERT INTO "message" VALUES (728,E'de-DE',E'BenutzerIn ID');
+INSERT INTO "message" VALUES (729,E'de-DE',E'Sprach-VerwalterIn');
+INSERT INTO "message" VALUES (730,E'de-DE',E'Sprach-VerwalterIn');
+INSERT INTO "message" VALUES (731,E'de-DE',E'Sprach-VerwalterIn erstellen');
+INSERT INTO "message" VALUES (732,E'de-DE',E'EFL-Ranking anzeigen');
+INSERT INTO "message" VALUES (733,E'de-DE',E'EinsteigerInnen-Ranking anzeigen');
+INSERT INTO "message" VALUES (734,E'de-DE',E'Englisch als gemeisterte Sprache');
+INSERT INTO "message" VALUES (735,E'de-DE',E'EIN');
+INSERT INTO "message" VALUES (736,E'de-DE',E'EinsteigerIn festlegen');
+INSERT INTO "message" VALUES (737,E'de-DE',E'ENL');
+INSERT INTO "message" VALUES (738,E'de-DE',E'Neue Sprache erstellen');
+INSERT INTO "message" VALUES (739,E'de-DE',E'Setzung als JSON exportieren');
+INSERT INTO "message" VALUES (740,E'de-DE',E'Das Team {name} kann nicht gelöscht werden, da es bereits in Gebrauch ist.');
+INSERT INTO "message" VALUES (741,E'de-DE',E'Der/die JurorIn {name} kann nicht gelöscht werden, da er/sie bereits verwendet wird.');
+INSERT INTO "message" VALUES (742,E'de-DE',E'Der Raum {name} kann nicht gelöscht werden, da er bereits verwendet wird.');
+INSERT INTO "message" VALUES (743,E'de-DE',E'Gib in 3-4 allgemeinen Stichworten an, um was es im Thema geht. Falls bereits passende Stichworte existieren, verwende bitte diese!');
+INSERT INTO "message" VALUES (744,E'de-DE',E'Fehler beim Speichern des benutzerdefinierten Attributs: {name}');
+INSERT INTO "message" VALUES (745,E'de-DE',E'Fehler beim Speichern des benutzerdefinierten Werts \'{key}\': {value}');
+INSERT INTO "message" VALUES (746,E'de-DE',E'BenutzerIn Attr ID');
+INSERT INTO "message" VALUES (747,E'de-DE',E'Turnier ID');
+INSERT INTO "message" VALUES (748,E'de-DE',E'Benötigt');
+INSERT INTO "message" VALUES (749,E'de-DE',E'Hilfe');
+INSERT INTO "message" VALUES (750,E'de-DE',E'Benutzerdefinierte Werte für {tournament}');
+INSERT INTO "message" VALUES (751,E'de-DE',E'Die Syntax der Datei passt nicht. Es werden mindestens 5 Spalten benötigt.');
+INSERT INTO "message" VALUES (753,E'de-DE',E'Jurierlehrling');
+INSERT INTO "message" VALUES (754,E'de-DE',E'Importiere {modelClass} #{number}');
+INSERT INTO "message" VALUES (755,E'de-DE',E'Veröffentliche bestätigte Setzung');
+INSERT INTO "message" VALUES (756,E'de-DE',E'Importiere Setzung aus JSON');
+INSERT INTO "message" VALUES (757,E'de-DE',E'Dies wird die aktuelle Setzung überschreiben! Alle Informationen gehen dabei verloren\r\n!');
+INSERT INTO "message" VALUES (758,E'de-DE',E'Runde neu setzen');
+INSERT INTO "message" VALUES (759,E'de-DE',E'Runde löschen');
+INSERT INTO "message" VALUES (760,E'de-DE',E'Bist du sicher, dass du die Runde LÖSCHEN willst? Alle Informationen gehen dabei verloren!');
+INSERT INTO "message" VALUES (761,E'de-DE',E'Die Runde ist bereits aktiv! Überschreiben mit der Eingabe ist nicht möglich.');
+INSERT INTO "message" VALUES (762,E'de-DE',E'Die hochgeladene Datei war leer. Bitte wähle eine andere Datei.');
+INSERT INTO "message" VALUES (764,E'de-DE',E'RednerInnen');
+INSERT INTO "message" VALUES (765,E'de-DE',E'Die Syntax der Datei ist falsch! Mindestens {min} Spalten werden benötigt; {num} vorhanden in Zeile {line}');
+INSERT INTO "message" VALUES (766,E'de-DE',E'Fragetext');
+INSERT INTO "message" VALUES (767,E'de-DE',E'Hilfstext');
+INSERT INTO "message" VALUES (770,E'de-DE',E'Konflikte von JurorInnen mit JurorInnen');
+INSERT INTO "message" VALUES (771,E'de-DE',E'Alle zulassen');
+INSERT INTO "message" VALUES (772,E'de-DE',E'Alle verweigern');
+INSERT INTO "message" VALUES (773,E'de-DE',E'Konflikte von Teams mit JurorInnen');
+INSERT INTO "message" VALUES (774,E'de-DE',E'Keine gültige Entscheidung');
+INSERT INTO "message" VALUES (775,E'de-DE',E'Importiere Wertung für {modelClass}');
+INSERT INTO "message" VALUES (777,E'de-DE',E'Öffentlich zugängliche URLs');
+INSERT INTO "message" VALUES (778,E'de-DE',E'Debatte nicht gefunden - falscher Typ?');
+INSERT INTO "message" VALUES (783,E'de-DE',E'Themenausgeglichenheit');
+INSERT INTO "message" VALUES (784,E'de-DE',E'Rundeninformation');
+INSERT INTO "message" VALUES (785,E'de-DE',E'Es gibt derzeit keine aktive Runde. Lade diese Seite später noch einmal neu.');
+INSERT INTO "message" VALUES (787,E'de-DE',E'Teilgedoppeltes Achtelfinale');
+INSERT INTO "message" VALUES (788,E'de-DE',E'Ersetze JurorIn {adjudicator} durch');
+INSERT INTO "message" VALUES (789,E'de-DE',E'Ersetze');
+INSERT INTO "message" VALUES (790,E'de-DE',E'Ansehen');
+INSERT INTO "message" VALUES (791,E'de-DE',E'Tausche Team {team} mit');
+INSERT INTO "message" VALUES (792,E'de-DE',E'Versuche Setzung erneut');
+INSERT INTO "message" VALUES (793,E'de-DE',E'AVG');
+INSERT INTO "message" VALUES (794,E'de-DE',NULL);
+INSERT INTO "message" VALUES (795,E'de-DE',NULL);
+INSERT INTO "message" VALUES (796,E'de-DE',NULL);
+INSERT INTO "message" VALUES (1,E'es-CO',E'ID');
+INSERT INTO "message" VALUES (2,E'es-CO',E'Nombre');
+INSERT INTO "message" VALUES (3,E'es-CO',E'Importar {modelClass}');
+INSERT INTO "message" VALUES (4,E'es-CO',E'Importar');
+INSERT INTO "message" VALUES (5,E'es-CO',E'Sociedades de Debate');
+INSERT INTO "message" VALUES (6,E'es-CO',E'Actualizar');
+INSERT INTO "message" VALUES (7,E'es-CO',E'Eliminar');
+INSERT INTO "message" VALUES (8,E'es-CO',E'¿Estás seguro de que quieres eliminar este elemento?');
+INSERT INTO "message" VALUES (9,E'es-CO',E'Actualizar {modelClass}:');
+INSERT INTO "message" VALUES (10,E'es-CO',E'Fusionar las sociedades \'{society}\' en ...');
+INSERT INTO "message" VALUES (11,E'es-CO',E'Selecciones la Sociedad de Debate principal');
+INSERT INTO "message" VALUES (12,E'es-CO',E'Crear {modelClass}');
+INSERT INTO "message" VALUES (13,E'es-CO',E'Ver {modelClass}');
+INSERT INTO "message" VALUES (14,E'es-CO',E'Actualizar {modelClass}');
+INSERT INTO "message" VALUES (15,E'es-CO',E'Eliminar {modelClass}');
+INSERT INTO "message" VALUES (16,E'es-CO',E'Agregar nuevo elemento');
+INSERT INTO "message" VALUES (17,E'es-CO',E'Volver a cargar contenido');
+INSERT INTO "message" VALUES (18,E'es-CO',E'Importar archivo EXL');
+INSERT INTO "message" VALUES (19,E'es-CO',E'Crear');
+INSERT INTO "message" VALUES (20,E'es-CO',E'Idiomas');
+INSERT INTO "message" VALUES (21,E'es-CO',E'Crear idioma');
+INSERT INTO "message" VALUES (22,E'es-CO',E'Necesidades especiales');
+INSERT INTO "message" VALUES (23,E'es-CO',E'Etiquetas de la moción');
+INSERT INTO "message" VALUES (24,E'es-CO',E'Fusionar la etiqueta \'{tag}\' de la moción a');
+INSERT INTO "message" VALUES (25,E'es-CO',E'Seleccione la etiqueta principal');
+INSERT INTO "message" VALUES (26,E'es-CO',E'Buscar');
+INSERT INTO "message" VALUES (27,E'es-CO',E'Reiniciar');
+INSERT INTO "message" VALUES (28,E'es-CO',E'Crear etiqueta para la moción');
+INSERT INTO "message" VALUES (29,E'es-CO',E'API');
+INSERT INTO "message" VALUES (30,E'es-CO',E'Master');
+INSERT INTO "message" VALUES (31,E'es-CO',E'Mensajes');
+INSERT INTO "message" VALUES (32,E'es-CO',E'Crear mensaje');
+INSERT INTO "message" VALUES (33,E'es-CO',E'{count} Cambiar etiquetas');
+INSERT INTO "message" VALUES (34,E'es-CO',E'Error de archivo');
+INSERT INTO "message" VALUES (35,E'es-CO',E'Etiqueta de la moción');
+INSERT INTO "message" VALUES (36,E'es-CO',E'Ronda');
+INSERT INTO "message" VALUES (37,E'es-CO',E'Abreviación');
+INSERT INTO "message" VALUES (38,E'es-CO',E'Puntaje');
+INSERT INTO "message" VALUES (39,E'es-CO',E'Cámara alta de Gobierno');
+INSERT INTO "message" VALUES (40,E'es-CO',E'Cámara alta de Oposición');
+INSERT INTO "message" VALUES (41,E'es-CO',E'Cámara baja de Gobierno');
+INSERT INTO "message" VALUES (42,E'es-CO',E'Cámara baja de Oposición');
+INSERT INTO "message" VALUES (43,E'es-CO',E'Equipo');
+INSERT INTO "message" VALUES (44,E'es-CO',E'Activo');
+INSERT INTO "message" VALUES (45,E'es-CO',E'Torneo');
+INSERT INTO "message" VALUES (46,E'es-CO',E'Orador');
+INSERT INTO "message" VALUES (47,E'es-CO',E'Sociedad de Debate');
+INSERT INTO "message" VALUES (48,E'es-CO',E'Swing Team');
+INSERT INTO "message" VALUES (49,E'es-CO',E'Estatus por idioma');
+INSERT INTO "message" VALUES (50,E'es-CO',E'Todo normal');
+INSERT INTO "message" VALUES (51,E'es-CO',E'Fue remplazado por equipo swing');
+INSERT INTO "message" VALUES (52,E'es-CO',E'Orador {letra} no se presentó');
+INSERT INTO "message" VALUES (53,E'es-CO',E'Llave');
+INSERT INTO "message" VALUES (54,E'es-CO',E'Etiqueta');
+INSERT INTO "message" VALUES (55,E'es-CO',E'Valor');
+INSERT INTO "message" VALUES (56,E'es-CO',E'La posición del equipo no puede estar en blanco');
+INSERT INTO "message" VALUES (57,E'es-CO',E'Fuera de ronda');
+INSERT INTO "message" VALUES (58,E'es-CO',E'Usuario del Tabulador');
+INSERT INTO "message" VALUES (59,E'es-CO',E'Usuario');
+INSERT INTO "message" VALUES (60,E'es-CO',E'ENL Posición');
+INSERT INTO "message" VALUES (61,E'es-CO',E'ESL Posición');
+INSERT INTO "message" VALUES (62,E'es-CO',E'Resultados caché');
+INSERT INTO "message" VALUES (63,E'es-CO',E'Nombre Completo');
+INSERT INTO "message" VALUES (64,E'es-CO',E'Abreviación');
+INSERT INTO "message" VALUES (65,E'es-CO',E'Ciudad');
+INSERT INTO "message" VALUES (66,E'es-CO',E'País');
+INSERT INTO "message" VALUES (67,E'es-CO',E'Primer Gobierno');
+INSERT INTO "message" VALUES (68,E'es-CO',E'Primera Oposición');
+INSERT INTO "message" VALUES (69,E'es-CO',E'Segundo Gobierno');
+INSERT INTO "message" VALUES (70,E'es-CO',E'Segunda Oposición');
+INSERT INTO "message" VALUES (71,E'es-CO',E'Panel');
+INSERT INTO "message" VALUES (72,E'es-CO',E'Lugar');
+INSERT INTO "message" VALUES (73,E'es-CO',E'Retroalimentación\r\n CAG');
+INSERT INTO "message" VALUES (74,E'es-CO',E'Retroalimentación CAO');
+INSERT INTO "message" VALUES (75,E'es-CO',E'Retroalimentación CBG');
+INSERT INTO "message" VALUES (76,E'es-CO',E'Retroalimentación CBO');
+INSERT INTO "message" VALUES (77,E'es-CO',E'Hora');
+INSERT INTO "message" VALUES (78,E'es-CO',E'Moción');
+INSERT INTO "message" VALUES (79,E'es-CO',E'Idioma');
+INSERT INTO "message" VALUES (80,E'es-CO',E'Fecha');
+INSERT INTO "message" VALUES (81,E'es-CO',E'Diapositiva de información');
+INSERT INTO "message" VALUES (82,E'es-CO',E'Enlace');
+INSERT INTO "message" VALUES (83,E'es-CO',E'Por Usuario');
+INSERT INTO "message" VALUES (84,E'es-CO',E'Traducción');
+INSERT INTO "message" VALUES (85,E'es-CO',E'Adjudicador');
+INSERT INTO "message" VALUES (86,E'es-CO',E'Respuesta');
+INSERT INTO "message" VALUES (87,E'es-CO',E'Retroalimentación');
+INSERT INTO "message" VALUES (88,E'es-CO',E'Pregunta');
+INSERT INTO "message" VALUES (89,E'es-CO',E'Creado');
+INSERT INTO "message" VALUES (90,E'es-CO',E'En marcha');
+INSERT INTO "message" VALUES (91,E'es-CO',E'Cerrado');
+INSERT INTO "message" VALUES (92,E'es-CO',E'Oculto');
+INSERT INTO "message" VALUES (93,E'es-CO',E'Organizado por');
+INSERT INTO "message" VALUES (94,E'es-CO',E'Nombre del torneo');
+INSERT INTO "message" VALUES (95,E'es-CO',E'Fecha de inicio');
+INSERT INTO "message" VALUES (96,E'es-CO',E'Fecha de finalización');
+INSERT INTO "message" VALUES (97,E'es-CO',E'Zona horaria');
+INSERT INTO "message" VALUES (98,E'es-CO',E'Logo');
+INSERT INTO "message" VALUES (99,E'es-CO',E'URL Adjunta');
+INSERT INTO "message" VALUES (100,E'es-CO',E'Algoritmo de tabulación');
+INSERT INTO "message" VALUES (101,E'es-CO',E'Número estimado de rondas');
+INSERT INTO "message" VALUES (102,E'es-CO',E'Mostrar ranking ESL');
+INSERT INTO "message" VALUES (103,E'es-CO',E'¿Hay una gran final?');
+INSERT INTO "message" VALUES (104,E'es-CO',E'¿Hay semifinales?');
+INSERT INTO "message" VALUES (105,E'es-CO',E'¿Hay cuartos de final?');
+INSERT INTO "message" VALUES (106,E'es-CO',E'¿Hay octavos de final?');
+INSERT INTO "message" VALUES (107,E'es-CO',E'Símbolo de acceso');
+INSERT INTO "message" VALUES (108,E'es-CO',E'Insignia del participante');
+INSERT INTO "message" VALUES (109,E'es-CO',E'Alfa 2');
+INSERT INTO "message" VALUES (110,E'es-CO',E'Alfa 3');
+INSERT INTO "message" VALUES (111,E'es-CO',E'Región');
+INSERT INTO "message" VALUES (112,E'es-CO',E'Código de lenguaje');
+INSERT INTO "message" VALUES (113,E'es-CO',E'Covertura');
+INSERT INTO "message" VALUES (114,E'es-CO',E'Última actualización');
+INSERT INTO "message" VALUES (115,E'es-CO',E'Fuerza');
+INSERT INTO "message" VALUES (116,E'es-CO',E'Puede ser juez principal');
+INSERT INTO "message" VALUES (117,E'es-CO',E'está observando');
+INSERT INTO "message" VALUES (118,E'es-CO',E'Sin clasificar');
+INSERT INTO "message" VALUES (121,E'es-CO',E'Puede juzgar');
+INSERT INTO "message" VALUES (122,E'es-CO',E'Decente');
+INSERT INTO "message" VALUES (124,E'es-CO',E'Gran potencial');
+INSERT INTO "message" VALUES (125,E'es-CO',E'Juez principal');
+INSERT INTO "message" VALUES (126,E'es-CO',E'Bueno');
+INSERT INTO "message" VALUES (127,E'es-CO',E'Breaking');
+INSERT INTO "message" VALUES (128,E'es-CO',E'Jefe de adjudicación');
+INSERT INTO "message" VALUES (129,E'es-CO',E'Empezando');
+INSERT INTO "message" VALUES (130,E'es-CO',E'Finalizando');
+INSERT INTO "message" VALUES (131,E'es-CO',E'Puntos de orador');
+INSERT INTO "message" VALUES (132,E'es-CO',E'Esta dirección de correo ya está en uso');
+INSERT INTO "message" VALUES (133,E'es-CO',E'Debatiente');
+INSERT INTO "message" VALUES (134,E'es-CO',E'Clave de autenticación');
+INSERT INTO "message" VALUES (135,E'es-CO',E'Contraseña');
+INSERT INTO "message" VALUES (136,E'es-CO',E'Restablecer contraseña');
+INSERT INTO "message" VALUES (137,E'es-CO',E'Correo electrónico');
+INSERT INTO "message" VALUES (138,E'es-CO',E'Rol de la cuenta');
+INSERT INTO "message" VALUES (139,E'es-CO',E'Estado de la cuenta');
+INSERT INTO "message" VALUES (140,E'es-CO',E'Último cambio');
+INSERT INTO "message" VALUES (141,E'es-CO',E'Nombre');
+INSERT INTO "message" VALUES (142,E'es-CO',E'Apellido');
+INSERT INTO "message" VALUES (143,E'es-CO',E'Imagen de perfil');
+INSERT INTO "message" VALUES (144,E'es-CO',E'Lugar de ubicación');
+INSERT INTO "message" VALUES (145,E'es-CO',E'Tabulador');
+INSERT INTO "message" VALUES (146,E'es-CO',E'Administrador');
+INSERT INTO "message" VALUES (147,E'es-CO',E'Eliminado');
+INSERT INTO "message" VALUES (148,E'es-CO',E'No revelar');
+INSERT INTO "message" VALUES (149,E'es-CO',E'Femenino');
+INSERT INTO "message" VALUES (150,E'es-CO',E'Masculino');
+INSERT INTO "message" VALUES (151,E'es-CO',E'Otro');
+INSERT INTO "message" VALUES (152,E'es-CO',E'mezclado');
+INSERT INTO "message" VALUES (153,E'es-CO',E'Sin definir');
+INSERT INTO "message" VALUES (154,E'es-CO',E'Entrevista necesaria');
+INSERT INTO "message" VALUES (155,E'es-CO',E'EPL');
+INSERT INTO "message" VALUES (157,E'es-CO',E'ESL');
+INSERT INTO "message" VALUES (158,E'es-CO',E'Español como segunda lengua');
+INSERT INTO "message" VALUES (159,E'es-CO',E'ELE');
+INSERT INTO "message" VALUES (160,E'es-CO',E'Español como lengua extranjera');
+INSERT INTO "message" VALUES (161,E'es-CO',E'Sin asignar');
+INSERT INTO "message" VALUES (162,E'es-CO',E'Error guardando Relación con la sociedad para {user_name}');
+INSERT INTO "message" VALUES (163,E'es-CO',E'Error guardando usuario {user_name}');
+INSERT INTO "message" VALUES (164,E'es-CO',E'{tournament_name}: Cuenta de usuario para  {user_name}');
+INSERT INTO "message" VALUES (165,E'es-CO',E'Esta dirección no está permitida');
+INSERT INTO "message" VALUES (166,E'es-CO',E'Publicado');
+INSERT INTO "message" VALUES (167,E'es-CO',E'Visualizado');
+INSERT INTO "message" VALUES (168,E'es-CO',E'Iniciado');
+INSERT INTO "message" VALUES (169,E'es-CO',E'Juzgando');
+INSERT INTO "message" VALUES (170,E'es-CO',E'Finalizado');
+INSERT INTO "message" VALUES (171,E'es-CO',E'Principal');
+INSERT INTO "message" VALUES (172,E'es-CO',E'Principiante');
+INSERT INTO "message" VALUES (173,E'es-CO',E'Final');
+INSERT INTO "message" VALUES (174,E'es-CO',E'Semifinal');
+INSERT INTO "message" VALUES (175,E'es-CO',E'Cuartos de final');
+INSERT INTO "message" VALUES (176,E'es-CO',E'Octavos de final');
+INSERT INTO "message" VALUES (177,E'es-CO',E'Ronda #{num}');
+INSERT INTO "message" VALUES (178,E'es-CO',E'En ronda');
+INSERT INTO "message" VALUES (179,E'es-CO',E'Energía');
+INSERT INTO "message" VALUES (180,E'es-CO',E'Diapositiva de información');
+INSERT INTO "message" VALUES (181,E'es-CO',E'Empieza el tiempo de preparación');
+INSERT INTO "message" VALUES (182,E'es-CO',E'Última temperatura');
+INSERT INTO "message" VALUES (183,E'es-CO',E'ms a calcular');
+INSERT INTO "message" VALUES (184,E'es-CO',E'No hay suficientes equipos para completar la sala - (active: {teams_count})');
+INSERT INTO "message" VALUES (185,E'es-CO',E'Al menos dos jueces son necesarios - (active: {count_adju})');
+INSERT INTO "message" VALUES (186,E'es-CO',E'El número de equipos activos debe dividirse entre 4 ;) - (active: {count_teams})');
+INSERT INTO "message" VALUES (187,E'es-CO',E'No hay suficientes salas activas (active: {active_rooms} required: {required})');
+INSERT INTO "message" VALUES (188,E'es-CO',E'No hay suficientes jueces (active: {active} min-required: {required})');
+INSERT INTO "message" VALUES (189,E'es-CO',E'No hay jueces libres suficientes con esta configuración preseleccionada de panel (fillable rooms: {active} min-required: {required})');
+INSERT INTO "message" VALUES (190,E'es-CO',E'No se puede guardar el panel! Error {message}');
+INSERT INTO "message" VALUES (191,E'es-CO',E'No se puede guardar el debate! Error {message}');
+INSERT INTO "message" VALUES (192,E'es-CO',E'No se puede guardar el debate! Errores <br>{errors}');
+INSERT INTO "message" VALUES (193,E'es-CO',E'No se encuentra el debate #{num} para actualizar');
+INSERT INTO "message" VALUES (195,E'es-CO',E'Tipo');
+INSERT INTO "message" VALUES (196,E'es-CO',E'Parámetro si es necesario');
+INSERT INTO "message" VALUES (197,E'es-CO',E'Aplica al equipo -> Juez principal');
+INSERT INTO "message" VALUES (198,E'es-CO',E'Aplica al Juez principal -> Juez panel');
+INSERT INTO "message" VALUES (199,E'es-CO',E'Aplicar a juez panel -> Juez principal');
+INSERT INTO "message" VALUES (200,E'es-CO',E'No es bueno');
+INSERT INTO "message" VALUES (201,E'es-CO',E'Muy bueno');
+INSERT INTO "message" VALUES (202,E'es-CO',E'Excelente');
+INSERT INTO "message" VALUES (203,E'es-CO',E'Califique (De 1 a 5) en el campo');
+INSERT INTO "message" VALUES (204,E'es-CO',E'Campo para texto corto');
+INSERT INTO "message" VALUES (205,E'es-CO',E'Campo para texto largo');
+INSERT INTO "message" VALUES (206,E'es-CO',E'Número de campo');
+INSERT INTO "message" VALUES (207,E'es-CO',E'Casilla de verificación de campo');
+INSERT INTO "message" VALUES (208,E'es-CO',E'Debate');
+INSERT INTO "message" VALUES (209,E'es-CO',E'Retroalimentación a ID');
+INSERT INTO "message" VALUES (210,E'es-CO',E'Calificación del juez de ID');
+INSERT INTO "message" VALUES (211,E'es-CO',E'Calificación del juez a ID');
+INSERT INTO "message" VALUES (212,E'es-CO',E'Grupo');
+INSERT INTO "message" VALUES (213,E'es-CO',E'Sala activa');
+INSERT INTO "message" VALUES (214,E'es-CO',E'Juez panel');
+INSERT INTO "message" VALUES (215,E'es-CO',E'Usado');
+INSERT INTO "message" VALUES (216,E'es-CO',E'Es el panel predeterminado');
+INSERT INTO "message" VALUES (217,E'es-CO',E'Panel #{id} tiene {amount} jueces principales');
+INSERT INTO "message" VALUES (218,E'es-CO',E'Categoría');
+INSERT INTO "message" VALUES (219,E'es-CO',E'Mensaje');
+INSERT INTO "message" VALUES (220,E'es-CO',E'Función');
+INSERT INTO "message" VALUES (221,E'es-CO',E'Mociones usadas');
+INSERT INTO "message" VALUES (222,E'es-CO',E'Preguntas');
+INSERT INTO "message" VALUES (223,E'es-CO',E'En conflicto con');
+INSERT INTO "message" VALUES (224,E'es-CO',E'Razón');
+INSERT INTO "message" VALUES (225,E'es-CO',E'Equipo en conflicto');
+INSERT INTO "message" VALUES (226,E'es-CO',E'Juez en conflicto');
+INSERT INTO "message" VALUES (227,E'es-CO',E'No se encuentra el tipo');
+INSERT INTO "message" VALUES (228,E'es-CO',E'CAG Orador A');
+INSERT INTO "message" VALUES (229,E'es-CO',E'CAG Orador B');
+INSERT INTO "message" VALUES (230,E'es-CO',E'CAG Puesto');
+INSERT INTO "message" VALUES (231,E'es-CO',E'CAO Orador A');
+INSERT INTO "message" VALUES (232,E'es-CO',E'CAO Orador B');
+INSERT INTO "message" VALUES (233,E'es-CO',E'CAO Puesto');
+INSERT INTO "message" VALUES (234,E'es-CO',E'CBG Orador A');
+INSERT INTO "message" VALUES (235,E'es-CO',E'CBG Orador B');
+INSERT INTO "message" VALUES (236,E'es-CO',E'CBG Puesto');
+INSERT INTO "message" VALUES (237,E'es-CO',E'CBO Orador A');
+INSERT INTO "message" VALUES (238,E'es-CO',E'CBO Orador B');
+INSERT INTO "message" VALUES (239,E'es-CO',E'CBO Puesto');
+INSERT INTO "message" VALUES (240,E'es-CO',E'Revisado');
+INSERT INTO "message" VALUES (241,E'es-CO',E'Ingresado por usuario ID');
+INSERT INTO "message" VALUES (242,E'es-CO',E'Existe empate');
+INSERT INTO "message" VALUES (243,E'es-CO',E'Ironman by');
+INSERT INTO "message" VALUES (244,E'es-CO',E'Jefe de Adjudicación');
+INSERT INTO "message" VALUES (245,E'es-CO',E'El espacio para restablecer la contraseña no puede estár en blanco');
+INSERT INTO "message" VALUES (246,E'es-CO',E'Error en el restablecimiento de contraseña');
+INSERT INTO "message" VALUES (247,E'es-CO',E'Archivo separado por comas ( , )');
+INSERT INTO "message" VALUES (248,E'es-CO',E'Archivo separado por punto y coma ( ; )');
+INSERT INTO "message" VALUES (249,E'es-CO',E'Archivo separado por espacios tabulados ( ->| )');
+INSERT INTO "message" VALUES (250,E'es-CO',E'Archivo EXL');
+INSERT INTO "message" VALUES (251,E'es-CO',E'Delimitador');
+INSERT INTO "message" VALUES (252,E'es-CO',E'Marcar como datos de prueba (no enviar e-mail)');
+INSERT INTO "message" VALUES (253,E'es-CO',E'Nombre de usuario');
+INSERT INTO "message" VALUES (254,E'es-CO',E'Imagen de perfil');
+INSERT INTO "message" VALUES (255,E'es-CO',E'Sociedad de debate actual');
+INSERT INTO "message" VALUES (256,E'es-CO',E'Con qué género se siente más identificado');
+INSERT INTO "message" VALUES (257,E'es-CO',E'La URL no está permitida');
+INSERT INTO "message" VALUES (258,E'es-CO',E'{adju} Registrado');
+INSERT INTO "message" VALUES (259,E'es-CO',E'{adju} ya está registrado!');
+INSERT INTO "message" VALUES (260,E'es-CO',E'{id} número no valido! no es juez!');
+INSERT INTO "message" VALUES (261,E'es-CO',E'{speaker} Registrado!');
+INSERT INTO "message" VALUES (262,E'es-CO',E'{speaker} ya se encuentra registrado!');
+INSERT INTO "message" VALUES (263,E'es-CO',E'{id} número no valido! No es un equipo!');
+INSERT INTO "message" VALUES (264,E'es-CO',E'No es una entrada válida');
+INSERT INTO "message" VALUES (265,E'es-CO',E'Código de verificación');
+INSERT INTO "message" VALUES (266,E'es-CO',E'RegDeb');
+INSERT INTO "message" VALUES (267,E'es-CO',E'Contraseña reestablecida por {user}');
+INSERT INTO "message" VALUES (268,E'es-CO',E'No se encuentra el usuario con este E-mail');
+INSERT INTO "message" VALUES (269,E'es-CO',E'Agregar {object}');
+INSERT INTO "message" VALUES (270,E'es-CO',E'Crear sociedad de debate');
+INSERT INTO "message" VALUES (271,E'es-CO',E'Hey tranquilo! Estás ingresando una sociedad de debate desconocida.');
+INSERT INTO "message" VALUES (272,E'es-CO',E'Antes de que podamos vincularte, por favor completa la información sobre tu sociedad de debate');
+INSERT INTO "message" VALUES (273,E'es-CO',E'Buscar por país');
+INSERT INTO "message" VALUES (274,E'es-CO',E'Agregar nueva sociedad de debate');
+INSERT INTO "message" VALUES (275,E'es-CO',E'Buscar por sociedad de debate...');
+INSERT INTO "message" VALUES (276,E'es-CO',E'Ingrese la fecha de inicio...');
+INSERT INTO "message" VALUES (277,E'es-CO',E'Ingrese la fecha de finalización (si aplica)...');
+INSERT INTO "message" VALUES (278,E'es-CO',E'Idioma oficial');
+INSERT INTO "message" VALUES (279,E'es-CO',E'Oficial');
+INSERT INTO "message" VALUES (280,E'es-CO',E'Alguno \r\n{object} ...');
+INSERT INTO "message" VALUES (281,E'es-CO',E'Revisión del estado de idiomas');
+INSERT INTO "message" VALUES (282,E'es-CO',E'Estado');
+INSERT INTO "message" VALUES (283,E'es-CO',E'Requiere entrevista');
+INSERT INTO "message" VALUES (284,E'es-CO',E'Grupo ENL');
+INSERT INTO "message" VALUES (285,E'es-CO',E'Grupo ESL');
+INSERT INTO "message" VALUES (286,E'es-CO',E'Idioma oficial');
+INSERT INTO "message" VALUES (288,E'es-CO',E'Agregar');
+INSERT INTO "message" VALUES (289,E'es-CO',E'Buscar usuario...');
+INSERT INTO "message" VALUES (290,E'es-CO',E'Comprobar');
+INSERT INTO "message" VALUES (291,E'es-CO',E'Enviar');
+INSERT INTO "message" VALUES (292,E'es-CO',E'Generar ballots');
+INSERT INTO "message" VALUES (293,E'es-CO',E'Únicamente hacer por usuario...');
+INSERT INTO "message" VALUES (294,E'es-CO',E'Imprimir Ballots');
+INSERT INTO "message" VALUES (295,E'es-CO',E'Generar código de barras');
+INSERT INTO "message" VALUES (296,E'es-CO',E'Buscar usuario.. o dejar en blanco');
+INSERT INTO "message" VALUES (297,E'es-CO',E'Imprimir código de barras');
+INSERT INTO "message" VALUES (298,E'es-CO',E'Equipos');
+INSERT INTO "message" VALUES (299,E'es-CO',E'Nombre del equipo');
+INSERT INTO "message" VALUES (300,E'es-CO',E'Orador A');
+INSERT INTO "message" VALUES (301,E'es-CO',E'Orador B');
+INSERT INTO "message" VALUES (302,E'es-CO',E'Así queda');
+INSERT INTO "message" VALUES (303,E'es-CO',E'Moción:');
+INSERT INTO "message" VALUES (304,E'es-CO',E'Panel de jueces:');
+INSERT INTO "message" VALUES (305,E'es-CO',E'Palanca activa');
+INSERT INTO "message" VALUES (307,E'es-CO',E'Buscar usuario...');
+INSERT INTO "message" VALUES (308,E'es-CO',E'Torneos');
+INSERT INTO "message" VALUES (309,E'es-CO',E'Detalle general');
+INSERT INTO "message" VALUES (310,E'es-CO',E'Mociones');
+INSERT INTO "message" VALUES (311,E'es-CO',E'Tabla de equipos');
+INSERT INTO "message" VALUES (312,E'es-CO',E'Tabla de oradores');
+INSERT INTO "message" VALUES (313,E'es-CO',E'Fuera de rondas');
+INSERT INTO "message" VALUES (314,E'es-CO',E'Jueces que pasan el break');
+INSERT INTO "message" VALUES (315,E'es-CO',E'Así queda');
+INSERT INTO "message" VALUES (316,E'es-CO',E'Registro torneos de debate');
+INSERT INTO "message" VALUES (317,E'es-CO',E'Mostrar antiguos torneos');
+INSERT INTO "message" VALUES (318,E'es-CO',E'Jueces');
+INSERT INTO "message" VALUES (319,E'es-CO',E'Resultado');
+INSERT INTO "message" VALUES (320,E'es-CO',E'junto con {teammate}');
+INSERT INTO "message" VALUES (321,E'es-CO',E'as ironman');
+INSERT INTO "message" VALUES (322,E'es-CO',E'Estás registrado como equipo <br> \'{team}\' {with} por {society}');
+INSERT INTO "message" VALUES (323,E'es-CO',E'Usted está registrado como juez por {society}');
+INSERT INTO "message" VALUES (325,E'es-CO',E'Registro de información');
+INSERT INTO "message" VALUES (326,E'es-CO',E'Ingresar información');
+INSERT INTO "message" VALUES (327,E'es-CO',E'Información de la ronda #{num}');
+INSERT INTO "message" VALUES (328,E'es-CO',E'Estás <b>{pos}</b> en la sala <b>{room}</b>.');
+INSERT INTO "message" VALUES (329,E'es-CO',E'La ronda comienza a las: <b>{time}</b>');
+INSERT INTO "message" VALUES (330,E'es-CO',E'Diapositiva de Información');
+INSERT INTO "message" VALUES (331,E'es-CO',E'Equipos Ronda #{num}');
+INSERT INTO "message" VALUES (332,E'es-CO',E'Mi súper increíble IV Torneo... ej: Vienna IV');
+INSERT INTO "message" VALUES (333,E'es-CO',E'Seleccione los organizadores');
+INSERT INTO "message" VALUES (334,E'es-CO',E'Ingrese fecha y hora de inicio...');
+INSERT INTO "message" VALUES (335,E'es-CO',E'Ingrese fecha y hora de finalización...');
+INSERT INTO "message" VALUES (336,E'es-CO',E'Jefes de adjudicación');
+INSERT INTO "message" VALUES (337,E'es-CO',E'Elija sus JAs...');
+INSERT INTO "message" VALUES (338,E'es-CO',E'Elija su Tabulador');
+INSERT INTO "message" VALUES (339,E'es-CO',E'Archivo del torneo');
+INSERT INTO "message" VALUES (340,E'es-CO',E'Se produjo un error mientras el servidor Web procesaba su solicitud.');
+INSERT INTO "message" VALUES (341,E'es-CO',E'Por favor contáctenos si cree que es un problema del servidor. Gracias');
+INSERT INTO "message" VALUES (342,E'es-CO',E'Recuperar contraseña');
+INSERT INTO "message" VALUES (343,E'es-CO',E'Por favor escoja su nueva contraseña');
+INSERT INTO "message" VALUES (344,E'es-CO',E'Guardar');
+INSERT INTO "message" VALUES (345,E'es-CO',E'Registrarse');
+INSERT INTO "message" VALUES (346,E'es-CO',E'Por favor complete la siguiente información para registrarse:');
+INSERT INTO "message" VALUES (347,E'es-CO',E'La mayoría de los algoritmos de asignación están en el sistema, pero tenga presente la diversidad del panel de jueces. Para que el sistema funcione completamente, le pedimos que escoja una opción de esta lista. Somos conscientes que no todas las preferencias personales pueden tenerse en cuenta en nuestras opciones. Si cree que ninguna de las opciones es útil para usted, por favor escoja <Not Revealing>. Esta opción nunca mostrará los resultados a los usuarios y se usa únicamente para calcular.');
+INSERT INTO "message" VALUES (348,E'es-CO',E'Ingresar');
+INSERT INTO "message" VALUES (349,E'es-CO',E'Por favor ingrese la siguiente información para iniciar sesión:');
+INSERT INTO "message" VALUES (350,E'es-CO',E'Si olvidó su contraseña puede {resetlt}');
+INSERT INTO "message" VALUES (351,E'es-CO',E'Reestablecer');
+INSERT INTO "message" VALUES (352,E'es-CO',E'Solicitar nueva contraseña');
+INSERT INTO "message" VALUES (353,E'es-CO',E'Por favor ingrese su e-mail. Un enlace será enviado allí para recuperar su contraseña.');
+INSERT INTO "message" VALUES (354,E'es-CO',E'Enviar');
+INSERT INTO "message" VALUES (355,E'es-CO',E'Posiciones EXL');
+INSERT INTO "message" VALUES (356,E'es-CO',E'Jueces EXL');
+INSERT INTO "message" VALUES (357,E'es-CO',E'Equipos EXL');
+INSERT INTO "message" VALUES (358,E'es-CO',E'Crear');
+INSERT INTO "message" VALUES (359,E'es-CO',E'Posiciones de muestra EXL');
+INSERT INTO "message" VALUES (360,E'es-CO',E'Equipo de muestra EXL');
+INSERT INTO "message" VALUES (361,E'es-CO',E'Muestra Jueces EXL');
+INSERT INTO "message" VALUES (362,E'es-CO',E'Torneo BP Actual {count, plural, =0{Tournament} =1{Tournament} other{Tournaments}}');
+INSERT INTO "message" VALUES (363,E'es-CO',E'Bienvenido a {appName}!');
+INSERT INTO "message" VALUES (364,E'es-CO',E'Ver torneos');
+INSERT INTO "message" VALUES (365,E'es-CO',E'Crear torneo');
+INSERT INTO "message" VALUES (366,E'es-CO',E'Antes de registrarse por favor complete la información acerca de su sociedad de debate:');
+INSERT INTO "message" VALUES (367,E'es-CO',E'Contacto');
+INSERT INTO "message" VALUES (368,E'es-CO',E'Preseleccionar panel de jueces #');
+INSERT INTO "message" VALUES (369,E'es-CO',E'Panel de jueces');
+INSERT INTO "message" VALUES (370,E'es-CO',E'Calificación promedio de panel de jueces');
+INSERT INTO "message" VALUES (371,E'es-CO',E'Crear panel de jueces');
+INSERT INTO "message" VALUES (372,E'es-CO',E'Preseleccionar jueces para la próxima ronda');
+INSERT INTO "message" VALUES (373,E'es-CO',E'Agregar {object}\r\n...');
+INSERT INTO "message" VALUES (374,E'es-CO',E'Lugar');
+INSERT INTO "message" VALUES (375,E'es-CO',E'Puntos de Equipo');
+INSERT INTO "message" VALUES (376,E'es-CO',E'#{number}');
+INSERT INTO "message" VALUES (377,E'es-CO',E'No hay jueces que pasen el break definidos');
+INSERT INTO "message" VALUES (378,E'es-CO',E'Distribución de puntos de orador');
+INSERT INTO "message" VALUES (379,E'es-CO',E'Corre');
+INSERT INTO "message" VALUES (380,E'es-CO',E'Cámara Alta de Gobierno');
+INSERT INTO "message" VALUES (381,E'es-CO',E'Cámara Alta de Oposición');
+INSERT INTO "message" VALUES (382,E'es-CO',E'Cámara Baja de Gobierno');
+INSERT INTO "message" VALUES (383,E'es-CO',E'Cámara Baja de Oposición');
+INSERT INTO "message" VALUES (384,E'es-CO',E'Mostrar diapositiva de información');
+INSERT INTO "message" VALUES (385,E'es-CO',E'Mostrar moción');
+INSERT INTO "message" VALUES (386,E'es-CO',E'Usuario desaparecido');
+INSERT INTO "message" VALUES (387,E'es-CO',E'Marcar desaparecido como inactivo');
+INSERT INTO "message" VALUES (388,E'es-CO',E'Resultados');
+INSERT INTO "message" VALUES (389,E'es-CO',E'Corre la información de al ronda #{number}');
+INSERT INTO "message" VALUES (390,E'es-CO',E'Auto actualización <i id=\'pjax-status\' class=\'\'></i>');
+INSERT INTO "message" VALUES (391,E'es-CO',E'Actualizar enfrentamiento individual');
+INSERT INTO "message" VALUES (392,E'es-CO',E'Enfrentamiento individual');
+INSERT INTO "message" VALUES (393,E'es-CO',E'En el sistema aún no están todos los debatientes :)');
+INSERT INTO "message" VALUES (394,E'es-CO',E'Crear impedimento');
+INSERT INTO "message" VALUES (395,E'es-CO',E'Actualizar impedimento');
+INSERT INTO "message" VALUES (396,E'es-CO',E'Configuración de energía');
+INSERT INTO "message" VALUES (397,E'es-CO',E'Actualizar valores de energía');
+INSERT INTO "message" VALUES (398,E'es-CO',E'Ronda #{number}');
+INSERT INTO "message" VALUES (399,E'es-CO',E'Rondas');
+INSERT INTO "message" VALUES (400,E'es-CO',E'Acciones');
+INSERT INTO "message" VALUES (401,E'es-CO',E'Publicar la tabulación');
+INSERT INTO "message" VALUES (402,E'es-CO',E'Volver intentar generar ronda');
+INSERT INTO "message" VALUES (403,E'es-CO',E'Actualizar ronda');
+INSERT INTO "message" VALUES (404,E'es-CO',E'Toggle desplegable');
+INSERT INTO "message" VALUES (405,E'es-CO',E'Continúa mejorando por');
+INSERT INTO "message" VALUES (407,E'es-CO',E'Está seguro que quiere volver a sortear la ronda? Perderá toda la información!');
+INSERT INTO "message" VALUES (408,E'es-CO',E'Imprimir Ballots');
+INSERT INTO "message" VALUES (411,E'es-CO',E'Estado de la ronda');
+INSERT INTO "message" VALUES (412,E'es-CO',E'Puntaje promedio');
+INSERT INTO "message" VALUES (413,E'es-CO',E'Tiempo de preparación');
+INSERT INTO "message" VALUES (414,E'es-CO',E'Paleta de color');
+INSERT INTO "message" VALUES (415,E'es-CO',E'Género');
+INSERT INTO "message" VALUES (416,E'es-CO',E'Regiones');
+INSERT INTO "message" VALUES (417,E'es-CO',E'Puntos');
+INSERT INTO "message" VALUES (418,E'es-CO',E'Cargando ...');
+INSERT INTO "message" VALUES (419,E'es-CO',E'Ver retroalimentación');
+INSERT INTO "message" VALUES (420,E'es-CO',E'Ver usuario');
+INSERT INTO "message" VALUES (421,E'es-CO',E'Cambiar posición con {venue}');
+INSERT INTO "message" VALUES (422,E'es-CO',E'Elija posición ...');
+INSERT INTO "message" VALUES (423,E'es-CO',E'Actualizar {modelClass} #{número}');
+INSERT INTO "message" VALUES (424,E'es-CO',E'Nivel de puntaje');
+INSERT INTO "message" VALUES (425,E'es-CO',E'Elegir equipo ...');
+INSERT INTO "message" VALUES (426,E'es-CO',E'Elegir idioma ...');
+INSERT INTO "message" VALUES (427,E'es-CO',E'Elegir juez ...');
+INSERT INTO "message" VALUES (428,E'es-CO',E'Cambiar jueces ...');
+INSERT INTO "message" VALUES (429,E'es-CO',E'Cambiar este juez ...');
+INSERT INTO "message" VALUES (430,E'es-CO',E'con');
+INSERT INTO "message" VALUES (431,E'es-CO',E'con este ...');
+INSERT INTO "message" VALUES (432,E'es-CO',E'Buscar moción por etiqueta ...');
+INSERT INTO "message" VALUES (433,E'es-CO',E'Puesto');
+INSERT INTO "message" VALUES (434,E'es-CO',E'Total');
+INSERT INTO "message" VALUES (435,E'es-CO',E'Debate ID');
+INSERT INTO "message" VALUES (436,E'es-CO',E'Sala');
+INSERT INTO "message" VALUES (437,E'es-CO',E'Fuera de ronda');
+INSERT INTO "message" VALUES (438,E'es-CO',E'Archivo de moción');
+INSERT INTO "message" VALUES (439,E'es-CO',E'Moción a terceros');
+INSERT INTO "message" VALUES (440,E'es-CO',E'Su sensacional IV');
+INSERT INTO "message" VALUES (441,E'es-CO',E'Ingrese fecha ...');
+INSERT INTO "message" VALUES (442,E'es-CO',E'Ronda #1 o Final');
+INSERT INTO "message" VALUES (443,E'es-CO',E'EC ...');
+INSERT INTO "message" VALUES (444,E'es-CO',E'http://dar.creditos.donde.los.creditos.se.necesitan.com');
+INSERT INTO "message" VALUES (445,E'es-CO',E'Ingresar {modelClass} Manualmente');
+INSERT INTO "message" VALUES (446,E'es-CO',E'Opciones');
+INSERT INTO "message" VALUES (447,E'es-CO',E'Continuar');
+INSERT INTO "message" VALUES (448,E'es-CO',E'No hay resultados aún!');
+INSERT INTO "message" VALUES (449,E'es-CO',E'Resultados en la sala: {venue}');
+INSERT INTO "message" VALUES (450,E'es-CO',E'Resultados por posición {venue}');
+INSERT INTO "message" VALUES (451,E'es-CO',E'Vista de la lista');
+INSERT INTO "message" VALUES (452,E'es-CO',E'Resultados por {label}');
+INSERT INTO "message" VALUES (453,E'es-CO',E'Cambiar a vista de las posiciones');
+INSERT INTO "message" VALUES (454,E'es-CO',E'Puntaje del Swing Team');
+INSERT INTO "message" VALUES (455,E'es-CO',E'Ver detalles de los resultados');
+INSERT INTO "message" VALUES (456,E'es-CO',E'Resultado correcto');
+INSERT INTO "message" VALUES (457,E'es-CO',E'Ver posiciones');
+INSERT INTO "message" VALUES (458,E'es-CO',E'Cambiar a vista de la lista');
+INSERT INTO "message" VALUES (459,E'es-CO',E'Confirmar datos de {venue}');
+INSERT INTO "message" VALUES (460,E'es-CO',E'Comenzar de nuevo');
+INSERT INTO "message" VALUES (461,E'es-CO',E'Ronda {number}');
+INSERT INTO "message" VALUES (462,E'es-CO',E'Gracias');
+INSERT INTO "message" VALUES (463,E'es-CO',E'Gracias!');
+INSERT INTO "message" VALUES (464,E'es-CO',E'Resultados exitosamente guardados');
+INSERT INTO "message" VALUES (465,E'es-CO',E'Boooonus por velocidad!');
+INSERT INTO "message" VALUES (466,E'es-CO',E'Apúrate ¡vamos! ¡vamos!');
+INSERT INTO "message" VALUES (467,E'es-CO',E'¡Ya está!¡El último!');
+INSERT INTO "message" VALUES (468,E'es-CO',E'Usted es <b>#{place}</b> de {max}');
+INSERT INTO "message" VALUES (469,E'es-CO',E'Ingresar retroalimentación');
+INSERT INTO "message" VALUES (470,E'es-CO',E'Volver al torneo');
+INSERT INTO "message" VALUES (471,E'es-CO',E'Retroalimentaciones');
+INSERT INTO "message" VALUES (472,E'es-CO',E'Objetivo del juez');
+INSERT INTO "message" VALUES (473,E'es-CO',E'Nombre del juez');
+INSERT INTO "message" VALUES (474,E'es-CO',E'Retroalimentación del juez');
+INSERT INTO "message" VALUES (475,E'es-CO',E'Enviar retroalimentación');
+INSERT INTO "message" VALUES (476,E'es-CO',E'{tournament} - Idioma oficial');
+INSERT INTO "message" VALUES (477,E'es-CO',E'Revisar estado del idioma');
+INSERT INTO "message" VALUES (478,E'es-CO',E'desarrollado con tecnología alien secreta');
+INSERT INTO "message" VALUES (479,E'es-CO',E'Reporte error');
+INSERT INTO "message" VALUES (480,E'es-CO',E'{tournament} - Director');
+INSERT INTO "message" VALUES (481,E'es-CO',E'Lista de posiciones');
+INSERT INTO "message" VALUES (482,E'es-CO',E'Crear posición');
+INSERT INTO "message" VALUES (483,E'es-CO',E'Importar posición');
+INSERT INTO "message" VALUES (484,E'es-CO',E'Lista de equipos');
+INSERT INTO "message" VALUES (485,E'es-CO',E'Crear equipo');
+INSERT INTO "message" VALUES (486,E'es-CO',E'Importar Equipo');
+INSERT INTO "message" VALUES (487,E'es-CO',E'Puntuar equipo');
+INSERT INTO "message" VALUES (488,E'es-CO',E'Lista de Jueces');
+INSERT INTO "message" VALUES (489,E'es-CO',E'Crear Juez');
+INSERT INTO "message" VALUES (490,E'es-CO',E'Importar Juez');
+INSERT INTO "message" VALUES (491,E'es-CO',E'Ver panel de jueces preseleccionado');
+INSERT INTO "message" VALUES (492,E'es-CO',E'Crear panel de jueces preseleccionado');
+INSERT INTO "message" VALUES (493,E'es-CO',E'Puntuar adjudicador');
+INSERT INTO "message" VALUES (494,E'es-CO',E'Actualizar torneo');
+INSERT INTO "message" VALUES (495,E'es-CO',E'Mostrar Tabla de equipos');
+INSERT INTO "message" VALUES (496,E'es-CO',E'Mostrar tabla de oradores');
+INSERT INTO "message" VALUES (497,E'es-CO',E'Mostrar fuera de ronda');
+INSERT INTO "message" VALUES (498,E'es-CO',E'Al publicar la tabulación el torneo se cerrará y archivará! Seguro que desea continuar?');
+INSERT INTO "message" VALUES (499,E'es-CO',E'Usuarios desaparecidos');
+INSERT INTO "message" VALUES (500,E'es-CO',E'Forma de confirmación');
+INSERT INTO "message" VALUES (501,E'es-CO',E'Imprimir Badgets');
+INSERT INTO "message" VALUES (502,E'es-CO',E'Reiniciar confirmación');
+INSERT INTO "message" VALUES (503,E'es-CO',E'Está seguro que desea reiniciar la confirmación?');
+INSERT INTO "message" VALUES (504,E'es-CO',E'Sincronizar con DebReg');
+INSERT INTO "message" VALUES (505,E'es-CO',E'Ir a Tabbie 1');
+INSERT INTO "message" VALUES (506,E'es-CO',E'Mucho cuidado pequeño padawan!');
+INSERT INTO "message" VALUES (507,E'es-CO',E'Lista de Rondas');
+INSERT INTO "message" VALUES (508,E'es-CO',E'Crear ronda');
+INSERT INTO "message" VALUES (509,E'es-CO',E'Opciones de energía');
+INSERT INTO "message" VALUES (510,E'es-CO',E'Lista de resultados');
+INSERT INTO "message" VALUES (511,E'es-CO',E'Ingrese ballot');
+INSERT INTO "message" VALUES (512,E'es-CO',E'Caché correcta');
+INSERT INTO "message" VALUES (513,E'es-CO',E'Preguntas de configuración');
+INSERT INTO "message" VALUES (514,E'es-CO',E'Cada retroalimentación');
+INSERT INTO "message" VALUES (515,E'es-CO',E'Retroalimentacion de jueces');
+INSERT INTO "message" VALUES (516,E'es-CO',E'Acerca de');
+INSERT INTO "message" VALUES (517,E'es-CO',E'Cómo se hace');
+INSERT INTO "message" VALUES (518,E'es-CO',E'Usuarios');
+INSERT INTO "message" VALUES (519,E'es-CO',E'Registro');
+INSERT INTO "message" VALUES (520,E'es-CO',E'Perfil de {user}');
+INSERT INTO "message" VALUES (521,E'es-CO',E'Historial de {user}');
+INSERT INTO "message" VALUES (522,E'es-CO',E'Cerrar sesión');
+INSERT INTO "message" VALUES (524,E'es-CO',E'Actualizar {label}');
+INSERT INTO "message" VALUES (525,E'es-CO',E'Siguiente paso');
+INSERT INTO "message" VALUES (526,E'es-CO',E'Sala {number}');
+INSERT INTO "message" VALUES (527,E'es-CO',E'Posiciones');
+INSERT INTO "message" VALUES (529,E'es-CO',E'Puntuaciones');
+INSERT INTO "message" VALUES (530,E'es-CO',E'Importar puntuaciones');
+INSERT INTO "message" VALUES (531,E'es-CO',E'Aceptar');
+INSERT INTO "message" VALUES (532,E'es-CO',E'Rechazar');
+INSERT INTO "message" VALUES (533,E'es-CO',E'Buscar equipo...');
+INSERT INTO "message" VALUES (534,E'es-CO',E'Buscar juez ...');
+INSERT INTO "message" VALUES (535,E'es-CO',E'Puntuar jueces');
+INSERT INTO "message" VALUES (536,E'es-CO',E'Crear adicional {modelClass}');
+INSERT INTO "message" VALUES (537,E'es-CO',E'Actualizar equipo');
+INSERT INTO "message" VALUES (538,E'es-CO',E'Eliminar equipo');
+INSERT INTO "message" VALUES (539,E'es-CO',E'Buscar por juez ...');
+INSERT INTO "message" VALUES (540,E'es-CO',E'Buscar un juez para ...');
+INSERT INTO "message" VALUES (541,E'es-CO',E'Puntuar equipo con juez');
+INSERT INTO "message" VALUES (542,E'es-CO',E'Actualizar equipo');
+INSERT INTO "message" VALUES (543,E'es-CO',E'Eliminar equipo');
+INSERT INTO "message" VALUES (544,E'es-CO',E'{modelClass} Historial');
+INSERT INTO "message" VALUES (545,E'es-CO',E'Historial');
+INSERT INTO "message" VALUES (546,E'es-CO',E'Revisión de equipos');
+INSERT INTO "message" VALUES (547,E'es-CO',E'EPL Posición');
+INSERT INTO "message" VALUES (548,E'es-CO',E'Puntos de orador por equipo');
+INSERT INTO "message" VALUES (549,E'es-CO',E'No hay tabulación disponible para publicar por el momento');
+INSERT INTO "message" VALUES (550,E'es-CO',E'Puede ser juez principal');
+INSERT INTO "message" VALUES (551,E'es-CO',E'No debe ser juez principal');
+INSERT INTO "message" VALUES (552,E'es-CO',E'Pasa el Break');
+INSERT INTO "message" VALUES (553,E'es-CO',E'No pasa el break');
+INSERT INTO "message" VALUES (554,E'es-CO',E'Observador');
+INSERT INTO "message" VALUES (555,E'es-CO',E'No observador');
+INSERT INTO "message" VALUES (556,E'es-CO',E'Ver palanca');
+INSERT INTO "message" VALUES (557,E'es-CO',E'Break palanca');
+INSERT INTO "message" VALUES (558,E'es-CO',E'Reiniciar bandera de observación');
+INSERT INTO "message" VALUES (559,E'es-CO',E'Buscar {object} ...');
+INSERT INTO "message" VALUES (560,E'es-CO',E'Juez principal');
+INSERT INTO "message" VALUES (561,E'es-CO',E'Indicador');
+INSERT INTO "message" VALUES (562,E'es-CO',E'Actualziar perfil de usuario');
+INSERT INTO "message" VALUES (563,E'es-CO',E'Enfrentamiento individual');
+INSERT INTO "message" VALUES (564,E'es-CO',E'Actualizar información de enfrentamiento');
+INSERT INTO "message" VALUES (565,E'es-CO',E'Eliminar enfrentamiento');
+INSERT INTO "message" VALUES (566,E'es-CO',E'No se conoce enfrentamiento en el sistema.');
+INSERT INTO "message" VALUES (567,E'es-CO',E'Historial de la sociedad de debate');
+INSERT INTO "message" VALUES (568,E'es-CO',E'Agregar nueva sociedad de debate al historial');
+INSERT INTO "message" VALUES (569,E'es-CO',E'Continúa activo');
+INSERT INTO "message" VALUES (570,E'es-CO',E'Actualizar información de sociedad de debate');
+INSERT INTO "message" VALUES (571,E'es-CO',E'Forzar nueva contraseña para {name}');
+INSERT INTO "message" VALUES (572,E'es-CO',E'Cancelar');
+INSERT INTO "message" VALUES (573,E'es-CO',E'Buscar torneo...');
+INSERT INTO "message" VALUES (574,E'es-CO',E'Elegir nueva contraseña');
+INSERT INTO "message" VALUES (575,E'es-CO',E'Actualizar usuario');
+INSERT INTO "message" VALUES (576,E'es-CO',E'Eliminar usuario');
+INSERT INTO "message" VALUES (577,E'es-CO',E'Crear usuario');
+INSERT INTO "message" VALUES (578,E'es-CO',E'No coincide condición');
+INSERT INTO "message" VALUES (579,E'es-CO',E'No pasó la verificación de antiguedad del panel:  {old} / new: {new}');
+INSERT INTO "message" VALUES (580,E'es-CO',E'No se pudo guardar {object}! Error: {message}');
+INSERT INTO "message" VALUES (582,E'es-CO',E'No hay archivo disponible');
+INSERT INTO "message" VALUES (583,E'es-CO',E'No coincide busqueda de historial');
+INSERT INTO "message" VALUES (584,E'es-CO',E'Gracias por su registro');
+INSERT INTO "message" VALUES (585,E'es-CO',E'Error guardando el panel de jueces:');
+INSERT INTO "message" VALUES (586,E'es-CO',E'Panel de jueces eliminado');
+INSERT INTO "message" VALUES (587,E'es-CO',E'Bienvenido! Esta es la primera vez que ingresas, por favor confirma que tu información sea correcta');
+INSERT INTO "message" VALUES (588,E'es-CO',E'La nueva sociedad de debate ha sido guardada.');
+INSERT INTO "message" VALUES (589,E'es-CO',E'Ha ocurrido un error recibiendo tu ingreso anterior. Por favor ingréselo nuevamente');
+INSERT INTO "message" VALUES (590,E'es-CO',E'Usuario registrado! Bienvenido {user}');
+INSERT INTO "message" VALUES (591,E'es-CO',E'Falló inicio de sesión');
+INSERT INTO "message" VALUES (592,E'es-CO',E'Revisa tu e-mail para más instrucciones');
+INSERT INTO "message" VALUES (593,E'es-CO',E'Lo sentimos, no podemos recuperar la contraseña del e-mail ingresado <br>{message}');
+INSERT INTO "message" VALUES (594,E'es-CO',E'Nueva contraseña guardada');
+INSERT INTO "message" VALUES (595,E'es-CO',E'Elegir nueva contraseña');
+INSERT INTO "message" VALUES (596,E'es-CO',E'Error guardando nueva contraseña');
+INSERT INTO "message" VALUES (597,E'es-CO',E'Conexión con sociedad de debate no guardada');
+INSERT INTO "message" VALUES (598,E'es-CO',E'Usuario exitosamente guardado!');
+INSERT INTO "message" VALUES (599,E'es-CO',E'Usuario no guardado!');
+INSERT INTO "message" VALUES (600,E'es-CO',E'Conexión con sociedad de debate no guardada!');
+INSERT INTO "message" VALUES (601,E'es-CO',E'Usuario actualizado exitosamente!');
+INSERT INTO "message" VALUES (602,E'es-CO',E'Por favor ingrese nueva contraseña!');
+INSERT INTO "message" VALUES (603,E'es-CO',E'Usuario eliminado');
+INSERT INTO "message" VALUES (604,E'es-CO',E'No se puede eliminar debido a {error}');
+INSERT INTO "message" VALUES (605,E'es-CO',E'No se puede eliminar porque actualmente está siendo usado. <br> {ex}');
+INSERT INTO "message" VALUES (606,E'es-CO',E'Comprobando reinicio de banderas');
+INSERT INTO "message" VALUES (607,E'es-CO',E'No hay necesidad de reiniciar');
+INSERT INTO "message" VALUES (608,E'es-CO',E'Por favor elija los jueces del break primero - Use el ícono de inicio en la columna de acciones.');
+INSERT INTO "message" VALUES (609,E'es-CO',E'No se puede crear equipo.');
+INSERT INTO "message" VALUES (610,E'es-CO',E'Error guardando relación con la sociedad de debate {society}');
+INSERT INTO "message" VALUES (611,E'es-CO',E'Error guardando equipo {name}!');
+INSERT INTO "message" VALUES (613,E'es-CO',E'No se puede guardar conexión con el torneo');
+INSERT INTO "message" VALUES (614,E'es-CO',E'No se puede eliminar la pregunta');
+INSERT INTO "message" VALUES (615,E'es-CO',E'Relación con la sociedad de debate exitosamente creada');
+INSERT INTO "message" VALUES (616,E'es-CO',E'No se puede guardar la sociedad de debate');
+INSERT INTO "message" VALUES (617,E'es-CO',E'Error en la activación');
+INSERT INTO "message" VALUES (618,E'es-CO',E'Información de la sociedad de debate actualizada');
+INSERT INTO "message" VALUES (619,E'es-CO',E'Tabulación publicada y torneo cerrado. ¡Vamos por una cerveza!');
+INSERT INTO "message" VALUES (620,E'es-CO',E'Juez principal del panel de jueces no encontrado - Escribiste mal?');
+INSERT INTO "message" VALUES (622,E'es-CO',E'Invalido');
+INSERT INTO "message" VALUES (623,E'es-CO',E'{object} enviado exitosamente');
+INSERT INTO "message" VALUES (624,E'es-CO',E'{object} creado');
+INSERT INTO "message" VALUES (625,E'es-CO',E'Enfrentamiento individual');
+INSERT INTO "message" VALUES (626,E'es-CO',E'No se pudo guardar enfrentamiento individual');
+INSERT INTO "message" VALUES (627,E'es-CO',E'{object} actualizado');
+INSERT INTO "message" VALUES (628,E'es-CO',E'No se puede guardar {object}');
+INSERT INTO "message" VALUES (629,E'es-CO',E'{object} eliminado');
+INSERT INTO "message" VALUES (630,E'es-CO',E'{tournament} en Tabbie2');
+INSERT INTO "message" VALUES (631,E'es-CO',E'{tournament} tendrá lugar del {start} al {end} organizado por {host} en {country}');
+INSERT INTO "message" VALUES (632,E'es-CO',E'Torneo creado exitosamente');
+INSERT INTO "message" VALUES (633,E'es-CO',E'Se creo el torneo pero la configuración de la conexión falló!');
+INSERT INTO "message" VALUES (634,E'es-CO',E'No se puede guardar el torneo!');
+INSERT INTO "message" VALUES (635,E'es-CO',E'Sincronización exitosa con DebReg');
+INSERT INTO "message" VALUES (636,E'es-CO',E'Posiciones cambiadas');
+INSERT INTO "message" VALUES (637,E'es-CO',E'Error mientras se hacía la combinación');
+INSERT INTO "message" VALUES (638,E'es-CO',E'Nuevas posicioes seleccionadas');
+INSERT INTO "message" VALUES (639,E'es-CO',E'Error mientras se configuraban las nuevas posiciones');
+INSERT INTO "message" VALUES (640,E'es-CO',E'No se puede crear la ronda: La cantidad de equipos no se puede dividir en 4');
+INSERT INTO "message" VALUES (641,E'es-CO',E'Exitosamente reasignado in {sec}s');
+INSERT INTO "message" VALUES (642,E'es-CO',E'Mejorar la energía por {diff} puntos en {secs}');
+INSERT INTO "message" VALUES (643,E'es-CO',E'Juez {n1} y {n2} se cambiaron');
+INSERT INTO "message" VALUES (644,E'es-CO',E'No se puede cambiar debido a quel {a_panel}<br>y<br>{b_panel}');
+INSERT INTO "message" VALUES (645,E'es-CO',E'Mostrar ronda {number}');
+INSERT INTO "message" VALUES (646,E'es-CO',E'No se encontraron debates en esta ronda');
+INSERT INTO "message" VALUES (647,E'es-CO',E'El idioma no es una opción valida en parámetros');
+INSERT INTO "message" VALUES (648,E'es-CO',E'Equipo actualizado a {status}');
+INSERT INTO "message" VALUES (649,E'es-CO',E'Configuración de idioma guardada');
+INSERT INTO "message" VALUES (650,E'es-CO',E'Error guardando la configuración de idioma');
+INSERT INTO "message" VALUES (651,E'es-CO',E'No se encuentra usuario!');
+INSERT INTO "message" VALUES (652,E'es-CO',E'{object} agregado exitosamente');
+INSERT INTO "message" VALUES (653,E'es-CO',E'Eliminado exitosamente');
+INSERT INTO "message" VALUES (654,E'es-CO',E'Error en el formato! Se requieren 3 columnas');
+INSERT INTO "message" VALUES (656,E'es-CO',E'Error guardando resultados. <br> Por favor solicite la ballot!');
+INSERT INTO "message" VALUES (657,E'es-CO',E'Se guardaron los resultados! Siguiente!');
+INSERT INTO "message" VALUES (658,E'es-CO',E'Debate #{id} no existe');
+INSERT INTO "message" VALUES (659,E'es-CO',E'Números correctos de equipo para {team} desde {old_points} hasta {new_points}');
+INSERT INTO "message" VALUES (660,E'es-CO',E'Confirmado puntaje de orador {pos} del equipo {team} desde {old_points} hasta {new_points}');
+INSERT INTO "message" VALUES (661,E'es-CO',E'Caché en perfecto estado. No se necesitan cambios');
+INSERT INTO "message" VALUES (662,E'es-CO',E'No se puede guardar el enfrentamiento {reason}');
+INSERT INTO "message" VALUES (663,E'es-CO',E'No hay suficientes posiciones');
+INSERT INTO "message" VALUES (664,E'es-CO',E'Demasiadas posiciones');
+INSERT INTO "message" VALUES (665,E'es-CO',E'Número máximo de interacciones para mejorar la asignación de jueces');
+INSERT INTO "message" VALUES (666,E'es-CO',E'Equipo y juez en la misma penalidad');
+INSERT INTO "message" VALUES (667,E'es-CO',E'Ambos adjudicadores en conflicto');
+INSERT INTO "message" VALUES (668,E'es-CO',E'Equipo y adjudicadores en conflicto');
+INSERT INTO "message" VALUES (669,E'es-CO',E'Juez no está habilitado para ser juez principal');
+INSERT INTO "message" VALUES (670,E'es-CO',E'El juez no es la mejor opción en la situación actual');
+INSERT INTO "message" VALUES (671,E'es-CO',E'El juez ya ha visto al equipo');
+INSERT INTO "message" VALUES (672,E'es-CO',E'El juez ya ha juzgado en esta combinación');
+INSERT INTO "message" VALUES (673,E'es-CO',E'El panel no está bien puntuado para la sala');
+INSERT INTO "message" VALUES (674,E'es-CO',E'El ingrediente especial de Richard');
+INSERT INTO "message" VALUES (675,E'es-CO',E'Juez {adju} y {team} en la misma sociedad de debate.');
+INSERT INTO "message" VALUES (676,E'es-CO',E'Juez {adju1} y {adju2} enfrentados manualmente');
+INSERT INTO "message" VALUES (677,E'es-CO',E'Juez {adju} y equipo {team} se enfrentan manualmente');
+INSERT INTO "message" VALUES (678,E'es-CO',E'Juez {adju} fue etiquetado como no principal.');
+INSERT INTO "message" VALUES (679,E'es-CO',E'El equipo de jueces no es el mejor por puntaje {points}.');
+INSERT INTO "message" VALUES (680,E'es-CO',E'Juez {adju1} y {adju2} han juzgados juntos x {occ} antes');
+INSERT INTO "message" VALUES (681,E'es-CO',E'Juez {adju} ya juzgó el equipo {team} x {occ} antes.');
+INSERT INTO "message" VALUES (682,E'es-CO',E'Pendiente comparación: {comparison_factor}, Diferencia: {roomDifference}, Pendiente penalidad: {steepnessPenalty}');
+INSERT INTO "message" VALUES (686,E'es-CO',E'Sin definir');
+INSERT INTO "message" VALUES (687,E'es-CO',E'Norte de Europa');
+INSERT INTO "message" VALUES (688,E'es-CO',E'Oeste de Europa');
+INSERT INTO "message" VALUES (689,E'es-CO',E'Sur de Europa');
+INSERT INTO "message" VALUES (690,E'es-CO',E'Europa del Este');
+INSERT INTO "message" VALUES (691,E'es-CO',E'Asia central');
+INSERT INTO "message" VALUES (692,E'es-CO',E'Este de Asia');
+INSERT INTO "message" VALUES (693,E'es-CO',E'Oeste de Asia');
+INSERT INTO "message" VALUES (694,E'es-CO',E'Sur de Asia');
+INSERT INTO "message" VALUES (695,E'es-CO',E'Suseste de Asia');
+INSERT INTO "message" VALUES (696,E'es-CO',E'Australia y Nueva Zelanda');
+INSERT INTO "message" VALUES (697,E'es-CO',E'Micronesia');
+INSERT INTO "message" VALUES (698,E'es-CO',E'Melanesia');
+INSERT INTO "message" VALUES (699,E'es-CO',E'Polinesia');
+INSERT INTO "message" VALUES (700,E'es-CO',E'Norte de África');
+INSERT INTO "message" VALUES (701,E'es-CO',E'Oeste de África');
+INSERT INTO "message" VALUES (702,E'es-CO',E'Africa Central');
+INSERT INTO "message" VALUES (703,E'es-CO',E'Este de África');
+INSERT INTO "message" VALUES (704,E'es-CO',E'Sur de África');
+INSERT INTO "message" VALUES (705,E'es-CO',E'Norte América');
+INSERT INTO "message" VALUES (706,E'es-CO',E'Centro América');
+INSERT INTO "message" VALUES (707,E'es-CO',E'Caribe');
+INSERT INTO "message" VALUES (708,E'es-CO',E'Sur América');
+INSERT INTO "message" VALUES (709,E'es-CO',E'Antártida');
+INSERT INTO "message" VALUES (710,E'es-CO',E'Juez penalizado');
+INSERT INTO "message" VALUES (711,E'es-CO',E'Mal juez');
+INSERT INTO "message" VALUES (712,E'es-CO',E'Juez decente');
+INSERT INTO "message" VALUES (713,E'es-CO',E'Juez promedio');
+INSERT INTO "message" VALUES (714,E'es-CO',E'Juez principal promedio');
+INSERT INTO "message" VALUES (715,E'es-CO',E'Buen juez principal');
+INSERT INTO "message" VALUES (716,E'es-CO',E'Jueces principales del break');
+INSERT INTO "message" VALUES (717,E'es-CO',E'<b> Este torneo no tiene equipos aún. </b><br>{add_button} or {import_button}');
+INSERT INTO "message" VALUES (718,E'es-CO',E'Agregar equipo');
+INSERT INTO "message" VALUES (719,E'es-CO',E'Importarlos vía archivo EXL.');
+INSERT INTO "message" VALUES (720,E'es-CO',E'Este torneo no tiene lugares aún. <br>{add} or {import}');
+INSERT INTO "message" VALUES (721,E'es-CO',E'Agregar lugar');
+INSERT INTO "message" VALUES (722,E'es-CO',E'Importarlos vía archivo EXL');
+INSERT INTO "message" VALUES (723,E'es-CO',E'<b> Este torneo no tiene jueces aún.</b><br>{add_button} ó {import_button}.');
+INSERT INTO "message" VALUES (724,E'es-CO',E'Importarlos via archivo EXL');
+INSERT INTO "message" VALUES (725,E'es-CO',E'Ya se ingresaron los resultados para esta ronda. No se pueden cambiar!');
+INSERT INTO "message" VALUES (726,E'es-CO',E'Ya se ingresaron los resultados para esta ronda. No se pueden mejorar!');
+INSERT INTO "message" VALUES (727,E'es-CO',E'Retroalimentación #{num}');
+INSERT INTO "message" VALUES (728,E'es-CO',E'ID del usuario');
+INSERT INTO "message" VALUES (729,E'es-CO',E'Encargado del idioma');
+INSERT INTO "message" VALUES (730,E'es-CO',E'Encargados del idioma');
+INSERT INTO "message" VALUES (731,E'es-CO',E'Crear encargado del idioma');
+INSERT INTO "message" VALUES (732,E'es-CO',E'Mostrar ELE ranking');
+INSERT INTO "message" VALUES (733,E'es-CO',E'Mostrar ranking de novatos');
+INSERT INTO "message" VALUES (734,E'es-CO',E'Inglés como idioma de dominio');
+INSERT INTO "message" VALUES (735,E'es-CO',E'NOV');
+INSERT INTO "message" VALUES (736,E'es-CO',E'Seleccionar novato');
+INSERT INTO "message" VALUES (737,E'es-CO',E'ENL');
+INSERT INTO "message" VALUES (738,E'es-CO',E'Agregar nuevo idioma');
+INSERT INTO "message" VALUES (739,E'es-CO',NULL);
+INSERT INTO "message" VALUES (740,E'es-CO',NULL);
+INSERT INTO "message" VALUES (741,E'es-CO',NULL);
+INSERT INTO "message" VALUES (742,E'es-CO',NULL);
+INSERT INTO "message" VALUES (743,E'es-CO',NULL);
+INSERT INTO "message" VALUES (744,E'es-CO',NULL);
+INSERT INTO "message" VALUES (745,E'es-CO',NULL);
+INSERT INTO "message" VALUES (746,E'es-CO',NULL);
+INSERT INTO "message" VALUES (747,E'es-CO',NULL);
+INSERT INTO "message" VALUES (748,E'es-CO',NULL);
+INSERT INTO "message" VALUES (749,E'es-CO',NULL);
+INSERT INTO "message" VALUES (750,E'es-CO',NULL);
+INSERT INTO "message" VALUES (751,E'es-CO',NULL);
+INSERT INTO "message" VALUES (753,E'es-CO',NULL);
+INSERT INTO "message" VALUES (754,E'es-CO',NULL);
+INSERT INTO "message" VALUES (755,E'es-CO',NULL);
+INSERT INTO "message" VALUES (756,E'es-CO',NULL);
+INSERT INTO "message" VALUES (757,E'es-CO',NULL);
+INSERT INTO "message" VALUES (758,E'es-CO',NULL);
+INSERT INTO "message" VALUES (759,E'es-CO',NULL);
+INSERT INTO "message" VALUES (760,E'es-CO',NULL);
+INSERT INTO "message" VALUES (761,E'es-CO',NULL);
+INSERT INTO "message" VALUES (762,E'es-CO',NULL);
+INSERT INTO "message" VALUES (764,E'es-CO',NULL);
+INSERT INTO "message" VALUES (765,E'es-CO',NULL);
+INSERT INTO "message" VALUES (766,E'es-CO',NULL);
+INSERT INTO "message" VALUES (767,E'es-CO',NULL);
+INSERT INTO "message" VALUES (770,E'es-CO',NULL);
+INSERT INTO "message" VALUES (771,E'es-CO',NULL);
+INSERT INTO "message" VALUES (772,E'es-CO',NULL);
+INSERT INTO "message" VALUES (773,E'es-CO',NULL);
+INSERT INTO "message" VALUES (774,E'es-CO',NULL);
+INSERT INTO "message" VALUES (775,E'es-CO',NULL);
+INSERT INTO "message" VALUES (777,E'es-CO',NULL);
+INSERT INTO "message" VALUES (778,E'es-CO',NULL);
+INSERT INTO "message" VALUES (783,E'es-CO',NULL);
+INSERT INTO "message" VALUES (784,E'es-CO',NULL);
+INSERT INTO "message" VALUES (785,E'es-CO',NULL);
+INSERT INTO "message" VALUES (787,E'es-CO',NULL);
+INSERT INTO "message" VALUES (788,E'es-CO',NULL);
+INSERT INTO "message" VALUES (789,E'es-CO',NULL);
+INSERT INTO "message" VALUES (790,E'es-CO',NULL);
+INSERT INTO "message" VALUES (791,E'es-CO',NULL);
+INSERT INTO "message" VALUES (792,E'es-CO',NULL);
+INSERT INTO "message" VALUES (793,E'es-CO',NULL);
+INSERT INTO "message" VALUES (794,E'es-CO',NULL);
+INSERT INTO "message" VALUES (795,E'es-CO',NULL);
+INSERT INTO "message" VALUES (796,E'es-CO',NULL);
+INSERT INTO "message" VALUES (1,E'tr-TR',E'Kullanıcı Kodu');
+INSERT INTO "message" VALUES (2,E'tr-TR',E'İsim');
+INSERT INTO "message" VALUES (3,E'tr-TR',E'{modelClass}\'ı İçeri Aktar');
+INSERT INTO "message" VALUES (4,E'tr-TR',E'İçeri Aktar');
+INSERT INTO "message" VALUES (5,E'tr-TR',E'Topluluklar');
+INSERT INTO "message" VALUES (6,E'tr-TR',E'Güncelle');
+INSERT INTO "message" VALUES (7,E'tr-TR',E'Sil');
+INSERT INTO "message" VALUES (8,E'tr-TR',E'Bu ögeyi silmek istediğinizden emin misiniz?');
+INSERT INTO "message" VALUES (9,E'tr-TR',E'{modelClass}\'ı Güncelle:');
+INSERT INTO "message" VALUES (10,E'tr-TR',E'\'{society}\' Topluluğunu Şununla Birleştir: ...');
+INSERT INTO "message" VALUES (11,E'tr-TR',E'Bir Ana Topluluk Seç ...');
+INSERT INTO "message" VALUES (12,E'tr-TR',E'{modelClass} Oluştur');
+INSERT INTO "message" VALUES (13,E'tr-TR',E'{modelClass}\'ı Görüntüle');
+INSERT INTO "message" VALUES (14,E'tr-TR',E'{modelClass}\'ı Güncelle');
+INSERT INTO "message" VALUES (15,E'tr-TR',E'{modelClass}\'ı Sil');
+INSERT INTO "message" VALUES (16,E'tr-TR',E'Yeni öge ekle');
+INSERT INTO "message" VALUES (17,E'tr-TR',E'İçeriği yeniden yükle');
+INSERT INTO "message" VALUES (18,E'tr-TR',E'CSV Dosyası Aracılığıyla İçeri Aktar');
+INSERT INTO "message" VALUES (19,E'tr-TR',E'Oluştur');
+INSERT INTO "message" VALUES (20,E'tr-TR',E'Diller');
+INSERT INTO "message" VALUES (21,E'tr-TR',E'Dil Oluştur');
+INSERT INTO "message" VALUES (22,E'tr-TR',E'Özel İhtiyaçlar');
+INSERT INTO "message" VALUES (23,E'tr-TR',E'Önerge Etiketleri');
+INSERT INTO "message" VALUES (24,E'tr-TR',E'\'{tag}\' Önerge Etiketini Şununla Birleştir: ...');
+INSERT INTO "message" VALUES (25,E'tr-TR',E'Bir Üst Etiket Seç ...');
+INSERT INTO "message" VALUES (26,E'tr-TR',E'Ara');
+INSERT INTO "message" VALUES (27,E'tr-TR',E'Sıfırla');
+INSERT INTO "message" VALUES (28,E'tr-TR',E'Önerge Etiketi Oluştur');
+INSERT INTO "message" VALUES (29,E'tr-TR',E'Uygulama Programlama Arayüzü');
+INSERT INTO "message" VALUES (30,E'tr-TR',E'Yönetici');
+INSERT INTO "message" VALUES (31,E'tr-TR',E'Mesajlar');
+INSERT INTO "message" VALUES (32,E'tr-TR',E'Mesaj Oluştur');
+INSERT INTO "message" VALUES (33,E'tr-TR',E'{count} adet Etiket değiştirildi');
+INSERT INTO "message" VALUES (34,E'tr-TR',E'Dosya Söz Dizimi Hatalı');
+INSERT INTO "message" VALUES (35,E'tr-TR',E'Önerge Etiketi');
+INSERT INTO "message" VALUES (36,E'tr-TR',E'Tur');
+INSERT INTO "message" VALUES (37,E'tr-TR',E'Kısaltma');
+INSERT INTO "message" VALUES (38,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (39,E'tr-TR',E'Hükümet Açılış');
+INSERT INTO "message" VALUES (40,E'tr-TR',E'Muhalefet Açılış');
+INSERT INTO "message" VALUES (41,E'tr-TR',E'Hükümet Kapanış');
+INSERT INTO "message" VALUES (42,E'tr-TR',E'Muhalefet Kapanış');
+INSERT INTO "message" VALUES (43,E'tr-TR',E'Takım');
+INSERT INTO "message" VALUES (44,E'tr-TR',E'Aktif');
+INSERT INTO "message" VALUES (45,E'tr-TR',E'Turnuva');
+INSERT INTO "message" VALUES (46,E'tr-TR',E'Konuşmacı');
+INSERT INTO "message" VALUES (47,E'tr-TR',E'Topluluk');
+INSERT INTO "message" VALUES (48,E'tr-TR',E'Gölge Takım');
+INSERT INTO "message" VALUES (49,E'tr-TR',E'Dil Durumu');
+INSERT INTO "message" VALUES (50,E'tr-TR',E'Her şey kontrol altında');
+INSERT INTO "message" VALUES (51,E'tr-TR',E'Yerine bir gölge takım yerleştirildi');
+INSERT INTO "message" VALUES (52,E'tr-TR',E'Konuşmacı {letter} maça katılmadı');
+INSERT INTO "message" VALUES (53,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (54,E'tr-TR',E'Etiket');
+INSERT INTO "message" VALUES (55,E'tr-TR',E'Değer');
+INSERT INTO "message" VALUES (56,E'tr-TR',E'Takım pozisyonu boş bırakılamaz');
+INSERT INTO "message" VALUES (57,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (58,E'tr-TR',E'Tabmaster Kullanıcısı');
+INSERT INTO "message" VALUES (59,E'tr-TR',E'Kullanıcı');
+INSERT INTO "message" VALUES (60,E'tr-TR',E'ENL Sıralaması');
+INSERT INTO "message" VALUES (61,E'tr-TR',E'ESL Sıralaması');
+INSERT INTO "message" VALUES (62,E'tr-TR',E'');
+INSERT INTO "message" VALUES (63,E'tr-TR',E'Tam İsim');
+INSERT INTO "message" VALUES (64,E'tr-TR',E'Kısaltma');
+INSERT INTO "message" VALUES (65,E'tr-TR',E'Şehir');
+INSERT INTO "message" VALUES (66,E'tr-TR',E'Ülke');
+INSERT INTO "message" VALUES (67,E'tr-TR',E'HA Takımı');
+INSERT INTO "message" VALUES (68,E'tr-TR',E'MA Takımı');
+INSERT INTO "message" VALUES (69,E'tr-TR',E'HK Takımı');
+INSERT INTO "message" VALUES (70,E'tr-TR',E'MK Takımı');
+INSERT INTO "message" VALUES (71,E'tr-TR',E'Panel');
+INSERT INTO "message" VALUES (72,E'tr-TR',E'Salon');
+INSERT INTO "message" VALUES (73,E'tr-TR',E'HA Geri Bildirimi');
+INSERT INTO "message" VALUES (74,E'tr-TR',E'MA Geri Bildirimi');
+INSERT INTO "message" VALUES (75,E'tr-TR',E'HK Geri Bildirimi');
+INSERT INTO "message" VALUES (76,E'tr-TR',E'MK Geri Bildirimi');
+INSERT INTO "message" VALUES (77,E'tr-TR',E'Zaman');
+INSERT INTO "message" VALUES (78,E'tr-TR',E'Önerge');
+INSERT INTO "message" VALUES (79,E'tr-TR',E'Dil');
+INSERT INTO "message" VALUES (80,E'tr-TR',E'Tarih');
+INSERT INTO "message" VALUES (81,E'tr-TR',E'Bilgi Slaytı');
+INSERT INTO "message" VALUES (82,E'tr-TR',E'Link');
+INSERT INTO "message" VALUES (83,E'tr-TR',E'Kullanıcı Tarafından');
+INSERT INTO "message" VALUES (84,E'tr-TR',E'Çeviri');
+INSERT INTO "message" VALUES (85,E'tr-TR',E'Jüri');
+INSERT INTO "message" VALUES (86,E'tr-TR',E'Cevap');
+INSERT INTO "message" VALUES (87,E'tr-TR',E'Geri Bildirim');
+INSERT INTO "message" VALUES (88,E'tr-TR',E'Soru');
+INSERT INTO "message" VALUES (89,E'tr-TR',E'Oluşturuldu');
+INSERT INTO "message" VALUES (90,E'tr-TR',E'Devam Ediyor');
+INSERT INTO "message" VALUES (91,E'tr-TR',E'Kapandı');
+INSERT INTO "message" VALUES (92,E'tr-TR',E'Gizlendi');
+INSERT INTO "message" VALUES (93,E'tr-TR',E'Ev Sahibi:');
+INSERT INTO "message" VALUES (94,E'tr-TR',E'Turnuva Adı');
+INSERT INTO "message" VALUES (95,E'tr-TR',E'Başlangıç Tarihi');
+INSERT INTO "message" VALUES (96,E'tr-TR',E'Bitiş Tarihi:');
+INSERT INTO "message" VALUES (97,E'tr-TR',E'Zaman Dilimi');
+INSERT INTO "message" VALUES (98,E'tr-TR',E'Logo');
+INSERT INTO "message" VALUES (99,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (100,E'tr-TR',E'Tab Algoritması');
+INSERT INTO "message" VALUES (101,E'tr-TR',E'Tahmini tur sayısı');
+INSERT INTO "message" VALUES (102,E'tr-TR',E'ESL Sıralamasını Göster');
+INSERT INTO "message" VALUES (103,E'tr-TR',E'Final turu var mı');
+INSERT INTO "message" VALUES (104,E'tr-TR',E'Yarı final turu var mı');
+INSERT INTO "message" VALUES (105,E'tr-TR',E'Çeyrek final turu var m?');
+INSERT INTO "message" VALUES (106,E'tr-TR',E'Ön çeyrek final turu var mı');
+INSERT INTO "message" VALUES (107,E'tr-TR',E'Erişim İşareti');
+INSERT INTO "message" VALUES (108,E'tr-TR',E'Katılımcı Kimlik Kartı');
+INSERT INTO "message" VALUES (109,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (110,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (111,E'tr-TR',E'Bölge');
+INSERT INTO "message" VALUES (112,E'tr-TR',E'Dil Kodu');
+INSERT INTO "message" VALUES (113,E'tr-TR',E'Kapsam');
+INSERT INTO "message" VALUES (114,E'tr-TR',E'Son Düzenleme');
+INSERT INTO "message" VALUES (115,E'tr-TR',E'Kuvvet');
+INSERT INTO "message" VALUES (116,E'tr-TR',E'Salon Başkanlığı için uygun');
+INSERT INTO "message" VALUES (117,E'tr-TR',E'İzleniyor');
+INSERT INTO "message" VALUES (118,E'tr-TR',E'Değerlendirilmemiş');
+INSERT INTO "message" VALUES (121,E'tr-TR',E'Jürilik için uygun');
+INSERT INTO "message" VALUES (122,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (124,E'tr-TR',E'Yüksek Potansiyelli');
+INSERT INTO "message" VALUES (125,E'tr-TR',E'Salon Başkanı');
+INSERT INTO "message" VALUES (126,E'tr-TR',E'İyi');
+INSERT INTO "message" VALUES (127,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (128,E'tr-TR',E'Jüri Komitesi Başkanı (CA)');
+INSERT INTO "message" VALUES (129,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (130,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (131,E'tr-TR',E'Konuşmacı Puanları');
+INSERT INTO "message" VALUES (132,E'tr-TR',E'Bu e-posta adresi kullanımda.');
+INSERT INTO "message" VALUES (133,E'tr-TR',E'Münazır');
+INSERT INTO "message" VALUES (134,E'tr-TR',E'Yetkilendirme Anahtarı');
+INSERT INTO "message" VALUES (135,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (136,E'tr-TR',E'Parola Sıfırlama Anahtarı');
+INSERT INTO "message" VALUES (137,E'tr-TR',E'e-posta');
+INSERT INTO "message" VALUES (138,E'tr-TR',E'Hesap Türü');
+INSERT INTO "message" VALUES (139,E'tr-TR',E'Hesap Durumu');
+INSERT INTO "message" VALUES (140,E'tr-TR',E'Son Değişiklik');
+INSERT INTO "message" VALUES (141,E'tr-TR',E'İsim');
+INSERT INTO "message" VALUES (142,E'tr-TR',E'Soyisim');
+INSERT INTO "message" VALUES (143,E'tr-TR',E'Fotoğraf');
+INSERT INTO "message" VALUES (144,E'tr-TR',E'Vekil');
+INSERT INTO "message" VALUES (145,E'tr-TR',E'Tabmaster');
+INSERT INTO "message" VALUES (146,E'tr-TR',E'Yönetici');
+INSERT INTO "message" VALUES (147,E'tr-TR',E'Silindi');
+INSERT INTO "message" VALUES (148,E'tr-TR',E'Belirtmek istemiyor');
+INSERT INTO "message" VALUES (149,E'tr-TR',E'Kadın');
+INSERT INTO "message" VALUES (150,E'tr-TR',E'Erkek');
+INSERT INTO "message" VALUES (151,E'tr-TR',E'Diğer');
+INSERT INTO "message" VALUES (152,E'tr-TR',E'karışık');
+INSERT INTO "message" VALUES (153,E'tr-TR',E'Daha belirlenmedi');
+INSERT INTO "message" VALUES (154,E'tr-TR',E'Mülakat gerekli');
+INSERT INTO "message" VALUES (155,E'tr-TR',E'EPL');
+INSERT INTO "message" VALUES (157,E'tr-TR',E'ESL');
+INSERT INTO "message" VALUES (158,E'tr-TR',E'İkinci dili İngilizce olan');
+INSERT INTO "message" VALUES (159,E'tr-TR',E'EFL');
+INSERT INTO "message" VALUES (160,E'tr-TR',E'Yabancı dili İngilizce olan');
+INSERT INTO "message" VALUES (161,E'tr-TR',E'Belirlenmemiş');
+INSERT INTO "message" VALUES (162,E'tr-TR',E'{user_name} Kullanıcısı İçin Kulüp İçi İlişkiyi Kaydetmede Hata');
+INSERT INTO "message" VALUES (163,E'tr-TR',E'{user_name} Kullanıcısını Kaydetmede Hata');
+INSERT INTO "message" VALUES (164,E'tr-TR',E'{tournament_name}: {user_name} için Kullanıcı Hesabı');
+INSERT INTO "message" VALUES (165,E'tr-TR',E'Bu URL-Slug\'ı kullanmanız mümkün değil');
+INSERT INTO "message" VALUES (166,E'tr-TR',E'Yayımlandı');
+INSERT INTO "message" VALUES (167,E'tr-TR',E'Gösterildi');
+INSERT INTO "message" VALUES (168,E'tr-TR',E'Başladı');
+INSERT INTO "message" VALUES (169,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (170,E'tr-TR',E'Bitti');
+INSERT INTO "message" VALUES (171,E'tr-TR',E'Ana');
+INSERT INTO "message" VALUES (172,E'tr-TR',E'Çaylak');
+INSERT INTO "message" VALUES (173,E'tr-TR',E'Final');
+INSERT INTO "message" VALUES (174,E'tr-TR',E'Yarı Final');
+INSERT INTO "message" VALUES (175,E'tr-TR',E'Çeyrek Final');
+INSERT INTO "message" VALUES (176,E'tr-TR',E'Ön Çeyrek Final');
+INSERT INTO "message" VALUES (177,E'tr-TR',E'Tur #{num}');
+INSERT INTO "message" VALUES (178,E'tr-TR',E'Turlar');
+INSERT INTO "message" VALUES (179,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (180,E'tr-TR',E'Bilgi Slaydı');
+INSERT INTO "message" VALUES (181,E'tr-TR',E'Hazırlık Süresi Başladı');
+INSERT INTO "message" VALUES (182,E'tr-TR',E'Ölçülen Son Sıcaklık');
+INSERT INTO "message" VALUES (183,E'tr-TR',E'ms\'de hazırlandı');
+INSERT INTO "message" VALUES (184,E'tr-TR',E'Bir salonu doldurmak için yeterli takım bulunmuyor - (aktif: {teams_count})');
+INSERT INTO "message" VALUES (185,E'tr-TR',E'En az iki jüri gerekli - (aktif: {count_adju})');
+INSERT INTO "message" VALUES (186,E'tr-TR',E'Aktif takım sayısı 4\'e bölünmeli ;) - (aktif: {count_teams})');
+INSERT INTO "message" VALUES (187,E'tr-TR',E'Gereğinden az salon bulunuyor - (aktif: {active_rooms})');
+INSERT INTO "message" VALUES (188,E'tr-TR',E'Yeteri kadar jüri bulunmuyor - (aktif: {active}, minimum: {required})');
+INSERT INTO "message" VALUES (189,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (190,E'tr-TR',E'Paneli kaydederken hata: {message}');
+INSERT INTO "message" VALUES (191,E'tr-TR',E'Maçı kaydederken hata: {message}');
+INSERT INTO "message" VALUES (192,E'tr-TR',E'Maçı kaydederken hata:<br>{errors}');
+INSERT INTO "message" VALUES (193,E'tr-TR',E'Güncellemek istediğiniz Maç #{num} bulunamadı.');
+INSERT INTO "message" VALUES (195,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (196,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (197,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (198,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (199,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (200,E'tr-TR',E'İyi Değil');
+INSERT INTO "message" VALUES (201,E'tr-TR',E'Oldukça İyi');
+INSERT INTO "message" VALUES (202,E'tr-TR',E'Mükemmel');
+INSERT INTO "message" VALUES (203,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (204,E'tr-TR',E'Kısa Metin Kutucuğu');
+INSERT INTO "message" VALUES (205,E'tr-TR',E'Uzun Metin Kutucuğu');
+INSERT INTO "message" VALUES (206,E'tr-TR',E'Sayı Kutucuğu');
+INSERT INTO "message" VALUES (207,E'tr-TR',E'Onay Kutusu Listesi');
+INSERT INTO "message" VALUES (208,E'tr-TR',E'Maç');
+INSERT INTO "message" VALUES (209,E'tr-TR',E'Geri Bildirim: ID');
+INSERT INTO "message" VALUES (210,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (211,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (212,E'tr-TR',E'Grup');
+INSERT INTO "message" VALUES (213,E'tr-TR',E'Aktif Salon');
+INSERT INTO "message" VALUES (214,E'tr-TR',E'Yan Jüri');
+INSERT INTO "message" VALUES (215,E'tr-TR',E'Kullanıldı');
+INSERT INTO "message" VALUES (216,E'tr-TR',E'Önceden Belirlenmiş Paneldir');
+INSERT INTO "message" VALUES (217,E'tr-TR',E'Panel #{id}\'de {amount} Salon Başkanı var');
+INSERT INTO "message" VALUES (218,E'tr-TR',E'Kategori');
+INSERT INTO "message" VALUES (219,E'tr-TR',E'Mesaj');
+INSERT INTO "message" VALUES (220,E'tr-TR',E'İşlev');
+INSERT INTO "message" VALUES (221,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (222,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (223,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (224,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (225,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (226,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (227,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (228,E'tr-TR',E'HA A Konuşmacı Puanı');
+INSERT INTO "message" VALUES (229,E'tr-TR',E'HA B Konuşmacı Puanı');
+INSERT INTO "message" VALUES (230,E'tr-TR',E'HA Sıralama');
+INSERT INTO "message" VALUES (231,E'tr-TR',E'MA A Konuşmacı Puanı');
+INSERT INTO "message" VALUES (232,E'tr-TR',E'MA B Konuşmacı Puanı');
+INSERT INTO "message" VALUES (233,E'tr-TR',E'MA Sıralama');
+INSERT INTO "message" VALUES (234,E'tr-TR',E'HK A Konuşmacı Puanı');
+INSERT INTO "message" VALUES (235,E'tr-TR',E'HK B Konuşmacı Puanı');
+INSERT INTO "message" VALUES (236,E'tr-TR',E'HK Sıralama');
+INSERT INTO "message" VALUES (237,E'tr-TR',E'MK A Konuşmacı Puanı');
+INSERT INTO "message" VALUES (238,E'tr-TR',E'MK B Konuşmacı Puanı');
+INSERT INTO "message" VALUES (239,E'tr-TR',E'MK Sıralama');
+INSERT INTO "message" VALUES (240,E'tr-TR',E'Kontrol Edildi');
+INSERT INTO "message" VALUES (241,E'tr-TR',E'Şu Kullanıcı Tarafından Girildi: ID');
+INSERT INTO "message" VALUES (242,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (243,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (244,E'tr-TR',E'CA');
+INSERT INTO "message" VALUES (245,E'tr-TR',E'Parola sıfırlama anahtarı boş bırakılamaz.');
+INSERT INTO "message" VALUES (246,E'tr-TR',E'Parola sıfırlama anahtarı hatası.');
+INSERT INTO "message" VALUES (247,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (248,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (249,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (250,E'tr-TR',E'CSV Dosyası');
+INSERT INTO "message" VALUES (251,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (252,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (253,E'tr-TR',E'Kullanıcı Adı');
+INSERT INTO "message" VALUES (254,E'tr-TR',E'Profil Fotoğrafı');
+INSERT INTO "message" VALUES (255,E'tr-TR',E'Güncel Topluluk');
+INSERT INTO "message" VALUES (256,E'tr-TR',E'Kendinizi hangi cinsiyet kategorisiyle en çok bağdaştırıyorsunuz');
+INSERT INTO "message" VALUES (257,E'tr-TR',E'Bu URL kullanılamaz.');
+INSERT INTO "message" VALUES (258,E'tr-TR',E'{adju} burada!');
+INSERT INTO "message" VALUES (259,E'tr-TR',E'{adju} zaten yoklama vermişti');
+INSERT INTO "message" VALUES (260,E'tr-TR',E'{id} numarası geçersiz! Bu kişi jüri değil!');
+INSERT INTO "message" VALUES (261,E'tr-TR',E'{speaker} burada!');
+INSERT INTO "message" VALUES (262,E'tr-TR',E'{speaker} zaten yoklama vermişti');
+INSERT INTO "message" VALUES (263,E'tr-TR',E'{id} numarası geçersiz! Bu bir takım değil!');
+INSERT INTO "message" VALUES (264,E'tr-TR',E'Geçerli bir girdi değil');
+INSERT INTO "message" VALUES (265,E'tr-TR',E'Doğrulama Kodu');
+INSERT INTO "message" VALUES (266,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (267,E'tr-TR',E'{user} için parola sıfırlama');
+INSERT INTO "message" VALUES (268,E'tr-TR',E'Bu e-posta adresiyle bir kullanıcı bulunamadı');
+INSERT INTO "message" VALUES (269,E'tr-TR',E'{object} Ekle');
+INSERT INTO "message" VALUES (270,E'tr-TR',E'Topluluk Oluştur');
+INSERT INTO "message" VALUES (271,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (272,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (273,E'tr-TR',E'Bir ülke ara ...');
+INSERT INTO "message" VALUES (274,E'tr-TR',E'Yeni Topluluk Ekle');
+INSERT INTO "message" VALUES (275,E'tr-TR',E'Bir topluluk ara ...');
+INSERT INTO "message" VALUES (276,E'tr-TR',E'Başlangıç tarihini gir ...');
+INSERT INTO "message" VALUES (277,E'tr-TR',E'Eğer mümkünse bitiş tarihini gir ...');
+INSERT INTO "message" VALUES (278,E'tr-TR',E'Dil Görevlileri');
+INSERT INTO "message" VALUES (279,E'tr-TR',E'Görevli');
+INSERT INTO "message" VALUES (280,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (281,E'tr-TR',E'Dil Durumunu Gözden Geçirme');
+INSERT INTO "message" VALUES (282,E'tr-TR',E'Durum');
+INSERT INTO "message" VALUES (283,E'tr-TR',E'Bir mülakat iste');
+INSERT INTO "message" VALUES (284,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (285,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (286,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (288,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (289,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (290,E'tr-TR',E'Yoklama');
+INSERT INTO "message" VALUES (291,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (292,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (293,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (294,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (295,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (296,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (297,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (298,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (299,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (300,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (301,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (302,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (303,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (304,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (305,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (307,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (308,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (309,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (310,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (311,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (312,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (313,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (314,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (315,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (316,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (317,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (318,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (319,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (320,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (321,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (322,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (323,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (325,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (326,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (327,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (328,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (329,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (330,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (331,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (332,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (333,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (334,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (335,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (336,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (337,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (338,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (339,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (340,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (341,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (342,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (343,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (344,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (345,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (346,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (347,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (348,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (349,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (350,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (351,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (352,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (353,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (354,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (355,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (356,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (357,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (358,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (359,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (360,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (361,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (362,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (363,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (364,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (365,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (366,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (367,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (368,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (369,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (370,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (371,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (372,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (373,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (374,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (375,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (376,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (377,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (378,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (379,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (380,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (381,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (382,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (383,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (384,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (385,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (386,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (387,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (388,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (389,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (390,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (391,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (392,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (393,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (394,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (395,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (396,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (397,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (398,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (399,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (400,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (401,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (402,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (403,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (404,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (405,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (407,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (408,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (411,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (412,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (413,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (414,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (415,E'tr-TR',E'Cinsiyet');
+INSERT INTO "message" VALUES (416,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (417,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (418,E'tr-TR',E'Yükleniyor ...');
+INSERT INTO "message" VALUES (419,E'tr-TR',E'Geri Bildirimi Görüntüle');
+INSERT INTO "message" VALUES (420,E'tr-TR',E'Kullanıcıyı Görüntüle');
+INSERT INTO "message" VALUES (421,E'tr-TR',E'{venue} salonunu şununla değiştir:');
+INSERT INTO "message" VALUES (422,E'tr-TR',E'Bir Salon Seç ...');
+INSERT INTO "message" VALUES (423,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (424,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (425,E'tr-TR',E'Bir Takım Seç ...');
+INSERT INTO "message" VALUES (426,E'tr-TR',E'Bir Dil Seç ...');
+INSERT INTO "message" VALUES (427,E'tr-TR',E'Bir Jüri Seç ...');
+INSERT INTO "message" VALUES (428,E'tr-TR',E'Jürileri Değiştir');
+INSERT INTO "message" VALUES (429,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (430,E'tr-TR',E'ile');
+INSERT INTO "message" VALUES (431,E'tr-TR',E'bununla ...');
+INSERT INTO "message" VALUES (432,E'tr-TR',E'Bir Önerge Etiketi Ara ...');
+INSERT INTO "message" VALUES (433,E'tr-TR',E'Sıralama');
+INSERT INTO "message" VALUES (434,E'tr-TR',E'Toplam');
+INSERT INTO "message" VALUES (435,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (436,E'tr-TR',E'Salon');
+INSERT INTO "message" VALUES (437,E'tr-TR',E'Final Turları');
+INSERT INTO "message" VALUES (438,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (439,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (440,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (441,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (442,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (443,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (444,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (445,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (446,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (447,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (448,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (449,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (450,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (451,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (452,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (453,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (454,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (455,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (456,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (457,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (458,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (459,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (460,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (461,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (462,E'tr-TR',E'Teşekkürler');
+INSERT INTO "message" VALUES (463,E'tr-TR',E'Teşekkürler!');
+INSERT INTO "message" VALUES (464,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (465,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (466,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (467,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (468,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (469,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (470,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (471,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (472,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (473,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (474,E'tr-TR',E'Jüri Geri Bildirimi');
+INSERT INTO "message" VALUES (475,E'tr-TR',E'Geri Bildirim Yolla');
+INSERT INTO "message" VALUES (476,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (477,E'tr-TR',E'Dil Durumunu Gözden Geçir');
+INSERT INTO "message" VALUES (478,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (479,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (480,E'tr-TR',E'{tournament} - Yönetici');
+INSERT INTO "message" VALUES (481,E'tr-TR',E'Salonları Listele');
+INSERT INTO "message" VALUES (482,E'tr-TR',E'Salon Oluştur');
+INSERT INTO "message" VALUES (483,E'tr-TR',E'Salonları İçeri Aktar');
+INSERT INTO "message" VALUES (484,E'tr-TR',E'Takımları Listele');
+INSERT INTO "message" VALUES (485,E'tr-TR',E'Takım Oluştur');
+INSERT INTO "message" VALUES (486,E'tr-TR',E'Takımları İçeri Aktar');
+INSERT INTO "message" VALUES (487,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (488,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (489,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (490,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (491,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (492,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (493,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (494,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (495,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (496,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (497,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (498,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (499,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (500,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (501,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (502,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (503,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (504,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (505,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (506,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (507,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (508,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (509,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (510,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (511,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (512,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (513,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (514,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (515,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (516,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (517,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (518,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (519,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (520,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (521,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (522,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (524,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (525,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (526,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (527,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (529,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (530,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (531,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (532,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (533,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (534,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (535,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (536,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (537,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (538,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (539,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (540,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (541,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (542,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (543,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (544,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (545,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (546,E'tr-TR',E'Takım Yorumları');
+INSERT INTO "message" VALUES (547,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (548,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (549,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (550,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (551,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (552,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (553,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (554,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (555,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (556,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (557,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (558,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (559,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (560,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (561,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (562,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (563,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (564,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (565,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (566,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (567,E'tr-TR',E'Münazara Topluluğu Geçmişi');
+INSERT INTO "message" VALUES (568,E'tr-TR',E'Geçmişe yeni topluluk ekle');
+INSERT INTO "message" VALUES (569,E'tr-TR',E'hala aktif');
+INSERT INTO "message" VALUES (570,E'tr-TR',E'Topluluk Bilgisini Güncelle');
+INSERT INTO "message" VALUES (571,E'tr-TR',E'{name}\'i yeni parola almaya zorla');
+INSERT INTO "message" VALUES (572,E'tr-TR',E'İptal');
+INSERT INTO "message" VALUES (573,E'tr-TR',E'Bir Turnuva Ara ...');
+INSERT INTO "message" VALUES (574,E'tr-TR',E'Yeni Parola Belirle');
+INSERT INTO "message" VALUES (575,E'tr-TR',E'Kullanıcıyı Güncelle');
+INSERT INTO "message" VALUES (576,E'tr-TR',E'Kullanıcıyı Sil');
+INSERT INTO "message" VALUES (577,E'tr-TR',E'Kullanıcı Oluştur');
+INSERT INTO "message" VALUES (578,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (579,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (580,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (582,E'tr-TR',E'Uygun dosya bulunamad?');
+INSERT INTO "message" VALUES (583,E'tr-TR',E'E?le?en sonuç bulunamad?');
+INSERT INTO "message" VALUES (584,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (585,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (586,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (587,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (588,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (589,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (590,E'tr-TR',E'Kullanıcı kaydedildi! Hoşgeldin {user}');
+INSERT INTO "message" VALUES (591,E'tr-TR',E'Giriş başarısız!');
+INSERT INTO "message" VALUES (592,E'tr-TR',E'Daha fazla yönlendirme için e-posta kutunuzu ziyaret edin');
+INSERT INTO "message" VALUES (593,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (594,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (595,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (596,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (597,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (598,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (599,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (600,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (601,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (602,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (603,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (604,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (605,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (606,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (607,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (608,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (609,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (610,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (611,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (613,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (614,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (615,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (616,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (617,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (618,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (619,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (620,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (622,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (623,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (624,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (625,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (626,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (627,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (628,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (629,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (630,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (631,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (632,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (633,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (634,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (635,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (636,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (637,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (638,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (639,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (640,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (641,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (642,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (643,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (644,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (645,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (646,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (647,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (648,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (649,E'tr-TR',E'Dil seçenekleri kaydedildi');
+INSERT INTO "message" VALUES (650,E'tr-TR',E'Dil seçeneklerini kaydetmede hata');
+INSERT INTO "message" VALUES (651,E'tr-TR',E'Kullanıcı bulunamadı!');
+INSERT INTO "message" VALUES (652,E'tr-TR',E'{object} başarıyla eklendi');
+INSERT INTO "message" VALUES (653,E'tr-TR',E'Başarıyla silindi');
+INSERT INTO "message" VALUES (654,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (656,E'tr-TR',E'Sonuçların kaydedilmesinde hata.<br>Lütfen basılı sonuç kağıdı isteyin.');
+INSERT INTO "message" VALUES (657,E'tr-TR',E'Sonuçlar kaydedildi. Sıradaki!');
+INSERT INTO "message" VALUES (658,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (659,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (660,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (661,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (662,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (663,E'tr-TR',E'Yeterli sayıda salon mevcut değil');
+INSERT INTO "message" VALUES (664,E'tr-TR',E'Gereğinden fazla sayıda salon var');
+INSERT INTO "message" VALUES (665,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (666,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (667,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (668,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (669,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (670,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (671,E'tr-TR',E'Jüri daha önce bu takımı gördü');
+INSERT INTO "message" VALUES (672,E'tr-TR',E'Jüri daha önce bu kombinasyonu izledi');
+INSERT INTO "message" VALUES (673,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (674,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (675,E'tr-TR',E'Jüri {adju} ve {team} aynı topluluğa mensuplar.');
+INSERT INTO "message" VALUES (676,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (677,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (678,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (679,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (680,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (681,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (682,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (686,E'tr-TR',E'Tanımlanmamış');
+INSERT INTO "message" VALUES (687,E'tr-TR',E'Kuzey Avrupa');
+INSERT INTO "message" VALUES (688,E'tr-TR',E'Batı Avrupa');
+INSERT INTO "message" VALUES (689,E'tr-TR',E'Güney Avrupa');
+INSERT INTO "message" VALUES (690,E'tr-TR',E'Doğu Avrupa');
+INSERT INTO "message" VALUES (691,E'tr-TR',E'Orta Asya');
+INSERT INTO "message" VALUES (692,E'tr-TR',E'Doğu Asya');
+INSERT INTO "message" VALUES (693,E'tr-TR',E'Batı Asya');
+INSERT INTO "message" VALUES (694,E'tr-TR',E'Güney Asya');
+INSERT INTO "message" VALUES (695,E'tr-TR',E'Güneydoğu Asya');
+INSERT INTO "message" VALUES (696,E'tr-TR',E'Avustralya ve Yeni Zelanda');
+INSERT INTO "message" VALUES (697,E'tr-TR',E'Mikronezya');
+INSERT INTO "message" VALUES (698,E'tr-TR',E'Melanezya');
+INSERT INTO "message" VALUES (699,E'tr-TR',E'Polinezya');
+INSERT INTO "message" VALUES (700,E'tr-TR',E'Kuzey Afrika');
+INSERT INTO "message" VALUES (701,E'tr-TR',E'Batı Afrika');
+INSERT INTO "message" VALUES (702,E'tr-TR',E'Orta Afrika');
+INSERT INTO "message" VALUES (703,E'tr-TR',E'Doğu Afrika');
+INSERT INTO "message" VALUES (704,E'tr-TR',E'Güney Afrika');
+INSERT INTO "message" VALUES (705,E'tr-TR',E'Kuzey Amerika');
+INSERT INTO "message" VALUES (706,E'tr-TR',E'Orta Amerika');
+INSERT INTO "message" VALUES (707,E'tr-TR',E'Karayipler');
+INSERT INTO "message" VALUES (708,E'tr-TR',E'Güney Amerika');
+INSERT INTO "message" VALUES (709,E'tr-TR',E'Antarktika');
+INSERT INTO "message" VALUES (710,E'tr-TR',E'Cezalı Jüri Üyesi');
+INSERT INTO "message" VALUES (711,E'tr-TR',E'Kötü Jüri Üyesi');
+INSERT INTO "message" VALUES (712,E'tr-TR',E'Vasat Jüri Üyesi');
+INSERT INTO "message" VALUES (713,E'tr-TR',E'Ortalama Jüri Üyesi');
+INSERT INTO "message" VALUES (714,E'tr-TR',E'Ortalama Salon Başkanı');
+INSERT INTO "message" VALUES (715,E'tr-TR',E'İyi Salon Başkanı');
+INSERT INTO "message" VALUES (716,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (717,E'tr-TR',E'<b>Bu turnuvanın takımları henüz eklenmemiş.</b><br>{add_button} ya da {import_button}');
+INSERT INTO "message" VALUES (718,E'tr-TR',E'Takım ekle');
+INSERT INTO "message" VALUES (719,E'tr-TR',E'CSV dosyası aracılığıyla içeri aktar');
+INSERT INTO "message" VALUES (720,E'tr-TR',E'Bu turnuvanın salonları henüz girilmemiş.<br>{add} ya da {import}');
+INSERT INTO "message" VALUES (721,E'tr-TR',E'Salon ekle');
+INSERT INTO "message" VALUES (722,E'tr-TR',E'CSV dosyası aracılığıyla içeri aktar');
+INSERT INTO "message" VALUES (723,E'tr-TR',E'<b>Bu turnuvanın jürileri henüz eklenmemiş.</b><br>{add_button} ya da {import_button}');
+INSERT INTO "message" VALUES (724,E'tr-TR',E'CSV dosyası aracılığıyla içeri aktar');
+INSERT INTO "message" VALUES (725,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (726,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (727,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (728,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (729,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (730,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (731,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (732,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (733,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (734,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (735,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (736,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (737,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (738,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (739,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (740,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (741,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (742,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (743,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (744,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (745,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (746,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (747,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (748,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (749,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (750,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (751,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (753,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (754,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (755,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (756,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (757,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (758,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (759,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (760,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (761,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (762,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (764,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (765,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (766,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (767,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (770,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (771,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (772,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (773,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (774,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (775,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (777,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (778,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (783,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (784,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (785,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (787,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (788,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (789,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (790,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (791,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (792,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (793,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (794,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (795,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (796,E'tr-TR',NULL);
+INSERT INTO "message" VALUES (1,E'{lang}',NULL);
+INSERT INTO "message" VALUES (2,E'{lang}',NULL);
+INSERT INTO "message" VALUES (3,E'{lang}',NULL);
+INSERT INTO "message" VALUES (4,E'{lang}',NULL);
+INSERT INTO "message" VALUES (5,E'{lang}',NULL);
+INSERT INTO "message" VALUES (6,E'{lang}',NULL);
+INSERT INTO "message" VALUES (7,E'{lang}',NULL);
+INSERT INTO "message" VALUES (8,E'{lang}',NULL);
+INSERT INTO "message" VALUES (9,E'{lang}',NULL);
+INSERT INTO "message" VALUES (10,E'{lang}',NULL);
+INSERT INTO "message" VALUES (11,E'{lang}',NULL);
+INSERT INTO "message" VALUES (12,E'{lang}',NULL);
+INSERT INTO "message" VALUES (13,E'{lang}',NULL);
+INSERT INTO "message" VALUES (14,E'{lang}',NULL);
+INSERT INTO "message" VALUES (15,E'{lang}',NULL);
+INSERT INTO "message" VALUES (16,E'{lang}',NULL);
+INSERT INTO "message" VALUES (17,E'{lang}',NULL);
+INSERT INTO "message" VALUES (18,E'{lang}',NULL);
+INSERT INTO "message" VALUES (19,E'{lang}',NULL);
+INSERT INTO "message" VALUES (20,E'{lang}',NULL);
+INSERT INTO "message" VALUES (21,E'{lang}',NULL);
+INSERT INTO "message" VALUES (22,E'{lang}',NULL);
+INSERT INTO "message" VALUES (23,E'{lang}',NULL);
+INSERT INTO "message" VALUES (24,E'{lang}',NULL);
+INSERT INTO "message" VALUES (25,E'{lang}',NULL);
+INSERT INTO "message" VALUES (26,E'{lang}',NULL);
+INSERT INTO "message" VALUES (27,E'{lang}',NULL);
+INSERT INTO "message" VALUES (28,E'{lang}',NULL);
+INSERT INTO "message" VALUES (29,E'{lang}',NULL);
+INSERT INTO "message" VALUES (30,E'{lang}',NULL);
+INSERT INTO "message" VALUES (31,E'{lang}',NULL);
+INSERT INTO "message" VALUES (32,E'{lang}',NULL);
+INSERT INTO "message" VALUES (33,E'{lang}',NULL);
+INSERT INTO "message" VALUES (34,E'{lang}',NULL);
+INSERT INTO "message" VALUES (35,E'{lang}',NULL);
+INSERT INTO "message" VALUES (36,E'{lang}',NULL);
+INSERT INTO "message" VALUES (37,E'{lang}',NULL);
+INSERT INTO "message" VALUES (38,E'{lang}',NULL);
+INSERT INTO "message" VALUES (39,E'{lang}',NULL);
+INSERT INTO "message" VALUES (40,E'{lang}',NULL);
+INSERT INTO "message" VALUES (41,E'{lang}',NULL);
+INSERT INTO "message" VALUES (42,E'{lang}',NULL);
+INSERT INTO "message" VALUES (43,E'{lang}',NULL);
+INSERT INTO "message" VALUES (44,E'{lang}',NULL);
+INSERT INTO "message" VALUES (45,E'{lang}',NULL);
+INSERT INTO "message" VALUES (46,E'{lang}',NULL);
+INSERT INTO "message" VALUES (47,E'{lang}',NULL);
+INSERT INTO "message" VALUES (48,E'{lang}',NULL);
+INSERT INTO "message" VALUES (49,E'{lang}',NULL);
+INSERT INTO "message" VALUES (50,E'{lang}',NULL);
+INSERT INTO "message" VALUES (51,E'{lang}',NULL);
+INSERT INTO "message" VALUES (52,E'{lang}',NULL);
+INSERT INTO "message" VALUES (53,E'{lang}',NULL);
+INSERT INTO "message" VALUES (54,E'{lang}',NULL);
+INSERT INTO "message" VALUES (55,E'{lang}',NULL);
+INSERT INTO "message" VALUES (56,E'{lang}',NULL);
+INSERT INTO "message" VALUES (57,E'{lang}',NULL);
+INSERT INTO "message" VALUES (58,E'{lang}',NULL);
+INSERT INTO "message" VALUES (59,E'{lang}',NULL);
+INSERT INTO "message" VALUES (60,E'{lang}',NULL);
+INSERT INTO "message" VALUES (61,E'{lang}',NULL);
+INSERT INTO "message" VALUES (62,E'{lang}',NULL);
+INSERT INTO "message" VALUES (63,E'{lang}',NULL);
+INSERT INTO "message" VALUES (64,E'{lang}',NULL);
+INSERT INTO "message" VALUES (65,E'{lang}',NULL);
+INSERT INTO "message" VALUES (66,E'{lang}',NULL);
+INSERT INTO "message" VALUES (67,E'{lang}',NULL);
+INSERT INTO "message" VALUES (68,E'{lang}',NULL);
+INSERT INTO "message" VALUES (69,E'{lang}',NULL);
+INSERT INTO "message" VALUES (70,E'{lang}',NULL);
+INSERT INTO "message" VALUES (71,E'{lang}',NULL);
+INSERT INTO "message" VALUES (72,E'{lang}',NULL);
+INSERT INTO "message" VALUES (73,E'{lang}',NULL);
+INSERT INTO "message" VALUES (74,E'{lang}',NULL);
+INSERT INTO "message" VALUES (75,E'{lang}',NULL);
+INSERT INTO "message" VALUES (76,E'{lang}',NULL);
+INSERT INTO "message" VALUES (77,E'{lang}',NULL);
+INSERT INTO "message" VALUES (78,E'{lang}',NULL);
+INSERT INTO "message" VALUES (79,E'{lang}',NULL);
+INSERT INTO "message" VALUES (80,E'{lang}',NULL);
+INSERT INTO "message" VALUES (81,E'{lang}',NULL);
+INSERT INTO "message" VALUES (82,E'{lang}',NULL);
+INSERT INTO "message" VALUES (83,E'{lang}',NULL);
+INSERT INTO "message" VALUES (84,E'{lang}',NULL);
+INSERT INTO "message" VALUES (85,E'{lang}',NULL);
+INSERT INTO "message" VALUES (86,E'{lang}',NULL);
+INSERT INTO "message" VALUES (87,E'{lang}',NULL);
+INSERT INTO "message" VALUES (88,E'{lang}',NULL);
+INSERT INTO "message" VALUES (89,E'{lang}',NULL);
+INSERT INTO "message" VALUES (90,E'{lang}',NULL);
+INSERT INTO "message" VALUES (91,E'{lang}',NULL);
+INSERT INTO "message" VALUES (92,E'{lang}',NULL);
+INSERT INTO "message" VALUES (93,E'{lang}',NULL);
+INSERT INTO "message" VALUES (94,E'{lang}',NULL);
+INSERT INTO "message" VALUES (95,E'{lang}',NULL);
+INSERT INTO "message" VALUES (96,E'{lang}',NULL);
+INSERT INTO "message" VALUES (97,E'{lang}',NULL);
+INSERT INTO "message" VALUES (98,E'{lang}',NULL);
+INSERT INTO "message" VALUES (99,E'{lang}',NULL);
+INSERT INTO "message" VALUES (100,E'{lang}',NULL);
+INSERT INTO "message" VALUES (101,E'{lang}',NULL);
+INSERT INTO "message" VALUES (102,E'{lang}',NULL);
+INSERT INTO "message" VALUES (103,E'{lang}',NULL);
+INSERT INTO "message" VALUES (104,E'{lang}',NULL);
+INSERT INTO "message" VALUES (105,E'{lang}',NULL);
+INSERT INTO "message" VALUES (106,E'{lang}',NULL);
+INSERT INTO "message" VALUES (107,E'{lang}',NULL);
+INSERT INTO "message" VALUES (108,E'{lang}',NULL);
+INSERT INTO "message" VALUES (109,E'{lang}',NULL);
+INSERT INTO "message" VALUES (110,E'{lang}',NULL);
+INSERT INTO "message" VALUES (111,E'{lang}',NULL);
+INSERT INTO "message" VALUES (112,E'{lang}',NULL);
+INSERT INTO "message" VALUES (113,E'{lang}',NULL);
+INSERT INTO "message" VALUES (114,E'{lang}',NULL);
+INSERT INTO "message" VALUES (115,E'{lang}',NULL);
+INSERT INTO "message" VALUES (116,E'{lang}',NULL);
+INSERT INTO "message" VALUES (117,E'{lang}',NULL);
+INSERT INTO "message" VALUES (118,E'{lang}',NULL);
+INSERT INTO "message" VALUES (121,E'{lang}',NULL);
+INSERT INTO "message" VALUES (122,E'{lang}',NULL);
+INSERT INTO "message" VALUES (124,E'{lang}',NULL);
+INSERT INTO "message" VALUES (125,E'{lang}',NULL);
+INSERT INTO "message" VALUES (126,E'{lang}',NULL);
+INSERT INTO "message" VALUES (127,E'{lang}',NULL);
+INSERT INTO "message" VALUES (128,E'{lang}',NULL);
+INSERT INTO "message" VALUES (129,E'{lang}',NULL);
+INSERT INTO "message" VALUES (130,E'{lang}',NULL);
+INSERT INTO "message" VALUES (131,E'{lang}',NULL);
+INSERT INTO "message" VALUES (132,E'{lang}',NULL);
+INSERT INTO "message" VALUES (133,E'{lang}',NULL);
+INSERT INTO "message" VALUES (134,E'{lang}',NULL);
+INSERT INTO "message" VALUES (135,E'{lang}',NULL);
+INSERT INTO "message" VALUES (136,E'{lang}',NULL);
+INSERT INTO "message" VALUES (137,E'{lang}',NULL);
+INSERT INTO "message" VALUES (138,E'{lang}',NULL);
+INSERT INTO "message" VALUES (139,E'{lang}',NULL);
+INSERT INTO "message" VALUES (140,E'{lang}',NULL);
+INSERT INTO "message" VALUES (141,E'{lang}',NULL);
+INSERT INTO "message" VALUES (142,E'{lang}',NULL);
+INSERT INTO "message" VALUES (143,E'{lang}',NULL);
+INSERT INTO "message" VALUES (144,E'{lang}',NULL);
+INSERT INTO "message" VALUES (145,E'{lang}',NULL);
+INSERT INTO "message" VALUES (146,E'{lang}',NULL);
+INSERT INTO "message" VALUES (147,E'{lang}',NULL);
+INSERT INTO "message" VALUES (148,E'{lang}',NULL);
+INSERT INTO "message" VALUES (149,E'{lang}',NULL);
+INSERT INTO "message" VALUES (150,E'{lang}',NULL);
+INSERT INTO "message" VALUES (151,E'{lang}',NULL);
+INSERT INTO "message" VALUES (152,E'{lang}',NULL);
+INSERT INTO "message" VALUES (153,E'{lang}',NULL);
+INSERT INTO "message" VALUES (154,E'{lang}',NULL);
+INSERT INTO "message" VALUES (155,E'{lang}',NULL);
+INSERT INTO "message" VALUES (157,E'{lang}',NULL);
+INSERT INTO "message" VALUES (158,E'{lang}',NULL);
+INSERT INTO "message" VALUES (159,E'{lang}',NULL);
+INSERT INTO "message" VALUES (160,E'{lang}',NULL);
+INSERT INTO "message" VALUES (161,E'{lang}',NULL);
+INSERT INTO "message" VALUES (162,E'{lang}',NULL);
+INSERT INTO "message" VALUES (163,E'{lang}',NULL);
+INSERT INTO "message" VALUES (164,E'{lang}',NULL);
+INSERT INTO "message" VALUES (165,E'{lang}',NULL);
+INSERT INTO "message" VALUES (166,E'{lang}',NULL);
+INSERT INTO "message" VALUES (167,E'{lang}',NULL);
+INSERT INTO "message" VALUES (168,E'{lang}',NULL);
+INSERT INTO "message" VALUES (169,E'{lang}',NULL);
+INSERT INTO "message" VALUES (170,E'{lang}',NULL);
+INSERT INTO "message" VALUES (171,E'{lang}',NULL);
+INSERT INTO "message" VALUES (172,E'{lang}',NULL);
+INSERT INTO "message" VALUES (173,E'{lang}',NULL);
+INSERT INTO "message" VALUES (174,E'{lang}',NULL);
+INSERT INTO "message" VALUES (175,E'{lang}',NULL);
+INSERT INTO "message" VALUES (176,E'{lang}',NULL);
+INSERT INTO "message" VALUES (177,E'{lang}',NULL);
+INSERT INTO "message" VALUES (178,E'{lang}',NULL);
+INSERT INTO "message" VALUES (179,E'{lang}',NULL);
+INSERT INTO "message" VALUES (180,E'{lang}',NULL);
+INSERT INTO "message" VALUES (181,E'{lang}',NULL);
+INSERT INTO "message" VALUES (182,E'{lang}',NULL);
+INSERT INTO "message" VALUES (183,E'{lang}',NULL);
+INSERT INTO "message" VALUES (184,E'{lang}',NULL);
+INSERT INTO "message" VALUES (185,E'{lang}',NULL);
+INSERT INTO "message" VALUES (186,E'{lang}',NULL);
+INSERT INTO "message" VALUES (187,E'{lang}',NULL);
+INSERT INTO "message" VALUES (188,E'{lang}',NULL);
+INSERT INTO "message" VALUES (189,E'{lang}',NULL);
+INSERT INTO "message" VALUES (190,E'{lang}',NULL);
+INSERT INTO "message" VALUES (191,E'{lang}',NULL);
+INSERT INTO "message" VALUES (192,E'{lang}',NULL);
+INSERT INTO "message" VALUES (193,E'{lang}',NULL);
+INSERT INTO "message" VALUES (195,E'{lang}',NULL);
+INSERT INTO "message" VALUES (196,E'{lang}',NULL);
+INSERT INTO "message" VALUES (197,E'{lang}',NULL);
+INSERT INTO "message" VALUES (198,E'{lang}',NULL);
+INSERT INTO "message" VALUES (199,E'{lang}',NULL);
+INSERT INTO "message" VALUES (200,E'{lang}',NULL);
+INSERT INTO "message" VALUES (201,E'{lang}',NULL);
+INSERT INTO "message" VALUES (202,E'{lang}',NULL);
+INSERT INTO "message" VALUES (203,E'{lang}',NULL);
+INSERT INTO "message" VALUES (204,E'{lang}',NULL);
+INSERT INTO "message" VALUES (205,E'{lang}',NULL);
+INSERT INTO "message" VALUES (206,E'{lang}',NULL);
+INSERT INTO "message" VALUES (207,E'{lang}',NULL);
+INSERT INTO "message" VALUES (208,E'{lang}',NULL);
+INSERT INTO "message" VALUES (209,E'{lang}',NULL);
+INSERT INTO "message" VALUES (210,E'{lang}',NULL);
+INSERT INTO "message" VALUES (211,E'{lang}',NULL);
+INSERT INTO "message" VALUES (212,E'{lang}',NULL);
+INSERT INTO "message" VALUES (213,E'{lang}',NULL);
+INSERT INTO "message" VALUES (214,E'{lang}',NULL);
+INSERT INTO "message" VALUES (215,E'{lang}',NULL);
+INSERT INTO "message" VALUES (216,E'{lang}',NULL);
+INSERT INTO "message" VALUES (217,E'{lang}',NULL);
+INSERT INTO "message" VALUES (218,E'{lang}',NULL);
+INSERT INTO "message" VALUES (219,E'{lang}',NULL);
+INSERT INTO "message" VALUES (220,E'{lang}',NULL);
+INSERT INTO "message" VALUES (221,E'{lang}',NULL);
+INSERT INTO "message" VALUES (222,E'{lang}',NULL);
+INSERT INTO "message" VALUES (223,E'{lang}',NULL);
+INSERT INTO "message" VALUES (224,E'{lang}',NULL);
+INSERT INTO "message" VALUES (225,E'{lang}',NULL);
+INSERT INTO "message" VALUES (226,E'{lang}',NULL);
+INSERT INTO "message" VALUES (227,E'{lang}',NULL);
+INSERT INTO "message" VALUES (228,E'{lang}',NULL);
+INSERT INTO "message" VALUES (229,E'{lang}',NULL);
+INSERT INTO "message" VALUES (230,E'{lang}',NULL);
+INSERT INTO "message" VALUES (231,E'{lang}',NULL);
+INSERT INTO "message" VALUES (232,E'{lang}',NULL);
+INSERT INTO "message" VALUES (233,E'{lang}',NULL);
+INSERT INTO "message" VALUES (234,E'{lang}',NULL);
+INSERT INTO "message" VALUES (235,E'{lang}',NULL);
+INSERT INTO "message" VALUES (236,E'{lang}',NULL);
+INSERT INTO "message" VALUES (237,E'{lang}',NULL);
+INSERT INTO "message" VALUES (238,E'{lang}',NULL);
+INSERT INTO "message" VALUES (239,E'{lang}',NULL);
+INSERT INTO "message" VALUES (240,E'{lang}',NULL);
+INSERT INTO "message" VALUES (241,E'{lang}',NULL);
+INSERT INTO "message" VALUES (242,E'{lang}',NULL);
+INSERT INTO "message" VALUES (243,E'{lang}',NULL);
+INSERT INTO "message" VALUES (244,E'{lang}',NULL);
+INSERT INTO "message" VALUES (245,E'{lang}',NULL);
+INSERT INTO "message" VALUES (246,E'{lang}',NULL);
+INSERT INTO "message" VALUES (247,E'{lang}',NULL);
+INSERT INTO "message" VALUES (248,E'{lang}',NULL);
+INSERT INTO "message" VALUES (249,E'{lang}',NULL);
+INSERT INTO "message" VALUES (250,E'{lang}',NULL);
+INSERT INTO "message" VALUES (251,E'{lang}',NULL);
+INSERT INTO "message" VALUES (252,E'{lang}',NULL);
+INSERT INTO "message" VALUES (253,E'{lang}',NULL);
+INSERT INTO "message" VALUES (254,E'{lang}',NULL);
+INSERT INTO "message" VALUES (255,E'{lang}',NULL);
+INSERT INTO "message" VALUES (256,E'{lang}',NULL);
+INSERT INTO "message" VALUES (257,E'{lang}',NULL);
+INSERT INTO "message" VALUES (258,E'{lang}',NULL);
+INSERT INTO "message" VALUES (259,E'{lang}',NULL);
+INSERT INTO "message" VALUES (260,E'{lang}',NULL);
+INSERT INTO "message" VALUES (261,E'{lang}',NULL);
+INSERT INTO "message" VALUES (262,E'{lang}',NULL);
+INSERT INTO "message" VALUES (263,E'{lang}',NULL);
+INSERT INTO "message" VALUES (264,E'{lang}',NULL);
+INSERT INTO "message" VALUES (265,E'{lang}',NULL);
+INSERT INTO "message" VALUES (266,E'{lang}',NULL);
+INSERT INTO "message" VALUES (267,E'{lang}',NULL);
+INSERT INTO "message" VALUES (268,E'{lang}',NULL);
+INSERT INTO "message" VALUES (269,E'{lang}',NULL);
+INSERT INTO "message" VALUES (270,E'{lang}',NULL);
+INSERT INTO "message" VALUES (271,E'{lang}',NULL);
+INSERT INTO "message" VALUES (272,E'{lang}',NULL);
+INSERT INTO "message" VALUES (273,E'{lang}',NULL);
+INSERT INTO "message" VALUES (274,E'{lang}',NULL);
+INSERT INTO "message" VALUES (275,E'{lang}',NULL);
+INSERT INTO "message" VALUES (276,E'{lang}',NULL);
+INSERT INTO "message" VALUES (277,E'{lang}',NULL);
+INSERT INTO "message" VALUES (278,E'{lang}',NULL);
+INSERT INTO "message" VALUES (279,E'{lang}',NULL);
+INSERT INTO "message" VALUES (280,E'{lang}',NULL);
+INSERT INTO "message" VALUES (281,E'{lang}',NULL);
+INSERT INTO "message" VALUES (282,E'{lang}',NULL);
+INSERT INTO "message" VALUES (283,E'{lang}',NULL);
+INSERT INTO "message" VALUES (284,E'{lang}',NULL);
+INSERT INTO "message" VALUES (285,E'{lang}',NULL);
+INSERT INTO "message" VALUES (286,E'{lang}',NULL);
+INSERT INTO "message" VALUES (288,E'{lang}',NULL);
+INSERT INTO "message" VALUES (289,E'{lang}',NULL);
+INSERT INTO "message" VALUES (290,E'{lang}',NULL);
+INSERT INTO "message" VALUES (291,E'{lang}',NULL);
+INSERT INTO "message" VALUES (292,E'{lang}',NULL);
+INSERT INTO "message" VALUES (293,E'{lang}',NULL);
+INSERT INTO "message" VALUES (294,E'{lang}',NULL);
+INSERT INTO "message" VALUES (295,E'{lang}',NULL);
+INSERT INTO "message" VALUES (296,E'{lang}',NULL);
+INSERT INTO "message" VALUES (297,E'{lang}',NULL);
+INSERT INTO "message" VALUES (298,E'{lang}',NULL);
+INSERT INTO "message" VALUES (299,E'{lang}',NULL);
+INSERT INTO "message" VALUES (300,E'{lang}',NULL);
+INSERT INTO "message" VALUES (301,E'{lang}',NULL);
+INSERT INTO "message" VALUES (302,E'{lang}',NULL);
+INSERT INTO "message" VALUES (303,E'{lang}',NULL);
+INSERT INTO "message" VALUES (304,E'{lang}',NULL);
+INSERT INTO "message" VALUES (305,E'{lang}',NULL);
+INSERT INTO "message" VALUES (307,E'{lang}',NULL);
+INSERT INTO "message" VALUES (308,E'{lang}',NULL);
+INSERT INTO "message" VALUES (309,E'{lang}',NULL);
+INSERT INTO "message" VALUES (310,E'{lang}',NULL);
+INSERT INTO "message" VALUES (311,E'{lang}',NULL);
+INSERT INTO "message" VALUES (312,E'{lang}',NULL);
+INSERT INTO "message" VALUES (313,E'{lang}',NULL);
+INSERT INTO "message" VALUES (314,E'{lang}',NULL);
+INSERT INTO "message" VALUES (315,E'{lang}',NULL);
+INSERT INTO "message" VALUES (316,E'{lang}',NULL);
+INSERT INTO "message" VALUES (317,E'{lang}',NULL);
+INSERT INTO "message" VALUES (318,E'{lang}',NULL);
+INSERT INTO "message" VALUES (319,E'{lang}',NULL);
+INSERT INTO "message" VALUES (320,E'{lang}',NULL);
+INSERT INTO "message" VALUES (321,E'{lang}',NULL);
+INSERT INTO "message" VALUES (322,E'{lang}',NULL);
+INSERT INTO "message" VALUES (323,E'{lang}',NULL);
+INSERT INTO "message" VALUES (325,E'{lang}',NULL);
+INSERT INTO "message" VALUES (326,E'{lang}',NULL);
+INSERT INTO "message" VALUES (327,E'{lang}',NULL);
+INSERT INTO "message" VALUES (328,E'{lang}',NULL);
+INSERT INTO "message" VALUES (329,E'{lang}',NULL);
+INSERT INTO "message" VALUES (330,E'{lang}',NULL);
+INSERT INTO "message" VALUES (331,E'{lang}',NULL);
+INSERT INTO "message" VALUES (332,E'{lang}',NULL);
+INSERT INTO "message" VALUES (333,E'{lang}',NULL);
+INSERT INTO "message" VALUES (334,E'{lang}',NULL);
+INSERT INTO "message" VALUES (335,E'{lang}',NULL);
+INSERT INTO "message" VALUES (336,E'{lang}',NULL);
+INSERT INTO "message" VALUES (337,E'{lang}',NULL);
+INSERT INTO "message" VALUES (338,E'{lang}',NULL);
+INSERT INTO "message" VALUES (339,E'{lang}',NULL);
+INSERT INTO "message" VALUES (340,E'{lang}',NULL);
+INSERT INTO "message" VALUES (341,E'{lang}',NULL);
+INSERT INTO "message" VALUES (342,E'{lang}',NULL);
+INSERT INTO "message" VALUES (343,E'{lang}',NULL);
+INSERT INTO "message" VALUES (344,E'{lang}',NULL);
+INSERT INTO "message" VALUES (345,E'{lang}',NULL);
+INSERT INTO "message" VALUES (346,E'{lang}',NULL);
+INSERT INTO "message" VALUES (347,E'{lang}',NULL);
+INSERT INTO "message" VALUES (348,E'{lang}',NULL);
+INSERT INTO "message" VALUES (349,E'{lang}',NULL);
+INSERT INTO "message" VALUES (350,E'{lang}',NULL);
+INSERT INTO "message" VALUES (351,E'{lang}',NULL);
+INSERT INTO "message" VALUES (352,E'{lang}',NULL);
+INSERT INTO "message" VALUES (353,E'{lang}',NULL);
+INSERT INTO "message" VALUES (354,E'{lang}',NULL);
+INSERT INTO "message" VALUES (355,E'{lang}',NULL);
+INSERT INTO "message" VALUES (356,E'{lang}',NULL);
+INSERT INTO "message" VALUES (357,E'{lang}',NULL);
+INSERT INTO "message" VALUES (358,E'{lang}',NULL);
+INSERT INTO "message" VALUES (359,E'{lang}',NULL);
+INSERT INTO "message" VALUES (360,E'{lang}',NULL);
+INSERT INTO "message" VALUES (361,E'{lang}',NULL);
+INSERT INTO "message" VALUES (362,E'{lang}',NULL);
+INSERT INTO "message" VALUES (363,E'{lang}',NULL);
+INSERT INTO "message" VALUES (364,E'{lang}',NULL);
+INSERT INTO "message" VALUES (365,E'{lang}',NULL);
+INSERT INTO "message" VALUES (366,E'{lang}',NULL);
+INSERT INTO "message" VALUES (367,E'{lang}',NULL);
+INSERT INTO "message" VALUES (368,E'{lang}',NULL);
+INSERT INTO "message" VALUES (369,E'{lang}',NULL);
+INSERT INTO "message" VALUES (370,E'{lang}',NULL);
+INSERT INTO "message" VALUES (371,E'{lang}',NULL);
+INSERT INTO "message" VALUES (372,E'{lang}',NULL);
+INSERT INTO "message" VALUES (373,E'{lang}',NULL);
+INSERT INTO "message" VALUES (374,E'{lang}',NULL);
+INSERT INTO "message" VALUES (375,E'{lang}',NULL);
+INSERT INTO "message" VALUES (376,E'{lang}',NULL);
+INSERT INTO "message" VALUES (377,E'{lang}',NULL);
+INSERT INTO "message" VALUES (378,E'{lang}',NULL);
+INSERT INTO "message" VALUES (379,E'{lang}',NULL);
+INSERT INTO "message" VALUES (380,E'{lang}',NULL);
+INSERT INTO "message" VALUES (381,E'{lang}',NULL);
+INSERT INTO "message" VALUES (382,E'{lang}',NULL);
+INSERT INTO "message" VALUES (383,E'{lang}',NULL);
+INSERT INTO "message" VALUES (384,E'{lang}',NULL);
+INSERT INTO "message" VALUES (385,E'{lang}',NULL);
+INSERT INTO "message" VALUES (386,E'{lang}',NULL);
+INSERT INTO "message" VALUES (387,E'{lang}',NULL);
+INSERT INTO "message" VALUES (388,E'{lang}',NULL);
+INSERT INTO "message" VALUES (389,E'{lang}',NULL);
+INSERT INTO "message" VALUES (390,E'{lang}',NULL);
+INSERT INTO "message" VALUES (391,E'{lang}',NULL);
+INSERT INTO "message" VALUES (392,E'{lang}',NULL);
+INSERT INTO "message" VALUES (393,E'{lang}',NULL);
+INSERT INTO "message" VALUES (394,E'{lang}',NULL);
+INSERT INTO "message" VALUES (395,E'{lang}',NULL);
+INSERT INTO "message" VALUES (396,E'{lang}',NULL);
+INSERT INTO "message" VALUES (397,E'{lang}',NULL);
+INSERT INTO "message" VALUES (398,E'{lang}',NULL);
+INSERT INTO "message" VALUES (399,E'{lang}',NULL);
+INSERT INTO "message" VALUES (400,E'{lang}',NULL);
+INSERT INTO "message" VALUES (401,E'{lang}',NULL);
+INSERT INTO "message" VALUES (402,E'{lang}',NULL);
+INSERT INTO "message" VALUES (403,E'{lang}',NULL);
+INSERT INTO "message" VALUES (404,E'{lang}',NULL);
+INSERT INTO "message" VALUES (405,E'{lang}',NULL);
+INSERT INTO "message" VALUES (407,E'{lang}',NULL);
+INSERT INTO "message" VALUES (408,E'{lang}',NULL);
+INSERT INTO "message" VALUES (411,E'{lang}',NULL);
+INSERT INTO "message" VALUES (412,E'{lang}',NULL);
+INSERT INTO "message" VALUES (413,E'{lang}',NULL);
+INSERT INTO "message" VALUES (414,E'{lang}',NULL);
+INSERT INTO "message" VALUES (415,E'{lang}',NULL);
+INSERT INTO "message" VALUES (416,E'{lang}',NULL);
+INSERT INTO "message" VALUES (417,E'{lang}',NULL);
+INSERT INTO "message" VALUES (418,E'{lang}',NULL);
+INSERT INTO "message" VALUES (419,E'{lang}',NULL);
+INSERT INTO "message" VALUES (420,E'{lang}',NULL);
+INSERT INTO "message" VALUES (421,E'{lang}',NULL);
+INSERT INTO "message" VALUES (422,E'{lang}',NULL);
+INSERT INTO "message" VALUES (423,E'{lang}',NULL);
+INSERT INTO "message" VALUES (424,E'{lang}',NULL);
+INSERT INTO "message" VALUES (425,E'{lang}',NULL);
+INSERT INTO "message" VALUES (426,E'{lang}',NULL);
+INSERT INTO "message" VALUES (427,E'{lang}',NULL);
+INSERT INTO "message" VALUES (428,E'{lang}',NULL);
+INSERT INTO "message" VALUES (429,E'{lang}',NULL);
+INSERT INTO "message" VALUES (430,E'{lang}',NULL);
+INSERT INTO "message" VALUES (431,E'{lang}',NULL);
+INSERT INTO "message" VALUES (432,E'{lang}',NULL);
+INSERT INTO "message" VALUES (433,E'{lang}',NULL);
+INSERT INTO "message" VALUES (434,E'{lang}',NULL);
+INSERT INTO "message" VALUES (435,E'{lang}',NULL);
+INSERT INTO "message" VALUES (436,E'{lang}',NULL);
+INSERT INTO "message" VALUES (437,E'{lang}',NULL);
+INSERT INTO "message" VALUES (438,E'{lang}',NULL);
+INSERT INTO "message" VALUES (439,E'{lang}',NULL);
+INSERT INTO "message" VALUES (440,E'{lang}',NULL);
+INSERT INTO "message" VALUES (441,E'{lang}',NULL);
+INSERT INTO "message" VALUES (442,E'{lang}',NULL);
+INSERT INTO "message" VALUES (443,E'{lang}',NULL);
+INSERT INTO "message" VALUES (444,E'{lang}',NULL);
+INSERT INTO "message" VALUES (445,E'{lang}',NULL);
+INSERT INTO "message" VALUES (446,E'{lang}',NULL);
+INSERT INTO "message" VALUES (447,E'{lang}',NULL);
+INSERT INTO "message" VALUES (448,E'{lang}',NULL);
+INSERT INTO "message" VALUES (449,E'{lang}',NULL);
+INSERT INTO "message" VALUES (450,E'{lang}',NULL);
+INSERT INTO "message" VALUES (451,E'{lang}',NULL);
+INSERT INTO "message" VALUES (452,E'{lang}',NULL);
+INSERT INTO "message" VALUES (453,E'{lang}',NULL);
+INSERT INTO "message" VALUES (454,E'{lang}',NULL);
+INSERT INTO "message" VALUES (455,E'{lang}',NULL);
+INSERT INTO "message" VALUES (456,E'{lang}',NULL);
+INSERT INTO "message" VALUES (457,E'{lang}',NULL);
+INSERT INTO "message" VALUES (458,E'{lang}',NULL);
+INSERT INTO "message" VALUES (459,E'{lang}',NULL);
+INSERT INTO "message" VALUES (460,E'{lang}',NULL);
+INSERT INTO "message" VALUES (461,E'{lang}',NULL);
+INSERT INTO "message" VALUES (462,E'{lang}',NULL);
+INSERT INTO "message" VALUES (463,E'{lang}',NULL);
+INSERT INTO "message" VALUES (464,E'{lang}',NULL);
+INSERT INTO "message" VALUES (465,E'{lang}',NULL);
+INSERT INTO "message" VALUES (466,E'{lang}',NULL);
+INSERT INTO "message" VALUES (467,E'{lang}',NULL);
+INSERT INTO "message" VALUES (468,E'{lang}',NULL);
+INSERT INTO "message" VALUES (469,E'{lang}',NULL);
+INSERT INTO "message" VALUES (470,E'{lang}',NULL);
+INSERT INTO "message" VALUES (471,E'{lang}',NULL);
+INSERT INTO "message" VALUES (472,E'{lang}',NULL);
+INSERT INTO "message" VALUES (473,E'{lang}',NULL);
+INSERT INTO "message" VALUES (474,E'{lang}',NULL);
+INSERT INTO "message" VALUES (475,E'{lang}',NULL);
+INSERT INTO "message" VALUES (476,E'{lang}',NULL);
+INSERT INTO "message" VALUES (477,E'{lang}',NULL);
+INSERT INTO "message" VALUES (478,E'{lang}',NULL);
+INSERT INTO "message" VALUES (479,E'{lang}',NULL);
+INSERT INTO "message" VALUES (480,E'{lang}',NULL);
+INSERT INTO "message" VALUES (481,E'{lang}',NULL);
+INSERT INTO "message" VALUES (482,E'{lang}',NULL);
+INSERT INTO "message" VALUES (483,E'{lang}',NULL);
+INSERT INTO "message" VALUES (484,E'{lang}',NULL);
+INSERT INTO "message" VALUES (485,E'{lang}',NULL);
+INSERT INTO "message" VALUES (486,E'{lang}',NULL);
+INSERT INTO "message" VALUES (487,E'{lang}',NULL);
+INSERT INTO "message" VALUES (488,E'{lang}',NULL);
+INSERT INTO "message" VALUES (489,E'{lang}',NULL);
+INSERT INTO "message" VALUES (490,E'{lang}',NULL);
+INSERT INTO "message" VALUES (491,E'{lang}',NULL);
+INSERT INTO "message" VALUES (492,E'{lang}',NULL);
+INSERT INTO "message" VALUES (493,E'{lang}',NULL);
+INSERT INTO "message" VALUES (494,E'{lang}',NULL);
+INSERT INTO "message" VALUES (495,E'{lang}',NULL);
+INSERT INTO "message" VALUES (496,E'{lang}',NULL);
+INSERT INTO "message" VALUES (497,E'{lang}',NULL);
+INSERT INTO "message" VALUES (498,E'{lang}',NULL);
+INSERT INTO "message" VALUES (499,E'{lang}',NULL);
+INSERT INTO "message" VALUES (500,E'{lang}',NULL);
+INSERT INTO "message" VALUES (501,E'{lang}',NULL);
+INSERT INTO "message" VALUES (502,E'{lang}',NULL);
+INSERT INTO "message" VALUES (503,E'{lang}',NULL);
+INSERT INTO "message" VALUES (504,E'{lang}',NULL);
+INSERT INTO "message" VALUES (505,E'{lang}',NULL);
+INSERT INTO "message" VALUES (506,E'{lang}',NULL);
+INSERT INTO "message" VALUES (507,E'{lang}',NULL);
+INSERT INTO "message" VALUES (508,E'{lang}',NULL);
+INSERT INTO "message" VALUES (509,E'{lang}',NULL);
+INSERT INTO "message" VALUES (510,E'{lang}',NULL);
+INSERT INTO "message" VALUES (511,E'{lang}',NULL);
+INSERT INTO "message" VALUES (512,E'{lang}',NULL);
+INSERT INTO "message" VALUES (513,E'{lang}',NULL);
+INSERT INTO "message" VALUES (514,E'{lang}',NULL);
+INSERT INTO "message" VALUES (515,E'{lang}',NULL);
+INSERT INTO "message" VALUES (516,E'{lang}',NULL);
+INSERT INTO "message" VALUES (517,E'{lang}',NULL);
+INSERT INTO "message" VALUES (518,E'{lang}',NULL);
+INSERT INTO "message" VALUES (519,E'{lang}',NULL);
+INSERT INTO "message" VALUES (520,E'{lang}',NULL);
+INSERT INTO "message" VALUES (521,E'{lang}',NULL);
+INSERT INTO "message" VALUES (522,E'{lang}',NULL);
+INSERT INTO "message" VALUES (524,E'{lang}',NULL);
+INSERT INTO "message" VALUES (525,E'{lang}',NULL);
+INSERT INTO "message" VALUES (526,E'{lang}',NULL);
+INSERT INTO "message" VALUES (527,E'{lang}',NULL);
+INSERT INTO "message" VALUES (529,E'{lang}',NULL);
+INSERT INTO "message" VALUES (530,E'{lang}',NULL);
+INSERT INTO "message" VALUES (531,E'{lang}',NULL);
+INSERT INTO "message" VALUES (532,E'{lang}',NULL);
+INSERT INTO "message" VALUES (533,E'{lang}',NULL);
+INSERT INTO "message" VALUES (534,E'{lang}',NULL);
+INSERT INTO "message" VALUES (535,E'{lang}',NULL);
+INSERT INTO "message" VALUES (536,E'{lang}',NULL);
+INSERT INTO "message" VALUES (537,E'{lang}',NULL);
+INSERT INTO "message" VALUES (538,E'{lang}',NULL);
+INSERT INTO "message" VALUES (539,E'{lang}',NULL);
+INSERT INTO "message" VALUES (540,E'{lang}',NULL);
+INSERT INTO "message" VALUES (541,E'{lang}',NULL);
+INSERT INTO "message" VALUES (542,E'{lang}',NULL);
+INSERT INTO "message" VALUES (543,E'{lang}',NULL);
+INSERT INTO "message" VALUES (544,E'{lang}',NULL);
+INSERT INTO "message" VALUES (545,E'{lang}',NULL);
+INSERT INTO "message" VALUES (546,E'{lang}',NULL);
+INSERT INTO "message" VALUES (547,E'{lang}',NULL);
+INSERT INTO "message" VALUES (548,E'{lang}',NULL);
+INSERT INTO "message" VALUES (549,E'{lang}',NULL);
+INSERT INTO "message" VALUES (550,E'{lang}',NULL);
+INSERT INTO "message" VALUES (551,E'{lang}',NULL);
+INSERT INTO "message" VALUES (552,E'{lang}',NULL);
+INSERT INTO "message" VALUES (553,E'{lang}',NULL);
+INSERT INTO "message" VALUES (554,E'{lang}',NULL);
+INSERT INTO "message" VALUES (555,E'{lang}',NULL);
+INSERT INTO "message" VALUES (556,E'{lang}',NULL);
+INSERT INTO "message" VALUES (557,E'{lang}',NULL);
+INSERT INTO "message" VALUES (558,E'{lang}',NULL);
+INSERT INTO "message" VALUES (559,E'{lang}',NULL);
+INSERT INTO "message" VALUES (560,E'{lang}',NULL);
+INSERT INTO "message" VALUES (561,E'{lang}',NULL);
+INSERT INTO "message" VALUES (562,E'{lang}',NULL);
+INSERT INTO "message" VALUES (563,E'{lang}',NULL);
+INSERT INTO "message" VALUES (564,E'{lang}',NULL);
+INSERT INTO "message" VALUES (565,E'{lang}',NULL);
+INSERT INTO "message" VALUES (566,E'{lang}',NULL);
+INSERT INTO "message" VALUES (567,E'{lang}',NULL);
+INSERT INTO "message" VALUES (568,E'{lang}',NULL);
+INSERT INTO "message" VALUES (569,E'{lang}',NULL);
+INSERT INTO "message" VALUES (570,E'{lang}',NULL);
+INSERT INTO "message" VALUES (571,E'{lang}',NULL);
+INSERT INTO "message" VALUES (572,E'{lang}',NULL);
+INSERT INTO "message" VALUES (573,E'{lang}',NULL);
+INSERT INTO "message" VALUES (574,E'{lang}',NULL);
+INSERT INTO "message" VALUES (575,E'{lang}',NULL);
+INSERT INTO "message" VALUES (576,E'{lang}',NULL);
+INSERT INTO "message" VALUES (577,E'{lang}',NULL);
+INSERT INTO "message" VALUES (578,E'{lang}',NULL);
+INSERT INTO "message" VALUES (579,E'{lang}',NULL);
+INSERT INTO "message" VALUES (580,E'{lang}',NULL);
+INSERT INTO "message" VALUES (582,E'{lang}',NULL);
+INSERT INTO "message" VALUES (583,E'{lang}',NULL);
+INSERT INTO "message" VALUES (584,E'{lang}',NULL);
+INSERT INTO "message" VALUES (585,E'{lang}',NULL);
+INSERT INTO "message" VALUES (586,E'{lang}',NULL);
+INSERT INTO "message" VALUES (587,E'{lang}',NULL);
+INSERT INTO "message" VALUES (588,E'{lang}',NULL);
+INSERT INTO "message" VALUES (589,E'{lang}',NULL);
+INSERT INTO "message" VALUES (590,E'{lang}',NULL);
+INSERT INTO "message" VALUES (591,E'{lang}',NULL);
+INSERT INTO "message" VALUES (592,E'{lang}',NULL);
+INSERT INTO "message" VALUES (593,E'{lang}',NULL);
+INSERT INTO "message" VALUES (594,E'{lang}',NULL);
+INSERT INTO "message" VALUES (595,E'{lang}',NULL);
+INSERT INTO "message" VALUES (596,E'{lang}',NULL);
+INSERT INTO "message" VALUES (597,E'{lang}',NULL);
+INSERT INTO "message" VALUES (598,E'{lang}',NULL);
+INSERT INTO "message" VALUES (599,E'{lang}',NULL);
+INSERT INTO "message" VALUES (600,E'{lang}',NULL);
+INSERT INTO "message" VALUES (601,E'{lang}',NULL);
+INSERT INTO "message" VALUES (602,E'{lang}',NULL);
+INSERT INTO "message" VALUES (603,E'{lang}',NULL);
+INSERT INTO "message" VALUES (604,E'{lang}',NULL);
+INSERT INTO "message" VALUES (605,E'{lang}',NULL);
+INSERT INTO "message" VALUES (606,E'{lang}',NULL);
+INSERT INTO "message" VALUES (607,E'{lang}',NULL);
+INSERT INTO "message" VALUES (608,E'{lang}',NULL);
+INSERT INTO "message" VALUES (609,E'{lang}',NULL);
+INSERT INTO "message" VALUES (610,E'{lang}',NULL);
+INSERT INTO "message" VALUES (611,E'{lang}',NULL);
+INSERT INTO "message" VALUES (613,E'{lang}',NULL);
+INSERT INTO "message" VALUES (614,E'{lang}',NULL);
+INSERT INTO "message" VALUES (615,E'{lang}',NULL);
+INSERT INTO "message" VALUES (616,E'{lang}',NULL);
+INSERT INTO "message" VALUES (617,E'{lang}',NULL);
+INSERT INTO "message" VALUES (618,E'{lang}',NULL);
+INSERT INTO "message" VALUES (619,E'{lang}',NULL);
+INSERT INTO "message" VALUES (620,E'{lang}',NULL);
+INSERT INTO "message" VALUES (622,E'{lang}',NULL);
+INSERT INTO "message" VALUES (623,E'{lang}',NULL);
+INSERT INTO "message" VALUES (624,E'{lang}',NULL);
+INSERT INTO "message" VALUES (625,E'{lang}',NULL);
+INSERT INTO "message" VALUES (626,E'{lang}',NULL);
+INSERT INTO "message" VALUES (627,E'{lang}',NULL);
+INSERT INTO "message" VALUES (628,E'{lang}',NULL);
+INSERT INTO "message" VALUES (629,E'{lang}',NULL);
+INSERT INTO "message" VALUES (630,E'{lang}',NULL);
+INSERT INTO "message" VALUES (631,E'{lang}',NULL);
+INSERT INTO "message" VALUES (632,E'{lang}',NULL);
+INSERT INTO "message" VALUES (633,E'{lang}',NULL);
+INSERT INTO "message" VALUES (634,E'{lang}',NULL);
+INSERT INTO "message" VALUES (635,E'{lang}',NULL);
+INSERT INTO "message" VALUES (636,E'{lang}',NULL);
+INSERT INTO "message" VALUES (637,E'{lang}',NULL);
+INSERT INTO "message" VALUES (638,E'{lang}',NULL);
+INSERT INTO "message" VALUES (639,E'{lang}',NULL);
+INSERT INTO "message" VALUES (640,E'{lang}',NULL);
+INSERT INTO "message" VALUES (641,E'{lang}',NULL);
+INSERT INTO "message" VALUES (642,E'{lang}',NULL);
+INSERT INTO "message" VALUES (643,E'{lang}',NULL);
+INSERT INTO "message" VALUES (644,E'{lang}',NULL);
+INSERT INTO "message" VALUES (645,E'{lang}',NULL);
+INSERT INTO "message" VALUES (646,E'{lang}',NULL);
+INSERT INTO "message" VALUES (647,E'{lang}',NULL);
+INSERT INTO "message" VALUES (648,E'{lang}',NULL);
+INSERT INTO "message" VALUES (649,E'{lang}',NULL);
+INSERT INTO "message" VALUES (650,E'{lang}',NULL);
+INSERT INTO "message" VALUES (651,E'{lang}',NULL);
+INSERT INTO "message" VALUES (652,E'{lang}',NULL);
+INSERT INTO "message" VALUES (653,E'{lang}',NULL);
+INSERT INTO "message" VALUES (654,E'{lang}',NULL);
+INSERT INTO "message" VALUES (656,E'{lang}',NULL);
+INSERT INTO "message" VALUES (657,E'{lang}',NULL);
+INSERT INTO "message" VALUES (658,E'{lang}',NULL);
+INSERT INTO "message" VALUES (659,E'{lang}',NULL);
+INSERT INTO "message" VALUES (660,E'{lang}',NULL);
+INSERT INTO "message" VALUES (661,E'{lang}',NULL);
+INSERT INTO "message" VALUES (662,E'{lang}',NULL);
+INSERT INTO "message" VALUES (663,E'{lang}',NULL);
+INSERT INTO "message" VALUES (664,E'{lang}',NULL);
+INSERT INTO "message" VALUES (665,E'{lang}',NULL);
+INSERT INTO "message" VALUES (666,E'{lang}',NULL);
+INSERT INTO "message" VALUES (667,E'{lang}',NULL);
+INSERT INTO "message" VALUES (668,E'{lang}',NULL);
+INSERT INTO "message" VALUES (669,E'{lang}',NULL);
+INSERT INTO "message" VALUES (670,E'{lang}',NULL);
+INSERT INTO "message" VALUES (671,E'{lang}',NULL);
+INSERT INTO "message" VALUES (672,E'{lang}',NULL);
+INSERT INTO "message" VALUES (673,E'{lang}',NULL);
+INSERT INTO "message" VALUES (674,E'{lang}',NULL);
+INSERT INTO "message" VALUES (675,E'{lang}',NULL);
+INSERT INTO "message" VALUES (676,E'{lang}',NULL);
+INSERT INTO "message" VALUES (677,E'{lang}',NULL);
+INSERT INTO "message" VALUES (678,E'{lang}',NULL);
+INSERT INTO "message" VALUES (679,E'{lang}',NULL);
+INSERT INTO "message" VALUES (680,E'{lang}',NULL);
+INSERT INTO "message" VALUES (681,E'{lang}',NULL);
+INSERT INTO "message" VALUES (682,E'{lang}',NULL);
+INSERT INTO "message" VALUES (686,E'{lang}',NULL);
+INSERT INTO "message" VALUES (687,E'{lang}',NULL);
+INSERT INTO "message" VALUES (688,E'{lang}',NULL);
+INSERT INTO "message" VALUES (689,E'{lang}',NULL);
+INSERT INTO "message" VALUES (690,E'{lang}',NULL);
+INSERT INTO "message" VALUES (691,E'{lang}',NULL);
+INSERT INTO "message" VALUES (692,E'{lang}',NULL);
+INSERT INTO "message" VALUES (693,E'{lang}',NULL);
+INSERT INTO "message" VALUES (694,E'{lang}',NULL);
+INSERT INTO "message" VALUES (695,E'{lang}',NULL);
+INSERT INTO "message" VALUES (696,E'{lang}',NULL);
+INSERT INTO "message" VALUES (697,E'{lang}',NULL);
+INSERT INTO "message" VALUES (698,E'{lang}',NULL);
+INSERT INTO "message" VALUES (699,E'{lang}',NULL);
+INSERT INTO "message" VALUES (700,E'{lang}',NULL);
+INSERT INTO "message" VALUES (701,E'{lang}',NULL);
+INSERT INTO "message" VALUES (702,E'{lang}',NULL);
+INSERT INTO "message" VALUES (703,E'{lang}',NULL);
+INSERT INTO "message" VALUES (704,E'{lang}',NULL);
+INSERT INTO "message" VALUES (705,E'{lang}',NULL);
+INSERT INTO "message" VALUES (706,E'{lang}',NULL);
+INSERT INTO "message" VALUES (707,E'{lang}',NULL);
+INSERT INTO "message" VALUES (708,E'{lang}',NULL);
+INSERT INTO "message" VALUES (709,E'{lang}',NULL);
+INSERT INTO "message" VALUES (710,E'{lang}',NULL);
+INSERT INTO "message" VALUES (711,E'{lang}',NULL);
+INSERT INTO "message" VALUES (712,E'{lang}',NULL);
+INSERT INTO "message" VALUES (713,E'{lang}',NULL);
+INSERT INTO "message" VALUES (714,E'{lang}',NULL);
+INSERT INTO "message" VALUES (715,E'{lang}',NULL);
+INSERT INTO "message" VALUES (716,E'{lang}',NULL);
+INSERT INTO "message" VALUES (717,E'{lang}',NULL);
+INSERT INTO "message" VALUES (718,E'{lang}',NULL);
+INSERT INTO "message" VALUES (719,E'{lang}',NULL);
+INSERT INTO "message" VALUES (720,E'{lang}',NULL);
+INSERT INTO "message" VALUES (721,E'{lang}',NULL);
+INSERT INTO "message" VALUES (722,E'{lang}',NULL);
+INSERT INTO "message" VALUES (723,E'{lang}',NULL);
+INSERT INTO "message" VALUES (724,E'{lang}',NULL);
+INSERT INTO "message" VALUES (725,E'{lang}',NULL);
+INSERT INTO "message" VALUES (726,E'{lang}',NULL);
+INSERT INTO "message" VALUES (727,E'{lang}',NULL);
+INSERT INTO "message" VALUES (728,E'{lang}',NULL);
+INSERT INTO "message" VALUES (729,E'{lang}',NULL);
+INSERT INTO "message" VALUES (730,E'{lang}',NULL);
+INSERT INTO "message" VALUES (731,E'{lang}',NULL);
+INSERT INTO "message" VALUES (732,E'{lang}',NULL);
+INSERT INTO "message" VALUES (733,E'{lang}',NULL);
+INSERT INTO "message" VALUES (734,E'{lang}',NULL);
+INSERT INTO "message" VALUES (735,E'{lang}',NULL);
+INSERT INTO "message" VALUES (736,E'{lang}',NULL);
+INSERT INTO "message" VALUES (737,E'{lang}',NULL);
+INSERT INTO "message" VALUES (738,E'{lang}',NULL);
+INSERT INTO "message" VALUES (739,E'{lang}',NULL);
+INSERT INTO "message" VALUES (740,E'{lang}',NULL);
+INSERT INTO "message" VALUES (741,E'{lang}',NULL);
+INSERT INTO "message" VALUES (742,E'{lang}',NULL);
+INSERT INTO "message" VALUES (743,E'{lang}',NULL);
+INSERT INTO "message" VALUES (744,E'{lang}',NULL);
+INSERT INTO "message" VALUES (745,E'{lang}',NULL);
+INSERT INTO "message" VALUES (746,E'{lang}',NULL);
+INSERT INTO "message" VALUES (747,E'{lang}',NULL);
+INSERT INTO "message" VALUES (748,E'{lang}',NULL);
+INSERT INTO "message" VALUES (749,E'{lang}',NULL);
+INSERT INTO "message" VALUES (750,E'{lang}',NULL);
+INSERT INTO "message" VALUES (751,E'{lang}',NULL);
+INSERT INTO "message" VALUES (753,E'{lang}',NULL);
+INSERT INTO "message" VALUES (754,E'{lang}',NULL);
+INSERT INTO "message" VALUES (755,E'{lang}',NULL);
+INSERT INTO "message" VALUES (756,E'{lang}',NULL);
+INSERT INTO "message" VALUES (757,E'{lang}',NULL);
+INSERT INTO "message" VALUES (758,E'{lang}',NULL);
+INSERT INTO "message" VALUES (759,E'{lang}',NULL);
+INSERT INTO "message" VALUES (760,E'{lang}',NULL);
+INSERT INTO "message" VALUES (761,E'{lang}',NULL);
+INSERT INTO "message" VALUES (762,E'{lang}',NULL);
+INSERT INTO "message" VALUES (764,E'{lang}',NULL);
+INSERT INTO "message" VALUES (765,E'{lang}',NULL);
+INSERT INTO "message" VALUES (766,E'{lang}',NULL);
+INSERT INTO "message" VALUES (767,E'{lang}',NULL);
+INSERT INTO "message" VALUES (770,E'{lang}',NULL);
+INSERT INTO "message" VALUES (771,E'{lang}',NULL);
+INSERT INTO "message" VALUES (772,E'{lang}',NULL);
+INSERT INTO "message" VALUES (773,E'{lang}',NULL);
+INSERT INTO "message" VALUES (774,E'{lang}',NULL);
+INSERT INTO "message" VALUES (775,E'{lang}',NULL);
+INSERT INTO "message" VALUES (777,E'{lang}',NULL);
+INSERT INTO "message" VALUES (778,E'{lang}',NULL);
+INSERT INTO "message" VALUES (783,E'{lang}',NULL);
+INSERT INTO "message" VALUES (784,E'{lang}',NULL);
+INSERT INTO "message" VALUES (785,E'{lang}',NULL);
+INSERT INTO "message" VALUES (787,E'{lang}',NULL);
+INSERT INTO "message" VALUES (788,E'{lang}',NULL);
+INSERT INTO "message" VALUES (789,E'{lang}',NULL);
+INSERT INTO "message" VALUES (790,E'{lang}',NULL);
+INSERT INTO "message" VALUES (791,E'{lang}',NULL);
+INSERT INTO "message" VALUES (792,E'{lang}',NULL);
+INSERT INTO "message" VALUES (793,E'{lang}',NULL);
 
---
--- Table structure for table `migration`
---
-
-DROP TABLE IF EXISTS `migration`;
+/*!40000 ALTER TABLE message ENABLE KEYS */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `migration` (
-  `version` varchar(180) NOT NULL,
-  `apply_time` int(11) DEFAULT NULL,
-  PRIMARY KEY (`version`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE INDEX "message_id_idx" ON "message" USING btree ("id");
+ALTER TABLE "message" ADD FOREIGN KEY ("id") REFERENCES "source_message" ("id");
+
+--
+-- Table structure for table migration
+--
+
+DROP TABLE IF EXISTS "migration" CASCADE;
+CREATE TABLE  "migration" (
+   "version"   varchar(180) NOT NULL,
+   "apply_time"   int DEFAULT NULL,
+   primary key ("version")
+)  ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `motion_tag`
---
-
-DROP TABLE IF EXISTS `motion_tag`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `motion_tag` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `abr` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=554 DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table motion_tag
+--
+
+DROP TABLE IF EXISTS "motion_tag" CASCADE;
+DROP SEQUENCE IF EXISTS "motion_tag_id_seq" CASCADE ;
+
+CREATE SEQUENCE "motion_tag_id_seq"  START WITH 554 ;
+
+CREATE TABLE  "motion_tag" (
+   "id" integer DEFAULT nextval('"motion_tag_id_seq"') NOT NULL,
+   "name"   varchar(255) NOT NULL,
+   "abr"   varchar(100) DEFAULT NULL,
+   primary key ("id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `panel`
---
-
-DROP TABLE IF EXISTS `panel`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `panel` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `strength` int(11) NOT NULL DEFAULT '0',
-  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `tournament_id` int(10) unsigned NOT NULL,
-  `used` tinyint(1) NOT NULL DEFAULT '1',
-  `is_preset` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `fk_panel_tournament1_idx` (`tournament_id`),
-  CONSTRAINT `fk_panel_tournament1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=8736 DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table panel
+--
+
+DROP TABLE IF EXISTS "panel" CASCADE;
+DROP SEQUENCE IF EXISTS "panel_id_seq" CASCADE ;
+
+CREATE SEQUENCE "panel_id_seq"  START WITH 8736 ;
+
+CREATE TABLE  "panel" (
+   "id" integer DEFAULT nextval('"panel_id_seq"') NOT NULL,
+   "strength"   int NOT NULL DEFAULT '0',
+   "time"   timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   "tournament_id" int CHECK ("tournament_id" >= 0) NOT NULL,
+   "used"    smallint NOT NULL DEFAULT '1',
+   "is_preset"    smallint NOT NULL DEFAULT '0',
+   primary key ("id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `publish_tab_speaker`
---
-
-DROP TABLE IF EXISTS `publish_tab_speaker`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `publish_tab_speaker` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `tournament_id` int(10) unsigned NOT NULL,
-  `user_id` int(11) unsigned NOT NULL,
-  `enl_place` int(11) NOT NULL,
-  `esl_place` int(11) DEFAULT NULL,
-  `cache_results` text NOT NULL,
-  `speaks` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_publish_tab_speaker_user1_idx` (`user_id`),
-  KEY `fk_publish_tab_speaker_tournament1_idx` (`tournament_id`),
-  CONSTRAINT `fk_publish_tab_speaker_tournament1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_publish_tab_speaker_user1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=7996 DEFAULT CHARSET=utf8;
+CREATE INDEX "panel_tournament_id_idx" ON "panel" USING btree ("tournament_id");
+ALTER TABLE "panel" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+
+--
+-- Table structure for table publish_tab_speaker
+--
+
+DROP TABLE IF EXISTS "publish_tab_speaker" CASCADE;
+DROP SEQUENCE IF EXISTS "publish_tab_speaker_id_seq" CASCADE ;
+
+CREATE SEQUENCE "publish_tab_speaker_id_seq"  START WITH 7996 ;
+
+CREATE TABLE  "publish_tab_speaker" (
+   "id" integer DEFAULT nextval('"publish_tab_speaker_id_seq"') NOT NULL,
+   "tournament_id" int CHECK ("tournament_id" >= 0) NOT NULL,
+   "user_id" int CHECK ("user_id" >= 0) NOT NULL,
+   "enl_place"   int NOT NULL,
+   "esl_place"   int DEFAULT NULL,
+   "cache_results"   text NOT NULL,
+   "speaks"   int NOT NULL,
+   primary key ("id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `publish_tab_team`
---
-
-DROP TABLE IF EXISTS `publish_tab_team`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `publish_tab_team` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `tournament_id` int(10) unsigned NOT NULL,
-  `team_id` int(10) unsigned NOT NULL,
-  `enl_place` int(11) NOT NULL,
-  `esl_place` varchar(45) DEFAULT NULL,
-  `cache_results` text NOT NULL,
-  `speaks` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_publish_tab_team_team1_idx` (`team_id`),
-  KEY `fk_publish_tab_team_tournament1_idx` (`tournament_id`),
-  CONSTRAINT `fk_publish_tab_team_team1` FOREIGN KEY (`team_id`) REFERENCES `team` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_publish_tab_team_tournament1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4190 DEFAULT CHARSET=utf8;
+CREATE INDEX "publish_tab_speaker_user_id_idx" ON "publish_tab_speaker" USING btree ("user_id");
+CREATE INDEX "publish_tab_speaker_tournament_id_idx" ON "publish_tab_speaker" USING btree ("tournament_id");
+ALTER TABLE "publish_tab_speaker" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "publish_tab_speaker" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
+
+--
+-- Table structure for table publish_tab_team
+--
+
+DROP TABLE IF EXISTS "publish_tab_team" CASCADE;
+DROP SEQUENCE IF EXISTS "publish_tab_team_id_seq" CASCADE ;
+
+CREATE SEQUENCE "publish_tab_team_id_seq"  START WITH 4190 ;
+
+CREATE TABLE  "publish_tab_team" (
+   "id" integer DEFAULT nextval('"publish_tab_team_id_seq"') NOT NULL,
+   "tournament_id" int CHECK ("tournament_id" >= 0) NOT NULL,
+   "team_id" int CHECK ("team_id" >= 0) NOT NULL,
+   "enl_place"   int NOT NULL,
+   "esl_place"   varchar(45) DEFAULT NULL,
+   "cache_results"   text NOT NULL,
+   "speaks"   int NOT NULL,
+   primary key ("id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `question`
---
-
-DROP TABLE IF EXISTS `question`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `question` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `text` varchar(255) NOT NULL,
-  `type` int(11) NOT NULL,
-  `apply_T2C` tinyint(1) NOT NULL DEFAULT '0',
-  `apply_C2W` tinyint(1) NOT NULL DEFAULT '0',
-  `apply_W2C` tinyint(1) NOT NULL DEFAULT '0',
-  `param` text,
-  `help` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=280 DEFAULT CHARSET=utf8;
+CREATE INDEX "publish_tab_team_team_id_idx" ON "publish_tab_team" USING btree ("team_id");
+CREATE INDEX "publish_tab_team_tournament_id_idx" ON "publish_tab_team" USING btree ("tournament_id");
+ALTER TABLE "publish_tab_team" ADD FOREIGN KEY ("team_id") REFERENCES "team" ("id");
+ALTER TABLE "publish_tab_team" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+
+--
+-- Table structure for table question
+--
+
+DROP TABLE IF EXISTS "question" CASCADE;
+DROP SEQUENCE IF EXISTS "question_id_seq" CASCADE ;
+
+CREATE SEQUENCE "question_id_seq"  START WITH 280 ;
+
+CREATE TABLE  "question" (
+   "id" integer DEFAULT nextval('"question_id_seq"') NOT NULL,
+   "text"   varchar(255) NOT NULL,
+   "type"   int NOT NULL,
+   "apply_t2c"    smallint NOT NULL DEFAULT '0',
+   "apply_c2w"    smallint NOT NULL DEFAULT '0',
+   "apply_w2c"    smallint NOT NULL DEFAULT '0',
+   "param"   text,
+   "help"   varchar(255) DEFAULT NULL,
+   primary key ("id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `result`
---
-
-DROP TABLE IF EXISTS `result`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `result` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `debate_id` int(10) unsigned NOT NULL,
-  `og_A_speaks` tinyint(4) NOT NULL,
-  `og_B_speaks` tinyint(4) NOT NULL,
-  `og_irregular` tinyint(4) NOT NULL DEFAULT '0',
-  `og_place` tinyint(4) NOT NULL,
-  `oo_A_speaks` tinyint(4) NOT NULL,
-  `oo_B_speaks` tinyint(4) NOT NULL,
-  `oo_irregular` tinyint(4) NOT NULL DEFAULT '0',
-  `oo_place` tinyint(4) NOT NULL,
-  `cg_A_speaks` tinyint(4) NOT NULL,
-  `cg_B_speaks` tinyint(4) NOT NULL,
-  `cg_irregular` tinyint(4) NOT NULL DEFAULT '0',
-  `cg_place` tinyint(4) NOT NULL,
-  `co_A_speaks` tinyint(4) NOT NULL,
-  `co_B_speaks` tinyint(4) NOT NULL,
-  `co_irregular` tinyint(4) NOT NULL DEFAULT '0',
-  `co_place` tinyint(4) NOT NULL,
-  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `entered_by_id` int(11) unsigned DEFAULT NULL,
-  `checked` tinyint(4) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `debate_id_UNIQUE` (`debate_id`),
-  KEY `fk_result_debate1_idx` (`debate_id`),
-  KEY `fk_result_user1_idx` (`entered_by_id`),
-  CONSTRAINT `fk_result_debate1` FOREIGN KEY (`debate_id`) REFERENCES `debate` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_result_user1` FOREIGN KEY (`entered_by_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4574 DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table result
+--
+
+DROP TABLE IF EXISTS "result" CASCADE;
+DROP SEQUENCE IF EXISTS "result_id_seq" CASCADE ;
+
+CREATE SEQUENCE "result_id_seq"  START WITH 4574 ;
+
+CREATE TABLE  "result" (
+   "id" integer DEFAULT nextval('"result_id_seq"') NOT NULL,
+   "debate_id" int CHECK ("debate_id" >= 0) NOT NULL,
+   "og_a_speaks"    smallint NOT NULL,
+   "og_b_speaks"    smallint NOT NULL,
+   "og_irregular"    smallint NOT NULL DEFAULT '0',
+   "og_place"    smallint NOT NULL,
+   "oo_a_speaks"    smallint NOT NULL,
+   "oo_b_speaks"    smallint NOT NULL,
+   "oo_irregular"    smallint NOT NULL DEFAULT '0',
+   "oo_place"    smallint NOT NULL,
+   "cg_a_speaks"    smallint NOT NULL,
+   "cg_b_speaks"    smallint NOT NULL,
+   "cg_irregular"    smallint NOT NULL DEFAULT '0',
+   "cg_place"    smallint NOT NULL,
+   "co_a_speaks"    smallint NOT NULL,
+   "co_b_speaks"    smallint NOT NULL,
+   "co_irregular"    smallint NOT NULL DEFAULT '0',
+   "co_place"    smallint NOT NULL,
+   "time"   timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   "entered_by_id" int CHECK ("entered_by_id" >= 0) DEFAULT NULL,
+   "checked"    smallint NOT NULL DEFAULT '0',
+   primary key ("id"),
+ unique ("debate_id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `round`
---
-
-DROP TABLE IF EXISTS `round`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `round` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `label` varchar(100) NOT NULL,
-  `tournament_id` int(10) unsigned NOT NULL,
-  `type` tinyint(4) NOT NULL DEFAULT '0',
-  `level` tinyint(4) NOT NULL DEFAULT '0',
-  `energy` int(11) NOT NULL DEFAULT '0',
-  `motion` text NOT NULL,
-  `infoslide` text,
-  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `published` tinyint(1) NOT NULL DEFAULT '0',
-  `displayed` tinyint(1) NOT NULL DEFAULT '0',
-  `closed` tinyint(1) NOT NULL DEFAULT '0',
-  `prep_started` datetime DEFAULT NULL,
-  `finished_time` datetime DEFAULT NULL,
-  `lastrun_temp` float NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`),
-  KEY `fk_round_tournament1_idx` (`tournament_id`),
-  CONSTRAINT `fk_round_tournament1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=542 DEFAULT CHARSET=utf8;
+CREATE INDEX "result_debate_id_idx" ON "result" USING btree ("debate_id");
+CREATE INDEX "result_entered_by_id_idx" ON "result" USING btree ("entered_by_id");
+ALTER TABLE "result" ADD FOREIGN KEY ("debate_id") REFERENCES "debate" ("id");
+ALTER TABLE "result" ADD FOREIGN KEY ("entered_by_id") REFERENCES "user" ("id");
+
+--
+-- Table structure for table round
+--
+
+DROP TABLE IF EXISTS "round" CASCADE;
+DROP SEQUENCE IF EXISTS "round_id_seq" CASCADE ;
+
+CREATE SEQUENCE "round_id_seq"  START WITH 542 ;
+
+CREATE TABLE  "round" (
+   "id" integer DEFAULT nextval('"round_id_seq"') NOT NULL,
+   "label"   varchar(100) NOT NULL,
+   "tournament_id" int CHECK ("tournament_id" >= 0) NOT NULL,
+   "type"    smallint NOT NULL DEFAULT '0',
+   "level"    smallint NOT NULL DEFAULT '0',
+   "energy"   int NOT NULL DEFAULT '0',
+   "motion"   text NOT NULL,
+   "infoslide"   text,
+   "time"   timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   "published"    smallint NOT NULL DEFAULT '0',
+   "displayed"    smallint NOT NULL DEFAULT '0',
+   "closed"    smallint NOT NULL DEFAULT '0',
+   "prep_started"   timestamp without time zone DEFAULT NULL,
+   "finished_time"   timestamp without time zone DEFAULT NULL,
+   "lastrun_temp"   float NOT NULL DEFAULT '1',
+   primary key ("id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `society`
---
-
-DROP TABLE IF EXISTS `society`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `society` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `fullname` varchar(255) DEFAULT NULL,
-  `abr` varchar(45) DEFAULT NULL,
-  `city` varchar(255) DEFAULT NULL,
-  `country_id` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `adr_UNIQUE` (`abr`),
-  KEY `fk_society_country1_idx` (`country_id`),
-  CONSTRAINT `fk_society_country1` FOREIGN KEY (`country_id`) REFERENCES `country` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2341 DEFAULT CHARSET=utf8;
+CREATE INDEX "round_tournament_id_idx" ON "round" USING btree ("tournament_id");
+ALTER TABLE "round" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+
+--
+-- Table structure for table society
+--
+
+DROP TABLE IF EXISTS "society" CASCADE;
+DROP SEQUENCE IF EXISTS "society_id_seq" CASCADE ;
+
+CREATE SEQUENCE "society_id_seq"  START WITH 2341 ;
+
+CREATE TABLE  "society" (
+   "id" integer DEFAULT nextval('"society_id_seq"') NOT NULL,
+   "fullname"   varchar(255) DEFAULT NULL,
+   "abr"   varchar(45) DEFAULT NULL,
+   "city"   varchar(255) DEFAULT NULL,
+   "country_id" int CHECK ("country_id" >= 0) NOT NULL,
+   primary key ("id"),
+ unique ("abr")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `source_message`
---
-
-DROP TABLE IF EXISTS `source_message`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `source_message` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `category` varchar(32) DEFAULT NULL,
-  `message` text,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=797 DEFAULT CHARSET=latin1;
+CREATE INDEX "society_country_id_idx" ON "society" USING btree ("country_id");
+ALTER TABLE "society" ADD FOREIGN KEY ("country_id") REFERENCES "country" ("id");
+
+--
+-- Table structure for table source_message
+--
+
+DROP TABLE IF EXISTS "source_message" CASCADE;
+DROP SEQUENCE IF EXISTS "source_message_id_seq" CASCADE ;
+
+CREATE SEQUENCE "source_message_id_seq"  START WITH 797 ;
+
+CREATE TABLE  "source_message" (
+   "id" integer DEFAULT nextval('"source_message_id_seq"') NOT NULL,
+   "category"   varchar(32) DEFAULT NULL,
+   "message"   text,
+   primary key ("id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
+/*!40000 ALTER TABLE source_message DISABLE KEYS */;
 
 --
--- Dumping data for table `source_message`
+-- Dumping data for table source_message
 --
 
-LOCK TABLES `source_message` WRITE;
-/*!40000 ALTER TABLE `source_message` DISABLE KEYS */;
-INSERT INTO `source_message` VALUES (1,'app','ID'),(2,'app','Name'),(3,'app','Import {modelClass}'),(4,'app','Import'),(5,'app','Societies'),(6,'app','Update'),(7,'app','Delete'),(8,'app','Are you sure you want to delete this item?'),(9,'app','Update {modelClass}: '),(10,'app','Merge Society \'{society}\' into ...'),(11,'app','Select a Mother-Society ...'),(12,'app','Create {modelClass}'),(13,'app','View {modelClass}'),(14,'app','Update {modelClass}'),(15,'app','Delete {modelClass}'),(16,'app','Add new element'),(17,'app','Reload content'),(18,'app','Import via CSV File'),(19,'app','Create'),(20,'app','Languages'),(21,'app','Create Language'),(22,'app','Special Needs'),(23,'app','Motion Tags'),(24,'app','Merge Motion Tag \'{tag}\' into ...'),(25,'app','Select a Mother-Tag ...'),(26,'app','Search'),(27,'app','Reset'),(28,'app','Create Motion Tag'),(29,'app','API'),(30,'app','Master'),(31,'app','Messages'),(32,'app','Create Message'),(33,'app','{count} Tags switched'),(34,'app','File Syntax Wrong'),(35,'app','Motion Tag'),(36,'app','Round'),(37,'app','Abbreviation'),(38,'app','Amount'),(39,'app','Opening Government'),(40,'app','Opening Opposition'),(41,'app','Closing Government'),(42,'app','Closing Opposition'),(43,'app','Team'),(44,'app','Active'),(45,'app','Tournament'),(46,'app','Speaker'),(47,'app','Society'),(48,'app','Swing Team'),(49,'app','Language Status'),(50,'app','Everything normal'),(51,'app','Was replaced by swing team'),(52,'app','Speaker {letter} didn\'t show up'),(53,'app','Key'),(54,'app','Label'),(55,'app','Value'),(56,'app','Team position can\'t be blank'),(57,'app','Outround'),(58,'app','Tabmaster User'),(59,'app','User'),(60,'app','ENL Place'),(61,'app','ESL Place'),(62,'app','Cache Results'),(63,'app','Fullname'),(64,'app','Abbrevation'),(65,'app','City'),(66,'app','Country'),(67,'app','OG Team'),(68,'app','OO Team'),(69,'app','CG Team'),(70,'app','CO Team'),(71,'app','Panel'),(72,'app','Venue'),(73,'app','OG Feedback'),(74,'app','OO Feedback'),(75,'app','CG Feedback'),(76,'app','CO Feedback'),(77,'app','Time'),(78,'app','Motion'),(79,'app','Language'),(80,'app','Date'),(81,'app','Infoslide'),(82,'app','Link'),(83,'app','By User'),(84,'app','Translation'),(85,'app','Adjudicator'),(86,'app','Answer'),(87,'app','Feedback'),(88,'app','Question'),(89,'app','Created'),(90,'app','Running'),(91,'app','Closed'),(92,'app','Hidden'),(93,'app','Hosted by'),(94,'app','Tournament Name'),(95,'app','Start Date'),(96,'app','End Date'),(97,'app','Timezone'),(98,'app','Logo'),(99,'app','URL Slug'),(100,'app','Tab Algorithm'),(101,'app','Expected number of rounds'),(102,'app','Show ESL Ranking'),(103,'app','Is there a grand final'),(104,'app','Is there a semifinal'),(105,'app','Is there a quarterfinal'),(106,'app','Is there a octofinal'),(107,'app','Access Token'),(108,'app','Participant Badge'),(109,'app','Alpha 2'),(110,'app','Alpha 3'),(111,'app','Region'),(112,'app','Language Code'),(113,'app','Coverage'),(114,'app','Last Update'),(115,'app','Strength'),(116,'app','can Chair'),(117,'app','are Watched'),(118,'app','Not Rated'),(121,'app','Can Judge'),(122,'app','Decent'),(124,'app','High Potential'),(125,'app','Chair'),(126,'app','Good'),(127,'app','Breaking'),(128,'app','Chief Adjudicator'),(129,'app','Starting'),(130,'app','Ending'),(131,'app','Speaker Points'),(132,'app','This email address has already been taken.'),(133,'app','Debater'),(134,'app','Auth Key'),(135,'app','Password Hash'),(136,'app','Password Reset Token'),(137,'app','Email'),(138,'app','Account Role'),(139,'app','Account Status'),(140,'app','Last Change'),(141,'app','First Name'),(142,'app','Last Name'),(143,'app','Picture'),(144,'app','Placeholder'),(145,'app','Tabmaster'),(146,'app','Admin'),(147,'app','Deleted'),(148,'app','Not revealing'),(149,'app','Female'),(150,'app','Male'),(151,'app','Other'),(152,'app','mixed'),(153,'app','Not yet set'),(154,'app','Interview needed'),(155,'app','EPL'),(157,'app','ESL'),(158,'app','English as a second language'),(159,'app','EFL'),(160,'app','English as a foreign language'),(161,'app','Not set'),(162,'app','Error saving InSociety Relation for {user_name}'),(163,'app','Error Saving User {user_name}'),(164,'app','{tournament_name}: User Account for {user_name}'),(165,'app','This URL-Slug is not allowed.'),(166,'app','Published'),(167,'app','Displayed'),(168,'app','Started'),(169,'app','Judging'),(170,'app','Finished'),(171,'app','Main'),(172,'app','Novice'),(173,'app','Final'),(174,'app','Semifinal'),(175,'app','Quarterfinal'),(176,'app','Octofinal'),(177,'app','Round #{num}'),(178,'app','Inround'),(179,'app','Energy'),(180,'app','Info Slide'),(181,'app','PrepTime started'),(182,'app','Last Temperature'),(183,'app','ms to calculate'),(184,'app','Not enough Teams to fill a single room - (active: {teams_count})'),(185,'app','At least two Adjudicators are necessary - (active: {count_adju})'),(186,'app','Amount of active Teams must be divided by 4 ;) - (active: {count_teams})'),(187,'app','Not enough active Rooms (active: {active_rooms} required: {required})'),(188,'app','Not enough adjudicators (active: {active}  min-required: {required})'),(189,'app','Not enough free adjudicators with this preset panel configuration. (fillable rooms: {active}  min-required: {required})'),(190,'app','Can\'t save Panel! Error: {message}'),(191,'app','Can\'t save Debate! Error: {message}'),(192,'app','Can\'t save debate! Errors:<br>{errors}'),(193,'app','No Debate #{num} found to update'),(195,'app','Type'),(196,'app','Parameter if needed'),(197,'app','Apply to Team -> Chair'),(198,'app','Apply to Chair -> Wing'),(199,'app','Apply to Wing -> Chair'),(200,'app','Not Good'),(201,'app','Very Good'),(202,'app','Excellent'),(203,'app','Star Rating (1-5) Field'),(204,'app','Short Text Field'),(205,'app','Long Text Field'),(206,'app','Number Field'),(207,'app','Checkbox List Field'),(208,'app','Debate'),(209,'app','Feedback To ID'),(210,'app','Adjudicator Strike From ID'),(211,'app','Adjudicator Strike To ID'),(212,'app','Group'),(213,'app','Active Room'),(214,'app','Wing'),(215,'app','Used'),(216,'app','Is Preset Panel'),(217,'app','Panel #{id} has {amount} chairs'),(218,'app','Category'),(219,'app','Message'),(220,'app','Function'),(221,'app','Legacy Motion'),(222,'app','Questions'),(223,'app','Clash With'),(224,'app','Reason'),(225,'app','Team Clash'),(226,'app','Adjudicator Clash'),(227,'app','No type found'),(228,'app','OG A Speaks'),(229,'app','OG B Speaks'),(230,'app','OG Place'),(231,'app','OO A Speaks'),(232,'app','OO B Speaks'),(233,'app','OO Place'),(234,'app','CG A Speaks'),(235,'app','CG B Speaks'),(236,'app','CG Place'),(237,'app','CO A Speaks'),(238,'app','CO B Speaks'),(239,'app','CO Place'),(240,'app','Checked'),(241,'app','Entered by User ID'),(242,'app','Equal place exist'),(243,'app','Ironman by'),(244,'app','CA'),(245,'app','Password reset token cannot be blank.'),(246,'app','Wrong password reset token.'),(247,'app','Comma ( , ) separated file'),(248,'app','Semicolon ( ; ) separated file'),(249,'app','Tab ( ->| ) separated file'),(250,'app','CSV File'),(251,'app','Delimiter'),(252,'app','Mark as Test Data Import (prohibits Email sending)'),(253,'app','Username'),(254,'app','Profile Picture'),(255,'app','Current Society'),(256,'app','With which gender do you identify yourself the most'),(257,'app','This URL is not allowed.'),(258,'app','{adju} checked in!'),(259,'app','{adju} already checked in!'),(260,'app','{id} number not valid! Not an Adjudicator!'),(261,'app','{speaker} checked in!'),(262,'app','{speaker} already checked in!'),(263,'app','{id} number not valid! Not a Team!'),(264,'app','Not a valid input'),(265,'app','Verification Code'),(266,'app','DebReg'),(267,'app','Password reset for {user}'),(268,'app','User not found with this Email'),(269,'app','Add {object}'),(270,'app','Create Society'),(271,'app','Hey cool! You entered an unknown Society!'),(272,'app','Before we can link you, can you please complete the information about your Society:'),(273,'app','Search for a country ...'),(274,'app','Add new Society'),(275,'app','Search for a society ...'),(276,'app','Enter start date ...'),(277,'app','Enter ending date if applicable ...'),(278,'app','Language Officers'),(279,'app','Officer'),(280,'app','Any {object} ...'),(281,'app','Language Status Review'),(282,'app','Status'),(283,'app','Request an interview'),(284,'app','Set ENL'),(285,'app','Set ESL'),(286,'app','Language Officer'),(288,'app','Add'),(289,'app','Search for a User ...'),(290,'app','Checkin'),(291,'app','Submit'),(292,'app','Generate Badges'),(293,'app','Only do for User ...'),(294,'app','Print Badges'),(295,'app','Generate Barcodes'),(296,'app','Search for a user ... or leave blank'),(297,'app','Print Barcodes'),(298,'app','Teams'),(299,'app','Team Name'),(300,'app','Speaker A'),(301,'app','Speaker B'),(302,'app','Make it so'),(303,'app','Motion:'),(304,'app','Panel:'),(305,'app','Toogle Active'),(307,'app','Search for a user ...'),(308,'app','Tournaments'),(309,'app','Overview'),(310,'app','Motions'),(311,'app','Team Tab'),(312,'app','Speaker Tab'),(313,'app','Out-Rounds'),(314,'app','Breaking Adjudicators'),(315,'app','Make it so!'),(316,'app','DebReg Tournament'),(317,'app','Show old tournaments'),(318,'app','Adjudicators'),(319,'app','Result'),(320,'app','together with {teammate}'),(321,'app','as ironman'),(322,'app','You are registered as team <br> \'{team}\' {with} for {society}'),(323,'app','You are registered as adjudicator for {society}'),(325,'app','Registration Information'),(326,'app','Enter Information'),(327,'app','Round #{num} Info'),(328,'app','You are <b>{pos}</b> in room <b>{room}</b>.'),(329,'app','Round starts at: <b>{time}</b>'),(330,'app','InfoSlide'),(331,'app','Round #{num} Teams'),(332,'app','My super awesome IV ... e.g. Vienna IV'),(333,'app','Select the Convenors ...'),(334,'app','Enter start date / time ...'),(335,'app','Enter the end date / time ...'),(336,'app','Chief Adjudicators'),(337,'app','Choose your CAs ...'),(338,'app','Choose your Tabmaster ...'),(339,'app','Tournament Archive'),(340,'app','The above error occurred while the Web server was processing your request.'),(341,'app','Please contact us if you think this is a server error. Thank you.'),(342,'app','Reset password'),(343,'app','Please choose your new password:'),(344,'app','Save'),(345,'app','Signup'),(346,'app','Please fill out the following fields to signup:'),(347,'app','Most tournament allocation algorithm in this system try also to take panel diversity into account.\n					For this to work at all, we would politely ask to choose an option from this list.\n					We are aware that not every personal preference can be matched by our choises and apologise for missing options.\n					If you feel that none of the options is in any applicable please choose <Not Revealing>.\n					This option will never be shown to any user and is only for calculation purposes only!'),(348,'app','Login'),(349,'app','Please fill out the following fields to login:'),(350,'app','If you forgot your password you can {resetIt}'),(351,'app','reset it'),(352,'app','Request password reset'),(353,'app','Please fill out your email. A link to reset password will be sent there.'),(354,'app','Send'),(355,'app','Venue CSV'),(356,'app','Adjudicator CSV'),(357,'app','Team CSV'),(358,'app','created'),(359,'app','Sample Venue CSV'),(360,'app','Sample Team CSV'),(361,'app','Sample Adjudicator CSV'),(362,'app','Current BP Debate {count, plural, =0{Tournament} =1{Tournament} other{Tournaments}}'),(363,'app','Welcome to {appName}!'),(364,'app','View Tournaments'),(365,'app','Create Tournament'),(366,'app','Before we can register you can you please complete the information about your Society:'),(367,'app','Contact'),(368,'app','Preset Panel #'),(369,'app','Panels'),(370,'app','Average Panel Strength'),(371,'app','Create Panel'),(372,'app','Preset Panels for next round'),(373,'app','Add {object} ...'),(374,'app','Place'),(375,'app','Team Points'),(376,'app','#{number}'),(377,'app','No Breaking Adjudicators defined'),(378,'app','Speaker Points Distribution'),(379,'app','Run'),(380,'app','Opening Gov'),(381,'app','Opening Opp'),(382,'app','Closing Gov'),(383,'app','Closing Opp'),(384,'app','Show Info Slide'),(385,'app','Show Motion'),(386,'app','Missing User'),(387,'app','Mark missing as inactive'),(388,'app','Results'),(389,'app','Runner View for Round #{number}'),(390,'app','Auto Update <i id=\'pjax-status\' class=\'\'></i>'),(391,'app','Update individual clash'),(392,'app','Individual Clash'),(393,'app','Not every debater is yet in the system. :)'),(394,'app','Create clash'),(395,'app','Update clash'),(396,'app','Energy Configs'),(397,'app','Update Energy Value'),(398,'app','Round #{number}'),(399,'app','Rounds'),(400,'app','Actions'),(401,'app','Publish Tab'),(402,'app','Retry to generate Draw'),(403,'app','Update Round'),(404,'app','Toggle Dropdown'),(405,'app','Continue Improving by'),(407,'app','Are you sure you want to re-draw the round? All information will be lost!'),(408,'app','Print Ballots'),(411,'app','Round Status'),(412,'app','Average Energy'),(413,'app','Creation Time'),(414,'app','Color Palette'),(415,'app','Gender'),(416,'app','Regions'),(417,'app','Points'),(418,'app','Loading ...'),(419,'app','View Feedback'),(420,'app','View User'),(421,'app','Switch venue {venue} with'),(422,'app','Select a Venue ...'),(423,'app','Update {modelClass} #{number}'),(424,'app','Energy Level'),(425,'app','Select a Team ...'),(426,'app','Select a Language ...'),(427,'app','Select an Adjudicator ...'),(428,'app','Switch Adjudicators'),(429,'app','Switch this Adjudicator ...'),(430,'app','with'),(431,'app','with this one ...'),(432,'app','Search for a Motion tag ...'),(433,'app','Rank'),(434,'app','Total'),(435,'app','Debate ID'),(436,'app','Room'),(437,'app','Outrounds'),(438,'app','Motion Archive'),(439,'app','Third-Party\n			Motion'),(440,'app','Your amazing IV'),(441,'app','Enter date ...'),(442,'app','Round #1 or Final'),(443,'app','THW ...'),(444,'app','http://give.credit.where.credit.is.due.com'),(445,'app','Enter {modelClass} Manual'),(446,'app','Options'),(447,'app','Continue'),(448,'app','No results yet!'),(449,'app','Results in Room: {venue}'),(450,'app','Results for {venue}'),(451,'app','Table View'),(452,'app','Results for {label}'),(453,'app','Switch to Venue View'),(454,'app','Swing Team Score'),(455,'app','View Result Details'),(456,'app','Correct Result'),(457,'app','Venue View'),(458,'app','Switch to Tableview'),(459,'app','Confirm Data for {venue}'),(460,'app','start over'),(461,'app','Round {number}'),(462,'app','Thank you'),(463,'app','Thank you!'),(464,'app','Results successfully saved'),(465,'app','Speeeed Bonus!'),(466,'app','Hurry up! Chop Chop!'),(467,'app','Bummer! Last one!'),(468,'app','You are <b>#{place}</b> from {max}'),(469,'app','Enter Feedback'),(470,'app','Return to Tournament'),(471,'app','Feedbacks'),(472,'app','Target Adjudicator'),(473,'app','Adjudicator name ...'),(474,'app','Adjudicator Feedback'),(475,'app','Submit Feedback'),(476,'app','{tournament} - Language Officer'),(477,'app','Review Language Status'),(478,'app','made with secret alien technology'),(479,'app','Report a Bug'),(480,'app','{tournament} - Manager'),(481,'app','List Venues'),(482,'app','Create Venue'),(483,'app','Import Venue'),(484,'app','List Teams'),(485,'app','Create Team'),(486,'app','Import Team'),(487,'app','Strike Team'),(488,'app','List Adjudicators'),(489,'app','Create Adjudicator'),(490,'app','Import Adjudicator'),(491,'app','View Preset Panels'),(492,'app','Create Preset Panel'),(493,'app','Strike Adjudicator'),(494,'app','Update Tournament'),(495,'app','Display Team Tab'),(496,'app','Display Speaker Tab'),(497,'app','Display Outrounds'),(498,'app','Publishing the Tab will close and archive the tournament!! Are you sure you want to continue?'),(499,'app','Missing Users'),(500,'app','Checkin Form'),(501,'app','Print Badgets'),(502,'app','Reset Checkin'),(503,'app','Are you sure you want to reset the checkin?'),(504,'app','Sync with DebReg'),(505,'app','Migrate to Tabbie 1'),(506,'app','Extreme caution young padawan!'),(507,'app','List Rounds'),(508,'app','Create Round'),(509,'app','Energy Options'),(510,'app','List Results'),(511,'app','Insert Ballot'),(512,'app','Correct Cache'),(513,'app','Setup Questions'),(514,'app','Every Feedback'),(515,'app','Feedback on Adjudicator'),(516,'app','About'),(517,'app','How-To'),(518,'app','Users'),(519,'app','Register'),(520,'app','{user}\'s Profile'),(521,'app','{user}\'s History'),(522,'app','Logout'),(524,'app','Update {label}'),(525,'app','Next Step'),(526,'app','Room {number}'),(527,'app','Venues'),(529,'app','Strikes'),(530,'app','Import Strikes'),(531,'app','Accept'),(532,'app','Deny'),(533,'app','Search for a Team ...'),(534,'app','Search for an Adjudicator ...'),(535,'app','Strike Adjudicators'),(536,'app','Create Additional {modelClass}'),(537,'app','Update team'),(538,'app','Delete team'),(539,'app','Search for an From Adjudicator ...'),(540,'app','Search for an To Adjudicator ...'),(541,'app','Strike Team with Adjudicator'),(542,'app','Update Team'),(543,'app','Delete Team'),(544,'app','{modelClass}\'s History'),(545,'app','History'),(546,'app','Team Review'),(547,'app','EPL Place'),(548,'app','Team Speaker Points'),(549,'app','No published tab available at the moment'),(550,'app','Can chair'),(551,'app','Should not chair'),(552,'app','Break'),(553,'app','Not breaking'),(554,'app','Watched'),(555,'app','Unwatched'),(556,'app','Toogle Watch'),(557,'app','Toogle Breaking'),(558,'app','Reset watcher flag'),(559,'app','Search for a {object} ...'),(560,'app','Chaired'),(561,'app','Pointer'),(562,'app','Update User profile'),(563,'app','Individual Clashes'),(564,'app','Update Clash Info'),(565,'app','Delete Clash'),(566,'app','No clash known to the system.'),(567,'app','Debate Society History'),(568,'app','Add new society to history'),(569,'app','still active'),(570,'app','Update Society Info'),(571,'app','Force new password for {name}'),(572,'app','Cancel'),(573,'app','Search for a tournament ...'),(574,'app','Set new Password'),(575,'app','Update User'),(576,'app','Delete User'),(577,'app','Create User'),(578,'app','No condition matched'),(579,'app','Did not pass panel check old: {old} / new: {new}'),(580,'app','Can\'t save {object}! Error: {message}'),(582,'app','No File available'),(583,'app','No matching records found'),(584,'app','Thank you for your submission.'),(585,'app','Error saving Panel:'),(586,'app','Panel deleted'),(587,'app','Welcome! This is your first login, please check that your information are correct'),(588,'app','A new society has been saved'),(589,'app','There has been an error receiving your previous input. Please enter them again.'),(590,'app','User registered! Welcome {user}'),(591,'app','Login failed'),(592,'app','Check your email for further instructions.'),(593,'app','Sorry, we are unable to reset password for email provided.<br>{message}'),(594,'app','New password was saved.'),(595,'app','New Passwort set'),(596,'app','Error saving new password'),(597,'app','Society connection not saved'),(598,'app','User successfully saved!'),(599,'app','User not saved!'),(600,'app','Society Connection not saved!'),(601,'app','User successfully updated!'),(602,'app','Please enter a new password!'),(603,'app','User deleted'),(604,'app','Cant\'t delete because of {error}'),(605,'app','Cound\'t delete because already in use. <br> {ex}'),(606,'app','Checking Flags reset'),(607,'app','There was no need for a reset'),(608,'app','Please set breaking adjudicators first - use the star icon in the action column.'),(609,'app','Couldn\'t create Team.'),(610,'app','Error saving Society Relation for {society}'),(611,'app','Error saving team {name}!'),(613,'app','Can\'t save Tournament connection'),(614,'app','Can\'t delete Question'),(615,'app','Society connection successfully created'),(616,'app','Society could not be saved'),(617,'app','Error in wakeup'),(618,'app','Society Info updated'),(619,'app','Tab published and tournament closed. Go have a drink!'),(620,'app','Chair in Panel not found - type wrong?'),(622,'app','No valid type'),(623,'app','{object} successfully submitted'),(624,'app','{object} created'),(625,'app','Individual clash'),(626,'app','Individual clash could not be saved'),(627,'app','{object} updated'),(628,'app','{object} could not be saved'),(629,'app','{object} deleted'),(630,'app','{tournament} on Tabbie2'),(631,'app','{tournament} is taking place from {start} to {end} hosted by {host} in {country}'),(632,'app','Tournament successfully created'),(633,'app','Tournament created but Energy config failed!'),(634,'app','Can\'t save Tournament!'),(635,'app','DebReg Syncing successful'),(636,'app','Venues switched'),(637,'app','Error while switching'),(638,'app','New Venues set'),(639,'app','Error while setting new venue'),(640,'app','Can\'t create Round: Amount of Teams is not dividable by 4'),(641,'app','Successfully redrawn in {secs}s'),(642,'app','Improved Energy by {diff} points in {secs}s'),(643,'app','Adjudicator {n1} and {n2} switched'),(644,'app','Could not switch because: {a_panel}<br>and<br>{b_panel}'),(645,'app','Show Round {number}'),(646,'app','No debates found in that round'),(647,'app','Not a valid language options in params'),(648,'app','Team upgraded to {status}'),(649,'app','Language Settings saved'),(650,'app','Error saving Language Settings'),(651,'app','User not found!'),(652,'app','{object} successfully added'),(653,'app','Successfully deleted'),(654,'app','File Syntax Wrong! Expecting 3 columns'),(656,'app','Error saving Results.<br>Please request a paper ballot!'),(657,'app','Result saved. Next one!'),(658,'app','Debate #{id} does not exist'),(659,'app','Correct Team Points for {team} from {old_points} to {new_points}'),(660,'app','Correct Speaker {pos} speaks for {team} from {old_points} to {new_points}'),(661,'app','Cache in perfect shape. No change needed!'),(662,'app','Can\'t save clash decision. {reason}'),(663,'app','Not enough venues'),(664,'app','Too many venues'),(665,'app','Max Iterations to improve the Adjudicator Allocation'),(666,'app','Team and adjudicator in same society penalty'),(667,'app','Both Adjudicators are clashed'),(668,'app','Team with Adjudicator is clashed'),(669,'app','Adjudicator is not allowed to chair'),(670,'app','Chair is not perfect at the current situation'),(671,'app','Adjudicator has seen the team already'),(672,'app','Adjudicator has already judged in this combination'),(673,'app','Panel is wrong strength for room'),(674,'app','Richard\'s special ingredient'),(675,'app','Adjudicator {adju} and {team} in same society.'),(676,'app','Adjudicator {adju1} and {adju2} are manually clashed.'),(677,'app','Adjudicator {adju} and Team {team} are manually clashed.'),(678,'app','Adjudicator {adju} has been labelled a non-chair.'),(679,'app','Chair not perfect by {points}.'),(680,'app','Adjudicator {adju1} and {adju2} have judged together x{occ} before'),(681,'app','Adjudicator {adju} has judged Team {team} x {occ} before.'),(682,'app','Steepness Comparison: {comparison_factor}, Difference: {roomDifference}, Steepness Penalty: {steepnessPenalty}'),(686,'app.country','Undefined'),(687,'app.country','Northern Europe'),(688,'app.country','Western Europe'),(689,'app.country','Southern Europe'),(690,'app.country','Eastern Europe'),(691,'app.country','Central Asia'),(692,'app.country','Eastern Asia'),(693,'app.country','Western Asia'),(694,'app.country','Southern Asia'),(695,'app.country','South-Eastern Asia'),(696,'app.country','Australia & New Zealand'),(697,'app.country','Micronesia'),(698,'app.country','Melanesia'),(699,'app.country','Polynesia'),(700,'app.country','Northern Africa'),(701,'app.country','Western Africa'),(702,'app.country','Central Africa'),(703,'app.country','Eastern Africa'),(704,'app.country','Southern Africa'),(705,'app.country','Northern America'),(706,'app.country','Central America'),(707,'app.country','Caribbean'),(708,'app.country','South America'),(709,'app.country','Antarctic'),(710,'app','Punished Adjudicator'),(711,'app','Bad Adjudicator'),(712,'app','Decent Adjudicator'),(713,'app','Average Adjudicator'),(714,'app','Average Chair'),(715,'app','Good Chair'),(716,'app','Breaking Chair'),(717,'app','<b>This tournament has no teams yet.</b><br>{add_button} or {import_button}'),(718,'app','Add a team'),(719,'app','Import them via CSV File.'),(720,'app','This tournament has no venues yet.<br>{add} or {import}'),(721,'app','Add a venue'),(722,'app','Import them via csv File'),(723,'app','<b>This tournament has no adjudicators yet.</b><br>{add_button} or {import_button}.'),(724,'app','Import them via CSV File'),(725,'app','Already Results entered for this round. Can\'t redraw!'),(726,'app','Already Results entered for this round. Can\'t improve!'),(727,'app','Feedback #{num}'),(728,'app','User ID'),(729,'app','Language Maintainer'),(730,'app','Language Maintainers'),(731,'app','Create Language Maintainer'),(732,'app','Show EFL Ranking'),(733,'app','Show Novice Ranking'),(734,'app','English as proficient language'),(735,'app','NOV'),(736,'app','Set Novice'),(737,'app','ENL'),(738,'app','Create new Language'),(739,'app','Export Draw as JSON'),(740,'app','Can\'t delete Team {name} because it is already in use'),(741,'app','Can\'t delete Adjudicator {name} because he/she is already in use'),(742,'app','Can\'t delete Venue {name} because it is already in use'),(743,'app','Tell us in 3-4 general keywords what the motion is about. Reuse tags ...'),(744,'app','Error Saving Custom Attribute: {name}'),(745,'app','Error Saving Custom Value \'{key}\': {value}'),(746,'app','User Attr ID'),(747,'app','Tournament ID'),(748,'app','Required'),(749,'app','Help'),(750,'app','Custom Values for {tournament}'),(751,'app','File Syntax not matching. Minimal 5 columns required.'),(753,'app','Trainee'),(754,'app','Import {modelClass} #{number}'),(755,'app','Publish approved Draw'),(756,'app','Import Draw from JSON'),(757,'app','This will override the current draw! All information will be lost!'),(758,'app','Re-draw Round'),(759,'app','Delete Round'),(760,'app','Are you sure you want to DELETE the round? All information will be lost!'),(761,'app','Round is already active! Can\'t override with input.'),(762,'app','Uploaded file was empty. Please select a file.'),(764,'app','Speakers'),(765,'app','File Syntax Wrong! At least {min} columns expected; {num} provided in line {line}'),(766,'app','Question Text'),(767,'app','Help Text'),(770,'app','Adjudicator to Adjudicator Clashes'),(771,'app','Accept all'),(772,'app','Deny all'),(773,'app','Team to Adjudicator Clashes'),(774,'app','Not a valid decision'),(775,'app','Import Score for {modelClass}'),(777,'app','Public Access URLs'),(778,'app','Debate not found - type wrong?'),(783,'app','Motion Balance'),(784,'app','Round information'),(785,'app','There is currently no active round. Refresh this page later.'),(787,'app','PD-Octofinal'),(788,'app','Replace adjudicator {adjudicator} with'),(789,'app','Replace'),(790,'app','View'),(791,'app','Switch Team {team} with'),(792,'app','Retry to set Draw'),(793,'app','AVG'),(794,'app','Only authorised Tabmasters can access this function'),(795,'app','Tournament successfully updated'),(796,'app','Tournament updated but Energy config updated failed!');
-/*!40000 ALTER TABLE `source_message` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO "source_message" VALUES (1,E'app',E'ID');
+INSERT INTO "source_message" VALUES (2,E'app',E'Name');
+INSERT INTO "source_message" VALUES (3,E'app',E'Import {modelClass}');
+INSERT INTO "source_message" VALUES (4,E'app',E'Import');
+INSERT INTO "source_message" VALUES (5,E'app',E'Societies');
+INSERT INTO "source_message" VALUES (6,E'app',E'Update');
+INSERT INTO "source_message" VALUES (7,E'app',E'Delete');
+INSERT INTO "source_message" VALUES (8,E'app',E'Are you sure you want to delete this item?');
+INSERT INTO "source_message" VALUES (9,E'app',E'Update {modelClass}: ');
+INSERT INTO "source_message" VALUES (10,E'app',E'Merge Society \'{society}\' into ...');
+INSERT INTO "source_message" VALUES (11,E'app',E'Select a Mother-Society ...');
+INSERT INTO "source_message" VALUES (12,E'app',E'Create {modelClass}');
+INSERT INTO "source_message" VALUES (13,E'app',E'View {modelClass}');
+INSERT INTO "source_message" VALUES (14,E'app',E'Update {modelClass}');
+INSERT INTO "source_message" VALUES (15,E'app',E'Delete {modelClass}');
+INSERT INTO "source_message" VALUES (16,E'app',E'Add new element');
+INSERT INTO "source_message" VALUES (17,E'app',E'Reload content');
+INSERT INTO "source_message" VALUES (18,E'app',E'Import via CSV File');
+INSERT INTO "source_message" VALUES (19,E'app',E'Create');
+INSERT INTO "source_message" VALUES (20,E'app',E'Languages');
+INSERT INTO "source_message" VALUES (21,E'app',E'Create Language');
+INSERT INTO "source_message" VALUES (22,E'app',E'Special Needs');
+INSERT INTO "source_message" VALUES (23,E'app',E'Motion Tags');
+INSERT INTO "source_message" VALUES (24,E'app',E'Merge Motion Tag \'{tag}\' into ...');
+INSERT INTO "source_message" VALUES (25,E'app',E'Select a Mother-Tag ...');
+INSERT INTO "source_message" VALUES (26,E'app',E'Search');
+INSERT INTO "source_message" VALUES (27,E'app',E'Reset');
+INSERT INTO "source_message" VALUES (28,E'app',E'Create Motion Tag');
+INSERT INTO "source_message" VALUES (29,E'app',E'API');
+INSERT INTO "source_message" VALUES (30,E'app',E'Master');
+INSERT INTO "source_message" VALUES (31,E'app',E'Messages');
+INSERT INTO "source_message" VALUES (32,E'app',E'Create Message');
+INSERT INTO "source_message" VALUES (33,E'app',E'{count} Tags switched');
+INSERT INTO "source_message" VALUES (34,E'app',E'File Syntax Wrong');
+INSERT INTO "source_message" VALUES (35,E'app',E'Motion Tag');
+INSERT INTO "source_message" VALUES (36,E'app',E'Round');
+INSERT INTO "source_message" VALUES (37,E'app',E'Abbreviation');
+INSERT INTO "source_message" VALUES (38,E'app',E'Amount');
+INSERT INTO "source_message" VALUES (39,E'app',E'Opening Government');
+INSERT INTO "source_message" VALUES (40,E'app',E'Opening Opposition');
+INSERT INTO "source_message" VALUES (41,E'app',E'Closing Government');
+INSERT INTO "source_message" VALUES (42,E'app',E'Closing Opposition');
+INSERT INTO "source_message" VALUES (43,E'app',E'Team');
+INSERT INTO "source_message" VALUES (44,E'app',E'Active');
+INSERT INTO "source_message" VALUES (45,E'app',E'Tournament');
+INSERT INTO "source_message" VALUES (46,E'app',E'Speaker');
+INSERT INTO "source_message" VALUES (47,E'app',E'Society');
+INSERT INTO "source_message" VALUES (48,E'app',E'Swing Team');
+INSERT INTO "source_message" VALUES (49,E'app',E'Language Status');
+INSERT INTO "source_message" VALUES (50,E'app',E'Everything normal');
+INSERT INTO "source_message" VALUES (51,E'app',E'Was replaced by swing team');
+INSERT INTO "source_message" VALUES (52,E'app',E'Speaker {letter} didn\'t show up');
+INSERT INTO "source_message" VALUES (53,E'app',E'Key');
+INSERT INTO "source_message" VALUES (54,E'app',E'Label');
+INSERT INTO "source_message" VALUES (55,E'app',E'Value');
+INSERT INTO "source_message" VALUES (56,E'app',E'Team position can\'t be blank');
+INSERT INTO "source_message" VALUES (57,E'app',E'Outround');
+INSERT INTO "source_message" VALUES (58,E'app',E'Tabmaster User');
+INSERT INTO "source_message" VALUES (59,E'app',E'User');
+INSERT INTO "source_message" VALUES (60,E'app',E'ENL Place');
+INSERT INTO "source_message" VALUES (61,E'app',E'ESL Place');
+INSERT INTO "source_message" VALUES (62,E'app',E'Cache Results');
+INSERT INTO "source_message" VALUES (63,E'app',E'Fullname');
+INSERT INTO "source_message" VALUES (64,E'app',E'Abbrevation');
+INSERT INTO "source_message" VALUES (65,E'app',E'City');
+INSERT INTO "source_message" VALUES (66,E'app',E'Country');
+INSERT INTO "source_message" VALUES (67,E'app',E'OG Team');
+INSERT INTO "source_message" VALUES (68,E'app',E'OO Team');
+INSERT INTO "source_message" VALUES (69,E'app',E'CG Team');
+INSERT INTO "source_message" VALUES (70,E'app',E'CO Team');
+INSERT INTO "source_message" VALUES (71,E'app',E'Panel');
+INSERT INTO "source_message" VALUES (72,E'app',E'Venue');
+INSERT INTO "source_message" VALUES (73,E'app',E'OG Feedback');
+INSERT INTO "source_message" VALUES (74,E'app',E'OO Feedback');
+INSERT INTO "source_message" VALUES (75,E'app',E'CG Feedback');
+INSERT INTO "source_message" VALUES (76,E'app',E'CO Feedback');
+INSERT INTO "source_message" VALUES (77,E'app',E'Time');
+INSERT INTO "source_message" VALUES (78,E'app',E'Motion');
+INSERT INTO "source_message" VALUES (79,E'app',E'Language');
+INSERT INTO "source_message" VALUES (80,E'app',E'Date');
+INSERT INTO "source_message" VALUES (81,E'app',E'Infoslide');
+INSERT INTO "source_message" VALUES (82,E'app',E'Link');
+INSERT INTO "source_message" VALUES (83,E'app',E'By User');
+INSERT INTO "source_message" VALUES (84,E'app',E'Translation');
+INSERT INTO "source_message" VALUES (85,E'app',E'Adjudicator');
+INSERT INTO "source_message" VALUES (86,E'app',E'Answer');
+INSERT INTO "source_message" VALUES (87,E'app',E'Feedback');
+INSERT INTO "source_message" VALUES (88,E'app',E'Question');
+INSERT INTO "source_message" VALUES (89,E'app',E'Created');
+INSERT INTO "source_message" VALUES (90,E'app',E'Running');
+INSERT INTO "source_message" VALUES (91,E'app',E'Closed');
+INSERT INTO "source_message" VALUES (92,E'app',E'Hidden');
+INSERT INTO "source_message" VALUES (93,E'app',E'Hosted by');
+INSERT INTO "source_message" VALUES (94,E'app',E'Tournament Name');
+INSERT INTO "source_message" VALUES (95,E'app',E'Start Date');
+INSERT INTO "source_message" VALUES (96,E'app',E'End Date');
+INSERT INTO "source_message" VALUES (97,E'app',E'Timezone');
+INSERT INTO "source_message" VALUES (98,E'app',E'Logo');
+INSERT INTO "source_message" VALUES (99,E'app',E'URL Slug');
+INSERT INTO "source_message" VALUES (100,E'app',E'Tab Algorithm');
+INSERT INTO "source_message" VALUES (101,E'app',E'Expected number of rounds');
+INSERT INTO "source_message" VALUES (102,E'app',E'Show ESL Ranking');
+INSERT INTO "source_message" VALUES (103,E'app',E'Is there a grand final');
+INSERT INTO "source_message" VALUES (104,E'app',E'Is there a semifinal');
+INSERT INTO "source_message" VALUES (105,E'app',E'Is there a quarterfinal');
+INSERT INTO "source_message" VALUES (106,E'app',E'Is there a octofinal');
+INSERT INTO "source_message" VALUES (107,E'app',E'Access Token');
+INSERT INTO "source_message" VALUES (108,E'app',E'Participant Badge');
+INSERT INTO "source_message" VALUES (109,E'app',E'Alpha 2');
+INSERT INTO "source_message" VALUES (110,E'app',E'Alpha 3');
+INSERT INTO "source_message" VALUES (111,E'app',E'Region');
+INSERT INTO "source_message" VALUES (112,E'app',E'Language Code');
+INSERT INTO "source_message" VALUES (113,E'app',E'Coverage');
+INSERT INTO "source_message" VALUES (114,E'app',E'Last Update');
+INSERT INTO "source_message" VALUES (115,E'app',E'Strength');
+INSERT INTO "source_message" VALUES (116,E'app',E'can Chair');
+INSERT INTO "source_message" VALUES (117,E'app',E'are Watched');
+INSERT INTO "source_message" VALUES (118,E'app',E'Not Rated');
+INSERT INTO "source_message" VALUES (121,E'app',E'Can Judge');
+INSERT INTO "source_message" VALUES (122,E'app',E'Decent');
+INSERT INTO "source_message" VALUES (124,E'app',E'High Potential');
+INSERT INTO "source_message" VALUES (125,E'app',E'Chair');
+INSERT INTO "source_message" VALUES (126,E'app',E'Good');
+INSERT INTO "source_message" VALUES (127,E'app',E'Breaking');
+INSERT INTO "source_message" VALUES (128,E'app',E'Chief Adjudicator');
+INSERT INTO "source_message" VALUES (129,E'app',E'Starting');
+INSERT INTO "source_message" VALUES (130,E'app',E'Ending');
+INSERT INTO "source_message" VALUES (131,E'app',E'Speaker Points');
+INSERT INTO "source_message" VALUES (132,E'app',E'This email address has already been taken.');
+INSERT INTO "source_message" VALUES (133,E'app',E'Debater');
+INSERT INTO "source_message" VALUES (134,E'app',E'Auth Key');
+INSERT INTO "source_message" VALUES (135,E'app',E'Password Hash');
+INSERT INTO "source_message" VALUES (136,E'app',E'Password Reset Token');
+INSERT INTO "source_message" VALUES (137,E'app',E'Email');
+INSERT INTO "source_message" VALUES (138,E'app',E'Account Role');
+INSERT INTO "source_message" VALUES (139,E'app',E'Account Status');
+INSERT INTO "source_message" VALUES (140,E'app',E'Last Change');
+INSERT INTO "source_message" VALUES (141,E'app',E'First Name');
+INSERT INTO "source_message" VALUES (142,E'app',E'Last Name');
+INSERT INTO "source_message" VALUES (143,E'app',E'Picture');
+INSERT INTO "source_message" VALUES (144,E'app',E'Placeholder');
+INSERT INTO "source_message" VALUES (145,E'app',E'Tabmaster');
+INSERT INTO "source_message" VALUES (146,E'app',E'Admin');
+INSERT INTO "source_message" VALUES (147,E'app',E'Deleted');
+INSERT INTO "source_message" VALUES (148,E'app',E'Not revealing');
+INSERT INTO "source_message" VALUES (149,E'app',E'Female');
+INSERT INTO "source_message" VALUES (150,E'app',E'Male');
+INSERT INTO "source_message" VALUES (151,E'app',E'Other');
+INSERT INTO "source_message" VALUES (152,E'app',E'mixed');
+INSERT INTO "source_message" VALUES (153,E'app',E'Not yet set');
+INSERT INTO "source_message" VALUES (154,E'app',E'Interview needed');
+INSERT INTO "source_message" VALUES (155,E'app',E'EPL');
+INSERT INTO "source_message" VALUES (157,E'app',E'ESL');
+INSERT INTO "source_message" VALUES (158,E'app',E'English as a second language');
+INSERT INTO "source_message" VALUES (159,E'app',E'EFL');
+INSERT INTO "source_message" VALUES (160,E'app',E'English as a foreign language');
+INSERT INTO "source_message" VALUES (161,E'app',E'Not set');
+INSERT INTO "source_message" VALUES (162,E'app',E'Error saving InSociety Relation for {user_name}');
+INSERT INTO "source_message" VALUES (163,E'app',E'Error Saving User {user_name}');
+INSERT INTO "source_message" VALUES (164,E'app',E'{tournament_name}: User Account for {user_name}');
+INSERT INTO "source_message" VALUES (165,E'app',E'This URL-Slug is not allowed.');
+INSERT INTO "source_message" VALUES (166,E'app',E'Published');
+INSERT INTO "source_message" VALUES (167,E'app',E'Displayed');
+INSERT INTO "source_message" VALUES (168,E'app',E'Started');
+INSERT INTO "source_message" VALUES (169,E'app',E'Judging');
+INSERT INTO "source_message" VALUES (170,E'app',E'Finished');
+INSERT INTO "source_message" VALUES (171,E'app',E'Main');
+INSERT INTO "source_message" VALUES (172,E'app',E'Novice');
+INSERT INTO "source_message" VALUES (173,E'app',E'Final');
+INSERT INTO "source_message" VALUES (174,E'app',E'Semifinal');
+INSERT INTO "source_message" VALUES (175,E'app',E'Quarterfinal');
+INSERT INTO "source_message" VALUES (176,E'app',E'Octofinal');
+INSERT INTO "source_message" VALUES (177,E'app',E'Round #{num}');
+INSERT INTO "source_message" VALUES (178,E'app',E'Inround');
+INSERT INTO "source_message" VALUES (179,E'app',E'Energy');
+INSERT INTO "source_message" VALUES (180,E'app',E'Info Slide');
+INSERT INTO "source_message" VALUES (181,E'app',E'PrepTime started');
+INSERT INTO "source_message" VALUES (182,E'app',E'Last Temperature');
+INSERT INTO "source_message" VALUES (183,E'app',E'ms to calculate');
+INSERT INTO "source_message" VALUES (184,E'app',E'Not enough Teams to fill a single room - (active: {teams_count})');
+INSERT INTO "source_message" VALUES (185,E'app',E'At least two Adjudicators are necessary - (active: {count_adju})');
+INSERT INTO "source_message" VALUES (186,E'app',E'Amount of active Teams must be divided by 4 ;) - (active: {count_teams})');
+INSERT INTO "source_message" VALUES (187,E'app',E'Not enough active Rooms (active: {active_rooms} required: {required})');
+INSERT INTO "source_message" VALUES (188,E'app',E'Not enough adjudicators (active: {active}  min-required: {required})');
+INSERT INTO "source_message" VALUES (189,E'app',E'Not enough free adjudicators with this preset panel configuration. (fillable rooms: {active}  min-required: {required})');
+INSERT INTO "source_message" VALUES (190,E'app',E'Can\'t save Panel! Error: {message}');
+INSERT INTO "source_message" VALUES (191,E'app',E'Can\'t save Debate! Error: {message}');
+INSERT INTO "source_message" VALUES (192,E'app',E'Can\'t save debate! Errors:<br>{errors}');
+INSERT INTO "source_message" VALUES (193,E'app',E'No Debate #{num} found to update');
+INSERT INTO "source_message" VALUES (195,E'app',E'Type');
+INSERT INTO "source_message" VALUES (196,E'app',E'Parameter if needed');
+INSERT INTO "source_message" VALUES (197,E'app',E'Apply to Team -> Chair');
+INSERT INTO "source_message" VALUES (198,E'app',E'Apply to Chair -> Wing');
+INSERT INTO "source_message" VALUES (199,E'app',E'Apply to Wing -> Chair');
+INSERT INTO "source_message" VALUES (200,E'app',E'Not Good');
+INSERT INTO "source_message" VALUES (201,E'app',E'Very Good');
+INSERT INTO "source_message" VALUES (202,E'app',E'Excellent');
+INSERT INTO "source_message" VALUES (203,E'app',E'Star Rating (1-5) Field');
+INSERT INTO "source_message" VALUES (204,E'app',E'Short Text Field');
+INSERT INTO "source_message" VALUES (205,E'app',E'Long Text Field');
+INSERT INTO "source_message" VALUES (206,E'app',E'Number Field');
+INSERT INTO "source_message" VALUES (207,E'app',E'Checkbox List Field');
+INSERT INTO "source_message" VALUES (208,E'app',E'Debate');
+INSERT INTO "source_message" VALUES (209,E'app',E'Feedback To ID');
+INSERT INTO "source_message" VALUES (210,E'app',E'Adjudicator Strike From ID');
+INSERT INTO "source_message" VALUES (211,E'app',E'Adjudicator Strike To ID');
+INSERT INTO "source_message" VALUES (212,E'app',E'Group');
+INSERT INTO "source_message" VALUES (213,E'app',E'Active Room');
+INSERT INTO "source_message" VALUES (214,E'app',E'Wing');
+INSERT INTO "source_message" VALUES (215,E'app',E'Used');
+INSERT INTO "source_message" VALUES (216,E'app',E'Is Preset Panel');
+INSERT INTO "source_message" VALUES (217,E'app',E'Panel #{id} has {amount} chairs');
+INSERT INTO "source_message" VALUES (218,E'app',E'Category');
+INSERT INTO "source_message" VALUES (219,E'app',E'Message');
+INSERT INTO "source_message" VALUES (220,E'app',E'Function');
+INSERT INTO "source_message" VALUES (221,E'app',E'Legacy Motion');
+INSERT INTO "source_message" VALUES (222,E'app',E'Questions');
+INSERT INTO "source_message" VALUES (223,E'app',E'Clash With');
+INSERT INTO "source_message" VALUES (224,E'app',E'Reason');
+INSERT INTO "source_message" VALUES (225,E'app',E'Team Clash');
+INSERT INTO "source_message" VALUES (226,E'app',E'Adjudicator Clash');
+INSERT INTO "source_message" VALUES (227,E'app',E'No type found');
+INSERT INTO "source_message" VALUES (228,E'app',E'OG A Speaks');
+INSERT INTO "source_message" VALUES (229,E'app',E'OG B Speaks');
+INSERT INTO "source_message" VALUES (230,E'app',E'OG Place');
+INSERT INTO "source_message" VALUES (231,E'app',E'OO A Speaks');
+INSERT INTO "source_message" VALUES (232,E'app',E'OO B Speaks');
+INSERT INTO "source_message" VALUES (233,E'app',E'OO Place');
+INSERT INTO "source_message" VALUES (234,E'app',E'CG A Speaks');
+INSERT INTO "source_message" VALUES (235,E'app',E'CG B Speaks');
+INSERT INTO "source_message" VALUES (236,E'app',E'CG Place');
+INSERT INTO "source_message" VALUES (237,E'app',E'CO A Speaks');
+INSERT INTO "source_message" VALUES (238,E'app',E'CO B Speaks');
+INSERT INTO "source_message" VALUES (239,E'app',E'CO Place');
+INSERT INTO "source_message" VALUES (240,E'app',E'Checked');
+INSERT INTO "source_message" VALUES (241,E'app',E'Entered by User ID');
+INSERT INTO "source_message" VALUES (242,E'app',E'Equal place exist');
+INSERT INTO "source_message" VALUES (243,E'app',E'Ironman by');
+INSERT INTO "source_message" VALUES (244,E'app',E'CA');
+INSERT INTO "source_message" VALUES (245,E'app',E'Password reset token cannot be blank.');
+INSERT INTO "source_message" VALUES (246,E'app',E'Wrong password reset token.');
+INSERT INTO "source_message" VALUES (247,E'app',E'Comma ( , ) separated file');
+INSERT INTO "source_message" VALUES (248,E'app',E'Semicolon ( ; ) separated file');
+INSERT INTO "source_message" VALUES (249,E'app',E'Tab ( ->| ) separated file');
+INSERT INTO "source_message" VALUES (250,E'app',E'CSV File');
+INSERT INTO "source_message" VALUES (251,E'app',E'Delimiter');
+INSERT INTO "source_message" VALUES (252,E'app',E'Mark as Test Data Import (prohibits Email sending)');
+INSERT INTO "source_message" VALUES (253,E'app',E'Username');
+INSERT INTO "source_message" VALUES (254,E'app',E'Profile Picture');
+INSERT INTO "source_message" VALUES (255,E'app',E'Current Society');
+INSERT INTO "source_message" VALUES (256,E'app',E'With which gender do you identify yourself the most');
+INSERT INTO "source_message" VALUES (257,E'app',E'This URL is not allowed.');
+INSERT INTO "source_message" VALUES (258,E'app',E'{adju} checked in!');
+INSERT INTO "source_message" VALUES (259,E'app',E'{adju} already checked in!');
+INSERT INTO "source_message" VALUES (260,E'app',E'{id} number not valid! Not an Adjudicator!');
+INSERT INTO "source_message" VALUES (261,E'app',E'{speaker} checked in!');
+INSERT INTO "source_message" VALUES (262,E'app',E'{speaker} already checked in!');
+INSERT INTO "source_message" VALUES (263,E'app',E'{id} number not valid! Not a Team!');
+INSERT INTO "source_message" VALUES (264,E'app',E'Not a valid input');
+INSERT INTO "source_message" VALUES (265,E'app',E'Verification Code');
+INSERT INTO "source_message" VALUES (266,E'app',E'DebReg');
+INSERT INTO "source_message" VALUES (267,E'app',E'Password reset for {user}');
+INSERT INTO "source_message" VALUES (268,E'app',E'User not found with this Email');
+INSERT INTO "source_message" VALUES (269,E'app',E'Add {object}');
+INSERT INTO "source_message" VALUES (270,E'app',E'Create Society');
+INSERT INTO "source_message" VALUES (271,E'app',E'Hey cool! You entered an unknown Society!');
+INSERT INTO "source_message" VALUES (272,E'app',E'Before we can link you, can you please complete the information about your Society:');
+INSERT INTO "source_message" VALUES (273,E'app',E'Search for a country ...');
+INSERT INTO "source_message" VALUES (274,E'app',E'Add new Society');
+INSERT INTO "source_message" VALUES (275,E'app',E'Search for a society ...');
+INSERT INTO "source_message" VALUES (276,E'app',E'Enter start date ...');
+INSERT INTO "source_message" VALUES (277,E'app',E'Enter ending date if applicable ...');
+INSERT INTO "source_message" VALUES (278,E'app',E'Language Officers');
+INSERT INTO "source_message" VALUES (279,E'app',E'Officer');
+INSERT INTO "source_message" VALUES (280,E'app',E'Any {object} ...');
+INSERT INTO "source_message" VALUES (281,E'app',E'Language Status Review');
+INSERT INTO "source_message" VALUES (282,E'app',E'Status');
+INSERT INTO "source_message" VALUES (283,E'app',E'Request an interview');
+INSERT INTO "source_message" VALUES (284,E'app',E'Set ENL');
+INSERT INTO "source_message" VALUES (285,E'app',E'Set ESL');
+INSERT INTO "source_message" VALUES (286,E'app',E'Language Officer');
+INSERT INTO "source_message" VALUES (288,E'app',E'Add');
+INSERT INTO "source_message" VALUES (289,E'app',E'Search for a User ...');
+INSERT INTO "source_message" VALUES (290,E'app',E'Checkin');
+INSERT INTO "source_message" VALUES (291,E'app',E'Submit');
+INSERT INTO "source_message" VALUES (292,E'app',E'Generate Badges');
+INSERT INTO "source_message" VALUES (293,E'app',E'Only do for User ...');
+INSERT INTO "source_message" VALUES (294,E'app',E'Print Badges');
+INSERT INTO "source_message" VALUES (295,E'app',E'Generate Barcodes');
+INSERT INTO "source_message" VALUES (296,E'app',E'Search for a user ... or leave blank');
+INSERT INTO "source_message" VALUES (297,E'app',E'Print Barcodes');
+INSERT INTO "source_message" VALUES (298,E'app',E'Teams');
+INSERT INTO "source_message" VALUES (299,E'app',E'Team Name');
+INSERT INTO "source_message" VALUES (300,E'app',E'Speaker A');
+INSERT INTO "source_message" VALUES (301,E'app',E'Speaker B');
+INSERT INTO "source_message" VALUES (302,E'app',E'Make it so');
+INSERT INTO "source_message" VALUES (303,E'app',E'Motion:');
+INSERT INTO "source_message" VALUES (304,E'app',E'Panel:');
+INSERT INTO "source_message" VALUES (305,E'app',E'Toogle Active');
+INSERT INTO "source_message" VALUES (307,E'app',E'Search for a user ...');
+INSERT INTO "source_message" VALUES (308,E'app',E'Tournaments');
+INSERT INTO "source_message" VALUES (309,E'app',E'Overview');
+INSERT INTO "source_message" VALUES (310,E'app',E'Motions');
+INSERT INTO "source_message" VALUES (311,E'app',E'Team Tab');
+INSERT INTO "source_message" VALUES (312,E'app',E'Speaker Tab');
+INSERT INTO "source_message" VALUES (313,E'app',E'Out-Rounds');
+INSERT INTO "source_message" VALUES (314,E'app',E'Breaking Adjudicators');
+INSERT INTO "source_message" VALUES (315,E'app',E'Make it so!');
+INSERT INTO "source_message" VALUES (316,E'app',E'DebReg Tournament');
+INSERT INTO "source_message" VALUES (317,E'app',E'Show old tournaments');
+INSERT INTO "source_message" VALUES (318,E'app',E'Adjudicators');
+INSERT INTO "source_message" VALUES (319,E'app',E'Result');
+INSERT INTO "source_message" VALUES (320,E'app',E'together with {teammate}');
+INSERT INTO "source_message" VALUES (321,E'app',E'as ironman');
+INSERT INTO "source_message" VALUES (322,E'app',E'You are registered as team <br> \'{team}\' {with} for {society}');
+INSERT INTO "source_message" VALUES (323,E'app',E'You are registered as adjudicator for {society}');
+INSERT INTO "source_message" VALUES (325,E'app',E'Registration Information');
+INSERT INTO "source_message" VALUES (326,E'app',E'Enter Information');
+INSERT INTO "source_message" VALUES (327,E'app',E'Round #{num} Info');
+INSERT INTO "source_message" VALUES (328,E'app',E'You are <b>{pos}</b> in room <b>{room}</b>.');
+INSERT INTO "source_message" VALUES (329,E'app',E'Round starts at: <b>{time}</b>');
+INSERT INTO "source_message" VALUES (330,E'app',E'InfoSlide');
+INSERT INTO "source_message" VALUES (331,E'app',E'Round #{num} Teams');
+INSERT INTO "source_message" VALUES (332,E'app',E'My super awesome IV ... e.g. Vienna IV');
+INSERT INTO "source_message" VALUES (333,E'app',E'Select the Convenors ...');
+INSERT INTO "source_message" VALUES (334,E'app',E'Enter start date / time ...');
+INSERT INTO "source_message" VALUES (335,E'app',E'Enter the end date / time ...');
+INSERT INTO "source_message" VALUES (336,E'app',E'Chief Adjudicators');
+INSERT INTO "source_message" VALUES (337,E'app',E'Choose your CAs ...');
+INSERT INTO "source_message" VALUES (338,E'app',E'Choose your Tabmaster ...');
+INSERT INTO "source_message" VALUES (339,E'app',E'Tournament Archive');
+INSERT INTO "source_message" VALUES (340,E'app',E'The above error occurred while the Web server was processing your request.');
+INSERT INTO "source_message" VALUES (341,E'app',E'Please contact us if you think this is a server error. Thank you.');
+INSERT INTO "source_message" VALUES (342,E'app',E'Reset password');
+INSERT INTO "source_message" VALUES (343,E'app',E'Please choose your new password:');
+INSERT INTO "source_message" VALUES (344,E'app',E'Save');
+INSERT INTO "source_message" VALUES (345,E'app',E'Signup');
+INSERT INTO "source_message" VALUES (346,E'app',E'Please fill out the following fields to signup:');
+INSERT INTO "source_message" VALUES (347,E'app',E'Most tournament allocation algorithm in this system try also to take panel diversity into account.\n					For this to work at all, we would politely ask to choose an option from this list.\n					We are aware that not every personal preference can be matched by our choises and apologise for missing options.\n					If you feel that none of the options is in any applicable please choose <Not Revealing>.\n					This option will never be shown to any user and is only for calculation purposes only!');
+INSERT INTO "source_message" VALUES (348,E'app',E'Login');
+INSERT INTO "source_message" VALUES (349,E'app',E'Please fill out the following fields to login:');
+INSERT INTO "source_message" VALUES (350,E'app',E'If you forgot your password you can {resetIt}');
+INSERT INTO "source_message" VALUES (351,E'app',E'reset it');
+INSERT INTO "source_message" VALUES (352,E'app',E'Request password reset');
+INSERT INTO "source_message" VALUES (353,E'app',E'Please fill out your email. A link to reset password will be sent there.');
+INSERT INTO "source_message" VALUES (354,E'app',E'Send');
+INSERT INTO "source_message" VALUES (355,E'app',E'Venue CSV');
+INSERT INTO "source_message" VALUES (356,E'app',E'Adjudicator CSV');
+INSERT INTO "source_message" VALUES (357,E'app',E'Team CSV');
+INSERT INTO "source_message" VALUES (358,E'app',E'created');
+INSERT INTO "source_message" VALUES (359,E'app',E'Sample Venue CSV');
+INSERT INTO "source_message" VALUES (360,E'app',E'Sample Team CSV');
+INSERT INTO "source_message" VALUES (361,E'app',E'Sample Adjudicator CSV');
+INSERT INTO "source_message" VALUES (362,E'app',E'Current BP Debate {count, plural, =0{Tournament} =1{Tournament} other{Tournaments}}');
+INSERT INTO "source_message" VALUES (363,E'app',E'Welcome to {appName}!');
+INSERT INTO "source_message" VALUES (364,E'app',E'View Tournaments');
+INSERT INTO "source_message" VALUES (365,E'app',E'Create Tournament');
+INSERT INTO "source_message" VALUES (366,E'app',E'Before we can register you can you please complete the information about your Society:');
+INSERT INTO "source_message" VALUES (367,E'app',E'Contact');
+INSERT INTO "source_message" VALUES (368,E'app',E'Preset Panel #');
+INSERT INTO "source_message" VALUES (369,E'app',E'Panels');
+INSERT INTO "source_message" VALUES (370,E'app',E'Average Panel Strength');
+INSERT INTO "source_message" VALUES (371,E'app',E'Create Panel');
+INSERT INTO "source_message" VALUES (372,E'app',E'Preset Panels for next round');
+INSERT INTO "source_message" VALUES (373,E'app',E'Add {object} ...');
+INSERT INTO "source_message" VALUES (374,E'app',E'Place');
+INSERT INTO "source_message" VALUES (375,E'app',E'Team Points');
+INSERT INTO "source_message" VALUES (376,E'app',E'#{number}');
+INSERT INTO "source_message" VALUES (377,E'app',E'No Breaking Adjudicators defined');
+INSERT INTO "source_message" VALUES (378,E'app',E'Speaker Points Distribution');
+INSERT INTO "source_message" VALUES (379,E'app',E'Run');
+INSERT INTO "source_message" VALUES (380,E'app',E'Opening Gov');
+INSERT INTO "source_message" VALUES (381,E'app',E'Opening Opp');
+INSERT INTO "source_message" VALUES (382,E'app',E'Closing Gov');
+INSERT INTO "source_message" VALUES (383,E'app',E'Closing Opp');
+INSERT INTO "source_message" VALUES (384,E'app',E'Show Info Slide');
+INSERT INTO "source_message" VALUES (385,E'app',E'Show Motion');
+INSERT INTO "source_message" VALUES (386,E'app',E'Missing User');
+INSERT INTO "source_message" VALUES (387,E'app',E'Mark missing as inactive');
+INSERT INTO "source_message" VALUES (388,E'app',E'Results');
+INSERT INTO "source_message" VALUES (389,E'app',E'Runner View for Round #{number}');
+INSERT INTO "source_message" VALUES (390,E'app',E'Auto Update <i id=\'pjax-status\' class=\'\'></i>');
+INSERT INTO "source_message" VALUES (391,E'app',E'Update individual clash');
+INSERT INTO "source_message" VALUES (392,E'app',E'Individual Clash');
+INSERT INTO "source_message" VALUES (393,E'app',E'Not every debater is yet in the system. :)');
+INSERT INTO "source_message" VALUES (394,E'app',E'Create clash');
+INSERT INTO "source_message" VALUES (395,E'app',E'Update clash');
+INSERT INTO "source_message" VALUES (396,E'app',E'Energy Configs');
+INSERT INTO "source_message" VALUES (397,E'app',E'Update Energy Value');
+INSERT INTO "source_message" VALUES (398,E'app',E'Round #{number}');
+INSERT INTO "source_message" VALUES (399,E'app',E'Rounds');
+INSERT INTO "source_message" VALUES (400,E'app',E'Actions');
+INSERT INTO "source_message" VALUES (401,E'app',E'Publish Tab');
+INSERT INTO "source_message" VALUES (402,E'app',E'Retry to generate Draw');
+INSERT INTO "source_message" VALUES (403,E'app',E'Update Round');
+INSERT INTO "source_message" VALUES (404,E'app',E'Toggle Dropdown');
+INSERT INTO "source_message" VALUES (405,E'app',E'Continue Improving by');
+INSERT INTO "source_message" VALUES (407,E'app',E'Are you sure you want to re-draw the round? All information will be lost!');
+INSERT INTO "source_message" VALUES (408,E'app',E'Print Ballots');
+INSERT INTO "source_message" VALUES (411,E'app',E'Round Status');
+INSERT INTO "source_message" VALUES (412,E'app',E'Average Energy');
+INSERT INTO "source_message" VALUES (413,E'app',E'Creation Time');
+INSERT INTO "source_message" VALUES (414,E'app',E'Color Palette');
+INSERT INTO "source_message" VALUES (415,E'app',E'Gender');
+INSERT INTO "source_message" VALUES (416,E'app',E'Regions');
+INSERT INTO "source_message" VALUES (417,E'app',E'Points');
+INSERT INTO "source_message" VALUES (418,E'app',E'Loading ...');
+INSERT INTO "source_message" VALUES (419,E'app',E'View Feedback');
+INSERT INTO "source_message" VALUES (420,E'app',E'View User');
+INSERT INTO "source_message" VALUES (421,E'app',E'Switch venue {venue} with');
+INSERT INTO "source_message" VALUES (422,E'app',E'Select a Venue ...');
+INSERT INTO "source_message" VALUES (423,E'app',E'Update {modelClass} #{number}');
+INSERT INTO "source_message" VALUES (424,E'app',E'Energy Level');
+INSERT INTO "source_message" VALUES (425,E'app',E'Select a Team ...');
+INSERT INTO "source_message" VALUES (426,E'app',E'Select a Language ...');
+INSERT INTO "source_message" VALUES (427,E'app',E'Select an Adjudicator ...');
+INSERT INTO "source_message" VALUES (428,E'app',E'Switch Adjudicators');
+INSERT INTO "source_message" VALUES (429,E'app',E'Switch this Adjudicator ...');
+INSERT INTO "source_message" VALUES (430,E'app',E'with');
+INSERT INTO "source_message" VALUES (431,E'app',E'with this one ...');
+INSERT INTO "source_message" VALUES (432,E'app',E'Search for a Motion tag ...');
+INSERT INTO "source_message" VALUES (433,E'app',E'Rank');
+INSERT INTO "source_message" VALUES (434,E'app',E'Total');
+INSERT INTO "source_message" VALUES (435,E'app',E'Debate ID');
+INSERT INTO "source_message" VALUES (436,E'app',E'Room');
+INSERT INTO "source_message" VALUES (437,E'app',E'Outrounds');
+INSERT INTO "source_message" VALUES (438,E'app',E'Motion Archive');
+INSERT INTO "source_message" VALUES (439,E'app',E'Third-Party\n			Motion');
+INSERT INTO "source_message" VALUES (440,E'app',E'Your amazing IV');
+INSERT INTO "source_message" VALUES (441,E'app',E'Enter date ...');
+INSERT INTO "source_message" VALUES (442,E'app',E'Round #1 or Final');
+INSERT INTO "source_message" VALUES (443,E'app',E'THW ...');
+INSERT INTO "source_message" VALUES (444,E'app',E'http://give.credit.where.credit.is.due.com');
+INSERT INTO "source_message" VALUES (445,E'app',E'Enter {modelClass} Manual');
+INSERT INTO "source_message" VALUES (446,E'app',E'Options');
+INSERT INTO "source_message" VALUES (447,E'app',E'Continue');
+INSERT INTO "source_message" VALUES (448,E'app',E'No results yet!');
+INSERT INTO "source_message" VALUES (449,E'app',E'Results in Room: {venue}');
+INSERT INTO "source_message" VALUES (450,E'app',E'Results for {venue}');
+INSERT INTO "source_message" VALUES (451,E'app',E'Table View');
+INSERT INTO "source_message" VALUES (452,E'app',E'Results for {label}');
+INSERT INTO "source_message" VALUES (453,E'app',E'Switch to Venue View');
+INSERT INTO "source_message" VALUES (454,E'app',E'Swing Team Score');
+INSERT INTO "source_message" VALUES (455,E'app',E'View Result Details');
+INSERT INTO "source_message" VALUES (456,E'app',E'Correct Result');
+INSERT INTO "source_message" VALUES (457,E'app',E'Venue View');
+INSERT INTO "source_message" VALUES (458,E'app',E'Switch to Tableview');
+INSERT INTO "source_message" VALUES (459,E'app',E'Confirm Data for {venue}');
+INSERT INTO "source_message" VALUES (460,E'app',E'start over');
+INSERT INTO "source_message" VALUES (461,E'app',E'Round {number}');
+INSERT INTO "source_message" VALUES (462,E'app',E'Thank you');
+INSERT INTO "source_message" VALUES (463,E'app',E'Thank you!');
+INSERT INTO "source_message" VALUES (464,E'app',E'Results successfully saved');
+INSERT INTO "source_message" VALUES (465,E'app',E'Speeeed Bonus!');
+INSERT INTO "source_message" VALUES (466,E'app',E'Hurry up! Chop Chop!');
+INSERT INTO "source_message" VALUES (467,E'app',E'Bummer! Last one!');
+INSERT INTO "source_message" VALUES (468,E'app',E'You are <b>#{place}</b> from {max}');
+INSERT INTO "source_message" VALUES (469,E'app',E'Enter Feedback');
+INSERT INTO "source_message" VALUES (470,E'app',E'Return to Tournament');
+INSERT INTO "source_message" VALUES (471,E'app',E'Feedbacks');
+INSERT INTO "source_message" VALUES (472,E'app',E'Target Adjudicator');
+INSERT INTO "source_message" VALUES (473,E'app',E'Adjudicator name ...');
+INSERT INTO "source_message" VALUES (474,E'app',E'Adjudicator Feedback');
+INSERT INTO "source_message" VALUES (475,E'app',E'Submit Feedback');
+INSERT INTO "source_message" VALUES (476,E'app',E'{tournament} - Language Officer');
+INSERT INTO "source_message" VALUES (477,E'app',E'Review Language Status');
+INSERT INTO "source_message" VALUES (478,E'app',E'made with secret alien technology');
+INSERT INTO "source_message" VALUES (479,E'app',E'Report a Bug');
+INSERT INTO "source_message" VALUES (480,E'app',E'{tournament} - Manager');
+INSERT INTO "source_message" VALUES (481,E'app',E'List Venues');
+INSERT INTO "source_message" VALUES (482,E'app',E'Create Venue');
+INSERT INTO "source_message" VALUES (483,E'app',E'Import Venue');
+INSERT INTO "source_message" VALUES (484,E'app',E'List Teams');
+INSERT INTO "source_message" VALUES (485,E'app',E'Create Team');
+INSERT INTO "source_message" VALUES (486,E'app',E'Import Team');
+INSERT INTO "source_message" VALUES (487,E'app',E'Strike Team');
+INSERT INTO "source_message" VALUES (488,E'app',E'List Adjudicators');
+INSERT INTO "source_message" VALUES (489,E'app',E'Create Adjudicator');
+INSERT INTO "source_message" VALUES (490,E'app',E'Import Adjudicator');
+INSERT INTO "source_message" VALUES (491,E'app',E'View Preset Panels');
+INSERT INTO "source_message" VALUES (492,E'app',E'Create Preset Panel');
+INSERT INTO "source_message" VALUES (493,E'app',E'Strike Adjudicator');
+INSERT INTO "source_message" VALUES (494,E'app',E'Update Tournament');
+INSERT INTO "source_message" VALUES (495,E'app',E'Display Team Tab');
+INSERT INTO "source_message" VALUES (496,E'app',E'Display Speaker Tab');
+INSERT INTO "source_message" VALUES (497,E'app',E'Display Outrounds');
+INSERT INTO "source_message" VALUES (498,E'app',E'Publishing the Tab will close and archive the tournament!! Are you sure you want to continue?');
+INSERT INTO "source_message" VALUES (499,E'app',E'Missing Users');
+INSERT INTO "source_message" VALUES (500,E'app',E'Checkin Form');
+INSERT INTO "source_message" VALUES (501,E'app',E'Print Badgets');
+INSERT INTO "source_message" VALUES (502,E'app',E'Reset Checkin');
+INSERT INTO "source_message" VALUES (503,E'app',E'Are you sure you want to reset the checkin?');
+INSERT INTO "source_message" VALUES (504,E'app',E'Sync with DebReg');
+INSERT INTO "source_message" VALUES (505,E'app',E'Migrate to Tabbie 1');
+INSERT INTO "source_message" VALUES (506,E'app',E'Extreme caution young padawan!');
+INSERT INTO "source_message" VALUES (507,E'app',E'List Rounds');
+INSERT INTO "source_message" VALUES (508,E'app',E'Create Round');
+INSERT INTO "source_message" VALUES (509,E'app',E'Energy Options');
+INSERT INTO "source_message" VALUES (510,E'app',E'List Results');
+INSERT INTO "source_message" VALUES (511,E'app',E'Insert Ballot');
+INSERT INTO "source_message" VALUES (512,E'app',E'Correct Cache');
+INSERT INTO "source_message" VALUES (513,E'app',E'Setup Questions');
+INSERT INTO "source_message" VALUES (514,E'app',E'Every Feedback');
+INSERT INTO "source_message" VALUES (515,E'app',E'Feedback on Adjudicator');
+INSERT INTO "source_message" VALUES (516,E'app',E'About');
+INSERT INTO "source_message" VALUES (517,E'app',E'How-To');
+INSERT INTO "source_message" VALUES (518,E'app',E'Users');
+INSERT INTO "source_message" VALUES (519,E'app',E'Register');
+INSERT INTO "source_message" VALUES (520,E'app',E'{user}\'s Profile');
+INSERT INTO "source_message" VALUES (521,E'app',E'{user}\'s History');
+INSERT INTO "source_message" VALUES (522,E'app',E'Logout');
+INSERT INTO "source_message" VALUES (524,E'app',E'Update {label}');
+INSERT INTO "source_message" VALUES (525,E'app',E'Next Step');
+INSERT INTO "source_message" VALUES (526,E'app',E'Room {number}');
+INSERT INTO "source_message" VALUES (527,E'app',E'Venues');
+INSERT INTO "source_message" VALUES (529,E'app',E'Strikes');
+INSERT INTO "source_message" VALUES (530,E'app',E'Import Strikes');
+INSERT INTO "source_message" VALUES (531,E'app',E'Accept');
+INSERT INTO "source_message" VALUES (532,E'app',E'Deny');
+INSERT INTO "source_message" VALUES (533,E'app',E'Search for a Team ...');
+INSERT INTO "source_message" VALUES (534,E'app',E'Search for an Adjudicator ...');
+INSERT INTO "source_message" VALUES (535,E'app',E'Strike Adjudicators');
+INSERT INTO "source_message" VALUES (536,E'app',E'Create Additional {modelClass}');
+INSERT INTO "source_message" VALUES (537,E'app',E'Update team');
+INSERT INTO "source_message" VALUES (538,E'app',E'Delete team');
+INSERT INTO "source_message" VALUES (539,E'app',E'Search for an From Adjudicator ...');
+INSERT INTO "source_message" VALUES (540,E'app',E'Search for an To Adjudicator ...');
+INSERT INTO "source_message" VALUES (541,E'app',E'Strike Team with Adjudicator');
+INSERT INTO "source_message" VALUES (542,E'app',E'Update Team');
+INSERT INTO "source_message" VALUES (543,E'app',E'Delete Team');
+INSERT INTO "source_message" VALUES (544,E'app',E'{modelClass}\'s History');
+INSERT INTO "source_message" VALUES (545,E'app',E'History');
+INSERT INTO "source_message" VALUES (546,E'app',E'Team Review');
+INSERT INTO "source_message" VALUES (547,E'app',E'EPL Place');
+INSERT INTO "source_message" VALUES (548,E'app',E'Team Speaker Points');
+INSERT INTO "source_message" VALUES (549,E'app',E'No published tab available at the moment');
+INSERT INTO "source_message" VALUES (550,E'app',E'Can chair');
+INSERT INTO "source_message" VALUES (551,E'app',E'Should not chair');
+INSERT INTO "source_message" VALUES (552,E'app',E'Break');
+INSERT INTO "source_message" VALUES (553,E'app',E'Not breaking');
+INSERT INTO "source_message" VALUES (554,E'app',E'Watched');
+INSERT INTO "source_message" VALUES (555,E'app',E'Unwatched');
+INSERT INTO "source_message" VALUES (556,E'app',E'Toogle Watch');
+INSERT INTO "source_message" VALUES (557,E'app',E'Toogle Breaking');
+INSERT INTO "source_message" VALUES (558,E'app',E'Reset watcher flag');
+INSERT INTO "source_message" VALUES (559,E'app',E'Search for a {object} ...');
+INSERT INTO "source_message" VALUES (560,E'app',E'Chaired');
+INSERT INTO "source_message" VALUES (561,E'app',E'Pointer');
+INSERT INTO "source_message" VALUES (562,E'app',E'Update User profile');
+INSERT INTO "source_message" VALUES (563,E'app',E'Individual Clashes');
+INSERT INTO "source_message" VALUES (564,E'app',E'Update Clash Info');
+INSERT INTO "source_message" VALUES (565,E'app',E'Delete Clash');
+INSERT INTO "source_message" VALUES (566,E'app',E'No clash known to the system.');
+INSERT INTO "source_message" VALUES (567,E'app',E'Debate Society History');
+INSERT INTO "source_message" VALUES (568,E'app',E'Add new society to history');
+INSERT INTO "source_message" VALUES (569,E'app',E'still active');
+INSERT INTO "source_message" VALUES (570,E'app',E'Update Society Info');
+INSERT INTO "source_message" VALUES (571,E'app',E'Force new password for {name}');
+INSERT INTO "source_message" VALUES (572,E'app',E'Cancel');
+INSERT INTO "source_message" VALUES (573,E'app',E'Search for a tournament ...');
+INSERT INTO "source_message" VALUES (574,E'app',E'Set new Password');
+INSERT INTO "source_message" VALUES (575,E'app',E'Update User');
+INSERT INTO "source_message" VALUES (576,E'app',E'Delete User');
+INSERT INTO "source_message" VALUES (577,E'app',E'Create User');
+INSERT INTO "source_message" VALUES (578,E'app',E'No condition matched');
+INSERT INTO "source_message" VALUES (579,E'app',E'Did not pass panel check old: {old} / new: {new}');
+INSERT INTO "source_message" VALUES (580,E'app',E'Can\'t save {object}! Error: {message}');
+INSERT INTO "source_message" VALUES (582,E'app',E'No File available');
+INSERT INTO "source_message" VALUES (583,E'app',E'No matching records found');
+INSERT INTO "source_message" VALUES (584,E'app',E'Thank you for your submission.');
+INSERT INTO "source_message" VALUES (585,E'app',E'Error saving Panel:');
+INSERT INTO "source_message" VALUES (586,E'app',E'Panel deleted');
+INSERT INTO "source_message" VALUES (587,E'app',E'Welcome! This is your first login, please check that your information are correct');
+INSERT INTO "source_message" VALUES (588,E'app',E'A new society has been saved');
+INSERT INTO "source_message" VALUES (589,E'app',E'There has been an error receiving your previous input. Please enter them again.');
+INSERT INTO "source_message" VALUES (590,E'app',E'User registered! Welcome {user}');
+INSERT INTO "source_message" VALUES (591,E'app',E'Login failed');
+INSERT INTO "source_message" VALUES (592,E'app',E'Check your email for further instructions.');
+INSERT INTO "source_message" VALUES (593,E'app',E'Sorry, we are unable to reset password for email provided.<br>{message}');
+INSERT INTO "source_message" VALUES (594,E'app',E'New password was saved.');
+INSERT INTO "source_message" VALUES (595,E'app',E'New Passwort set');
+INSERT INTO "source_message" VALUES (596,E'app',E'Error saving new password');
+INSERT INTO "source_message" VALUES (597,E'app',E'Society connection not saved');
+INSERT INTO "source_message" VALUES (598,E'app',E'User successfully saved!');
+INSERT INTO "source_message" VALUES (599,E'app',E'User not saved!');
+INSERT INTO "source_message" VALUES (600,E'app',E'Society Connection not saved!');
+INSERT INTO "source_message" VALUES (601,E'app',E'User successfully updated!');
+INSERT INTO "source_message" VALUES (602,E'app',E'Please enter a new password!');
+INSERT INTO "source_message" VALUES (603,E'app',E'User deleted');
+INSERT INTO "source_message" VALUES (604,E'app',E'Cant\'t delete because of {error}');
+INSERT INTO "source_message" VALUES (605,E'app',E'Cound\'t delete because already in use. <br> {ex}');
+INSERT INTO "source_message" VALUES (606,E'app',E'Checking Flags reset');
+INSERT INTO "source_message" VALUES (607,E'app',E'There was no need for a reset');
+INSERT INTO "source_message" VALUES (608,E'app',E'Please set breaking adjudicators first - use the star icon in the action column.');
+INSERT INTO "source_message" VALUES (609,E'app',E'Couldn\'t create Team.');
+INSERT INTO "source_message" VALUES (610,E'app',E'Error saving Society Relation for {society}');
+INSERT INTO "source_message" VALUES (611,E'app',E'Error saving team {name}!');
+INSERT INTO "source_message" VALUES (613,E'app',E'Can\'t save Tournament connection');
+INSERT INTO "source_message" VALUES (614,E'app',E'Can\'t delete Question');
+INSERT INTO "source_message" VALUES (615,E'app',E'Society connection successfully created');
+INSERT INTO "source_message" VALUES (616,E'app',E'Society could not be saved');
+INSERT INTO "source_message" VALUES (617,E'app',E'Error in wakeup');
+INSERT INTO "source_message" VALUES (618,E'app',E'Society Info updated');
+INSERT INTO "source_message" VALUES (619,E'app',E'Tab published and tournament closed. Go have a drink!');
+INSERT INTO "source_message" VALUES (620,E'app',E'Chair in Panel not found - type wrong?');
+INSERT INTO "source_message" VALUES (622,E'app',E'No valid type');
+INSERT INTO "source_message" VALUES (623,E'app',E'{object} successfully submitted');
+INSERT INTO "source_message" VALUES (624,E'app',E'{object} created');
+INSERT INTO "source_message" VALUES (625,E'app',E'Individual clash');
+INSERT INTO "source_message" VALUES (626,E'app',E'Individual clash could not be saved');
+INSERT INTO "source_message" VALUES (627,E'app',E'{object} updated');
+INSERT INTO "source_message" VALUES (628,E'app',E'{object} could not be saved');
+INSERT INTO "source_message" VALUES (629,E'app',E'{object} deleted');
+INSERT INTO "source_message" VALUES (630,E'app',E'{tournament} on Tabbie2');
+INSERT INTO "source_message" VALUES (631,E'app',E'{tournament} is taking place from {start} to {end} hosted by {host} in {country}');
+INSERT INTO "source_message" VALUES (632,E'app',E'Tournament successfully created');
+INSERT INTO "source_message" VALUES (633,E'app',E'Tournament created but Energy config failed!');
+INSERT INTO "source_message" VALUES (634,E'app',E'Can\'t save Tournament!');
+INSERT INTO "source_message" VALUES (635,E'app',E'DebReg Syncing successful');
+INSERT INTO "source_message" VALUES (636,E'app',E'Venues switched');
+INSERT INTO "source_message" VALUES (637,E'app',E'Error while switching');
+INSERT INTO "source_message" VALUES (638,E'app',E'New Venues set');
+INSERT INTO "source_message" VALUES (639,E'app',E'Error while setting new venue');
+INSERT INTO "source_message" VALUES (640,E'app',E'Can\'t create Round: Amount of Teams is not dividable by 4');
+INSERT INTO "source_message" VALUES (641,E'app',E'Successfully redrawn in {secs}s');
+INSERT INTO "source_message" VALUES (642,E'app',E'Improved Energy by {diff} points in {secs}s');
+INSERT INTO "source_message" VALUES (643,E'app',E'Adjudicator {n1} and {n2} switched');
+INSERT INTO "source_message" VALUES (644,E'app',E'Could not switch because: {a_panel}<br>and<br>{b_panel}');
+INSERT INTO "source_message" VALUES (645,E'app',E'Show Round {number}');
+INSERT INTO "source_message" VALUES (646,E'app',E'No debates found in that round');
+INSERT INTO "source_message" VALUES (647,E'app',E'Not a valid language options in params');
+INSERT INTO "source_message" VALUES (648,E'app',E'Team upgraded to {status}');
+INSERT INTO "source_message" VALUES (649,E'app',E'Language Settings saved');
+INSERT INTO "source_message" VALUES (650,E'app',E'Error saving Language Settings');
+INSERT INTO "source_message" VALUES (651,E'app',E'User not found!');
+INSERT INTO "source_message" VALUES (652,E'app',E'{object} successfully added');
+INSERT INTO "source_message" VALUES (653,E'app',E'Successfully deleted');
+INSERT INTO "source_message" VALUES (654,E'app',E'File Syntax Wrong! Expecting 3 columns');
+INSERT INTO "source_message" VALUES (656,E'app',E'Error saving Results.<br>Please request a paper ballot!');
+INSERT INTO "source_message" VALUES (657,E'app',E'Result saved. Next one!');
+INSERT INTO "source_message" VALUES (658,E'app',E'Debate #{id} does not exist');
+INSERT INTO "source_message" VALUES (659,E'app',E'Correct Team Points for {team} from {old_points} to {new_points}');
+INSERT INTO "source_message" VALUES (660,E'app',E'Correct Speaker {pos} speaks for {team} from {old_points} to {new_points}');
+INSERT INTO "source_message" VALUES (661,E'app',E'Cache in perfect shape. No change needed!');
+INSERT INTO "source_message" VALUES (662,E'app',E'Can\'t save clash decision. {reason}');
+INSERT INTO "source_message" VALUES (663,E'app',E'Not enough venues');
+INSERT INTO "source_message" VALUES (664,E'app',E'Too many venues');
+INSERT INTO "source_message" VALUES (665,E'app',E'Max Iterations to improve the Adjudicator Allocation');
+INSERT INTO "source_message" VALUES (666,E'app',E'Team and adjudicator in same society penalty');
+INSERT INTO "source_message" VALUES (667,E'app',E'Both Adjudicators are clashed');
+INSERT INTO "source_message" VALUES (668,E'app',E'Team with Adjudicator is clashed');
+INSERT INTO "source_message" VALUES (669,E'app',E'Adjudicator is not allowed to chair');
+INSERT INTO "source_message" VALUES (670,E'app',E'Chair is not perfect at the current situation');
+INSERT INTO "source_message" VALUES (671,E'app',E'Adjudicator has seen the team already');
+INSERT INTO "source_message" VALUES (672,E'app',E'Adjudicator has already judged in this combination');
+INSERT INTO "source_message" VALUES (673,E'app',E'Panel is wrong strength for room');
+INSERT INTO "source_message" VALUES (674,E'app',E'Richard\'s special ingredient');
+INSERT INTO "source_message" VALUES (675,E'app',E'Adjudicator {adju} and {team} in same society.');
+INSERT INTO "source_message" VALUES (676,E'app',E'Adjudicator {adju1} and {adju2} are manually clashed.');
+INSERT INTO "source_message" VALUES (677,E'app',E'Adjudicator {adju} and Team {team} are manually clashed.');
+INSERT INTO "source_message" VALUES (678,E'app',E'Adjudicator {adju} has been labelled a non-chair.');
+INSERT INTO "source_message" VALUES (679,E'app',E'Chair not perfect by {points}.');
+INSERT INTO "source_message" VALUES (680,E'app',E'Adjudicator {adju1} and {adju2} have judged together x{occ} before');
+INSERT INTO "source_message" VALUES (681,E'app',E'Adjudicator {adju} has judged Team {team} x {occ} before.');
+INSERT INTO "source_message" VALUES (682,E'app',E'Steepness Comparison: {comparison_factor}, Difference: {roomDifference}, Steepness Penalty: {steepnessPenalty}');
+INSERT INTO "source_message" VALUES (686,E'app.country',E'Undefined');
+INSERT INTO "source_message" VALUES (687,E'app.country',E'Northern Europe');
+INSERT INTO "source_message" VALUES (688,E'app.country',E'Western Europe');
+INSERT INTO "source_message" VALUES (689,E'app.country',E'Southern Europe');
+INSERT INTO "source_message" VALUES (690,E'app.country',E'Eastern Europe');
+INSERT INTO "source_message" VALUES (691,E'app.country',E'Central Asia');
+INSERT INTO "source_message" VALUES (692,E'app.country',E'Eastern Asia');
+INSERT INTO "source_message" VALUES (693,E'app.country',E'Western Asia');
+INSERT INTO "source_message" VALUES (694,E'app.country',E'Southern Asia');
+INSERT INTO "source_message" VALUES (695,E'app.country',E'South-Eastern Asia');
+INSERT INTO "source_message" VALUES (696,E'app.country',E'Australia & New Zealand');
+INSERT INTO "source_message" VALUES (697,E'app.country',E'Micronesia');
+INSERT INTO "source_message" VALUES (698,E'app.country',E'Melanesia');
+INSERT INTO "source_message" VALUES (699,E'app.country',E'Polynesia');
+INSERT INTO "source_message" VALUES (700,E'app.country',E'Northern Africa');
+INSERT INTO "source_message" VALUES (701,E'app.country',E'Western Africa');
+INSERT INTO "source_message" VALUES (702,E'app.country',E'Central Africa');
+INSERT INTO "source_message" VALUES (703,E'app.country',E'Eastern Africa');
+INSERT INTO "source_message" VALUES (704,E'app.country',E'Southern Africa');
+INSERT INTO "source_message" VALUES (705,E'app.country',E'Northern America');
+INSERT INTO "source_message" VALUES (706,E'app.country',E'Central America');
+INSERT INTO "source_message" VALUES (707,E'app.country',E'Caribbean');
+INSERT INTO "source_message" VALUES (708,E'app.country',E'South America');
+INSERT INTO "source_message" VALUES (709,E'app.country',E'Antarctic');
+INSERT INTO "source_message" VALUES (710,E'app',E'Punished Adjudicator');
+INSERT INTO "source_message" VALUES (711,E'app',E'Bad Adjudicator');
+INSERT INTO "source_message" VALUES (712,E'app',E'Decent Adjudicator');
+INSERT INTO "source_message" VALUES (713,E'app',E'Average Adjudicator');
+INSERT INTO "source_message" VALUES (714,E'app',E'Average Chair');
+INSERT INTO "source_message" VALUES (715,E'app',E'Good Chair');
+INSERT INTO "source_message" VALUES (716,E'app',E'Breaking Chair');
+INSERT INTO "source_message" VALUES (717,E'app',E'<b>This tournament has no teams yet.</b><br>{add_button} or {import_button}');
+INSERT INTO "source_message" VALUES (718,E'app',E'Add a team');
+INSERT INTO "source_message" VALUES (719,E'app',E'Import them via CSV File.');
+INSERT INTO "source_message" VALUES (720,E'app',E'This tournament has no venues yet.<br>{add} or {import}');
+INSERT INTO "source_message" VALUES (721,E'app',E'Add a venue');
+INSERT INTO "source_message" VALUES (722,E'app',E'Import them via csv File');
+INSERT INTO "source_message" VALUES (723,E'app',E'<b>This tournament has no adjudicators yet.</b><br>{add_button} or {import_button}.');
+INSERT INTO "source_message" VALUES (724,E'app',E'Import them via CSV File');
+INSERT INTO "source_message" VALUES (725,E'app',E'Already Results entered for this round. Can\'t redraw!');
+INSERT INTO "source_message" VALUES (726,E'app',E'Already Results entered for this round. Can\'t improve!');
+INSERT INTO "source_message" VALUES (727,E'app',E'Feedback #{num}');
+INSERT INTO "source_message" VALUES (728,E'app',E'User ID');
+INSERT INTO "source_message" VALUES (729,E'app',E'Language Maintainer');
+INSERT INTO "source_message" VALUES (730,E'app',E'Language Maintainers');
+INSERT INTO "source_message" VALUES (731,E'app',E'Create Language Maintainer');
+INSERT INTO "source_message" VALUES (732,E'app',E'Show EFL Ranking');
+INSERT INTO "source_message" VALUES (733,E'app',E'Show Novice Ranking');
+INSERT INTO "source_message" VALUES (734,E'app',E'English as proficient language');
+INSERT INTO "source_message" VALUES (735,E'app',E'NOV');
+INSERT INTO "source_message" VALUES (736,E'app',E'Set Novice');
+INSERT INTO "source_message" VALUES (737,E'app',E'ENL');
+INSERT INTO "source_message" VALUES (738,E'app',E'Create new Language');
+INSERT INTO "source_message" VALUES (739,E'app',E'Export Draw as JSON');
+INSERT INTO "source_message" VALUES (740,E'app',E'Can\'t delete Team {name} because it is already in use');
+INSERT INTO "source_message" VALUES (741,E'app',E'Can\'t delete Adjudicator {name} because he/she is already in use');
+INSERT INTO "source_message" VALUES (742,E'app',E'Can\'t delete Venue {name} because it is already in use');
+INSERT INTO "source_message" VALUES (743,E'app',E'Tell us in 3-4 general keywords what the motion is about. Reuse tags ...');
+INSERT INTO "source_message" VALUES (744,E'app',E'Error Saving Custom Attribute: {name}');
+INSERT INTO "source_message" VALUES (745,E'app',E'Error Saving Custom Value \'{key}\': {value}');
+INSERT INTO "source_message" VALUES (746,E'app',E'User Attr ID');
+INSERT INTO "source_message" VALUES (747,E'app',E'Tournament ID');
+INSERT INTO "source_message" VALUES (748,E'app',E'Required');
+INSERT INTO "source_message" VALUES (749,E'app',E'Help');
+INSERT INTO "source_message" VALUES (750,E'app',E'Custom Values for {tournament}');
+INSERT INTO "source_message" VALUES (751,E'app',E'File Syntax not matching. Minimal 5 columns required.');
+INSERT INTO "source_message" VALUES (753,E'app',E'Trainee');
+INSERT INTO "source_message" VALUES (754,E'app',E'Import {modelClass} #{number}');
+INSERT INTO "source_message" VALUES (755,E'app',E'Publish approved Draw');
+INSERT INTO "source_message" VALUES (756,E'app',E'Import Draw from JSON');
+INSERT INTO "source_message" VALUES (757,E'app',E'This will override the current draw! All information will be lost!');
+INSERT INTO "source_message" VALUES (758,E'app',E'Re-draw Round');
+INSERT INTO "source_message" VALUES (759,E'app',E'Delete Round');
+INSERT INTO "source_message" VALUES (760,E'app',E'Are you sure you want to DELETE the round? All information will be lost!');
+INSERT INTO "source_message" VALUES (761,E'app',E'Round is already active! Can\'t override with input.');
+INSERT INTO "source_message" VALUES (762,E'app',E'Uploaded file was empty. Please select a file.');
+INSERT INTO "source_message" VALUES (764,E'app',E'Speakers');
+INSERT INTO "source_message" VALUES (765,E'app',E'File Syntax Wrong! At least {min} columns expected; {num} provided in line {line}');
+INSERT INTO "source_message" VALUES (766,E'app',E'Question Text');
+INSERT INTO "source_message" VALUES (767,E'app',E'Help Text');
+INSERT INTO "source_message" VALUES (770,E'app',E'Adjudicator to Adjudicator Clashes');
+INSERT INTO "source_message" VALUES (771,E'app',E'Accept all');
+INSERT INTO "source_message" VALUES (772,E'app',E'Deny all');
+INSERT INTO "source_message" VALUES (773,E'app',E'Team to Adjudicator Clashes');
+INSERT INTO "source_message" VALUES (774,E'app',E'Not a valid decision');
+INSERT INTO "source_message" VALUES (775,E'app',E'Import Score for {modelClass}');
+INSERT INTO "source_message" VALUES (777,E'app',E'Public Access URLs');
+INSERT INTO "source_message" VALUES (778,E'app',E'Debate not found - type wrong?');
+INSERT INTO "source_message" VALUES (783,E'app',E'Motion Balance');
+INSERT INTO "source_message" VALUES (784,E'app',E'Round information');
+INSERT INTO "source_message" VALUES (785,E'app',E'There is currently no active round. Refresh this page later.');
+INSERT INTO "source_message" VALUES (787,E'app',E'PD-Octofinal');
+INSERT INTO "source_message" VALUES (788,E'app',E'Replace adjudicator {adjudicator} with');
+INSERT INTO "source_message" VALUES (789,E'app',E'Replace');
+INSERT INTO "source_message" VALUES (790,E'app',E'View');
+INSERT INTO "source_message" VALUES (791,E'app',E'Switch Team {team} with');
+INSERT INTO "source_message" VALUES (792,E'app',E'Retry to set Draw');
+INSERT INTO "source_message" VALUES (793,E'app',E'AVG');
+INSERT INTO "source_message" VALUES (794,E'app',E'Only authorised Tabmasters can access this function');
+INSERT INTO "source_message" VALUES (795,E'app',E'Tournament successfully updated');
+INSERT INTO "source_message" VALUES (796,E'app',E'Tournament updated but Energy config updated failed!');
 
---
--- Table structure for table `special_needs`
---
-
-DROP TABLE IF EXISTS `special_needs`;
+/*!40000 ALTER TABLE source_message ENABLE KEYS */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `special_needs` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table special_needs
+--
+
+DROP TABLE IF EXISTS "special_needs" CASCADE;
+DROP SEQUENCE IF EXISTS "special_needs_id_seq" CASCADE ;
+
+CREATE SEQUENCE "special_needs_id_seq" ;
+
+CREATE TABLE  "special_needs" (
+   "id" integer DEFAULT nextval('"special_needs_id_seq"') NOT NULL,
+   "name"   varchar(255) DEFAULT NULL,
+   primary key ("id")
+)  ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `tabmaster`
---
-
-DROP TABLE IF EXISTS `tabmaster`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tabmaster` (
-  `user_id` int(11) unsigned NOT NULL,
-  `tournament_id` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`user_id`,`tournament_id`),
-  KEY `fk_user_has_tournament_tournament3_idx` (`tournament_id`),
-  KEY `fk_user_has_tournament_user3_idx` (`user_id`),
-  CONSTRAINT `fk_user_has_tournament_tournament3` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_user_has_tournament_user3` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Table structure for table tabmaster
+--
+
+DROP TABLE IF EXISTS "tabmaster" CASCADE;
+CREATE TABLE  "tabmaster" (
+   "user_id" int CHECK ("user_id" >= 0) NOT NULL,
+   "tournament_id" int CHECK ("tournament_id" >= 0) NOT NULL,
+   primary key ("user_id", "tournament_id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `tag`
---
-
-DROP TABLE IF EXISTS `tag`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tag` (
-  `motion_tag_id` int(11) NOT NULL,
-  `round_id` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`motion_tag_id`,`round_id`),
-  KEY `fk_motion_tag_has_round_round1_idx` (`round_id`),
-  KEY `fk_motion_tag_has_round_motion_tag1_idx` (`motion_tag_id`),
-  CONSTRAINT `fk_motion_tag_has_round_motion_tag1` FOREIGN KEY (`motion_tag_id`) REFERENCES `motion_tag` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_motion_tag_has_round_round1` FOREIGN KEY (`round_id`) REFERENCES `round` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE INDEX "tabmaster_tournament_id_idx" ON "tabmaster" USING btree ("tournament_id");
+CREATE INDEX "tabmaster_user_id_idx" ON "tabmaster" USING btree ("user_id");
+ALTER TABLE "tabmaster" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "tabmaster" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
+
+--
+-- Table structure for table tag
+--
+
+DROP TABLE IF EXISTS "tag" CASCADE;
+CREATE TABLE  "tag" (
+   "motion_tag_id"   int NOT NULL,
+   "round_id" int CHECK ("round_id" >= 0) NOT NULL,
+   primary key ("motion_tag_id", "round_id")
+)  ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `team`
---
-
-DROP TABLE IF EXISTS `team`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `team` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `tournament_id` int(10) unsigned NOT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT '1',
-  `speakerA_id` int(10) unsigned DEFAULT NULL,
-  `speakerB_id` int(10) unsigned DEFAULT NULL,
-  `society_id` int(10) unsigned NOT NULL,
-  `isSwing` tinyint(1) NOT NULL DEFAULT '0',
-  `language_status` tinyint(4) NOT NULL DEFAULT '0',
-  `points` int(11) NOT NULL DEFAULT '0',
-  `speakerA_speaks` int(11) NOT NULL DEFAULT '0',
-  `speakerB_speaks` int(11) NOT NULL DEFAULT '0',
-  `speakerA_checkedin` tinyint(1) NOT NULL DEFAULT '0',
-  `speakerB_checkedin` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `fk_team_username_idx` (`speakerA_id`),
-  KEY `fk_team_username1_idx` (`speakerB_id`),
-  KEY `fk_team_tournament1_idx` (`tournament_id`),
-  KEY `fk_team_society1_idx` (`society_id`),
-  CONSTRAINT `fk_team_society1` FOREIGN KEY (`society_id`) REFERENCES `society` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_team_tournament1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_team_username` FOREIGN KEY (`speakerA_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_team_username1` FOREIGN KEY (`speakerB_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=6181 DEFAULT CHARSET=utf8;
+CREATE INDEX "tag_round_id_idx" ON "tag" USING btree ("round_id");
+CREATE INDEX "tag_motion_tag_id_idx" ON "tag" USING btree ("motion_tag_id");
+ALTER TABLE "tag" ADD FOREIGN KEY ("motion_tag_id") REFERENCES "motion_tag" ("id");
+ALTER TABLE "tag" ADD FOREIGN KEY ("round_id") REFERENCES "round" ("id");
+
+--
+-- Table structure for table team
+--
+
+DROP TABLE IF EXISTS "team" CASCADE;
+DROP SEQUENCE IF EXISTS "team_id_seq" CASCADE ;
+
+CREATE SEQUENCE "team_id_seq"  START WITH 6181 ;
+
+CREATE TABLE  "team" (
+   "id" integer DEFAULT nextval('"team_id_seq"') NOT NULL,
+   "name"   varchar(255) DEFAULT NULL,
+   "tournament_id" int CHECK ("tournament_id" >= 0) NOT NULL,
+   "active"    smallint NOT NULL DEFAULT '1',
+   "speakera_id" int CHECK ("speakera_id" >= 0) DEFAULT NULL,
+   "speakerb_id" int CHECK ("speakerb_id" >= 0) DEFAULT NULL,
+   "society_id" int CHECK ("society_id" >= 0) NOT NULL,
+   "isswing"    smallint NOT NULL DEFAULT '0',
+   "language_status"    smallint NOT NULL DEFAULT '0',
+   "points"   int NOT NULL DEFAULT '0',
+   "speakera_speaks"   int NOT NULL DEFAULT '0',
+   "speakerb_speaks"   int NOT NULL DEFAULT '0',
+   "speakera_checkedin"    smallint NOT NULL DEFAULT '0',
+   "speakerb_checkedin"    smallint NOT NULL DEFAULT '0',
+   primary key ("id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `team_strike`
---
-
-DROP TABLE IF EXISTS `team_strike`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `team_strike` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `team_id` int(10) unsigned NOT NULL,
-  `adjudicator_id` int(10) unsigned NOT NULL,
-  `tournament_id` int(10) unsigned NOT NULL,
-  `user_clash_id` int(11) DEFAULT NULL,
-  `accepted` tinyint(1) NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`),
-  KEY `fk_team_strike_team1_idx` (`team_id`),
-  KEY `fk_team_strike_adjudicator1_idx` (`adjudicator_id`),
-  KEY `fk_team_strike_tournament1_idx` (`tournament_id`),
-  KEY `fk_team_strike_user_clash1_idx` (`user_clash_id`),
-  CONSTRAINT `fk_team_strike_adjudicator1` FOREIGN KEY (`adjudicator_id`) REFERENCES `adjudicator` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_team_strike_team1` FOREIGN KEY (`team_id`) REFERENCES `team` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_team_strike_tournament1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_team_strike_user_clash1` FOREIGN KEY (`user_clash_id`) REFERENCES `user_clash` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=734 DEFAULT CHARSET=utf8;
+CREATE INDEX "team_speakera_id_idx" ON "team" USING btree ("speakera_id");
+CREATE INDEX "team_speakerb_id_idx" ON "team" USING btree ("speakerb_id");
+CREATE INDEX "team_tournament_id_idx" ON "team" USING btree ("tournament_id");
+CREATE INDEX "team_society_id_idx" ON "team" USING btree ("society_id");
+ALTER TABLE "team" ADD FOREIGN KEY ("society_id") REFERENCES "society" ("id");
+ALTER TABLE "team" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "team" ADD FOREIGN KEY ("speakera_id") REFERENCES "user" ("id");
+ALTER TABLE "team" ADD FOREIGN KEY ("speakerb_id") REFERENCES "user" ("id");
+
+--
+-- Table structure for table team_strike
+--
+
+DROP TABLE IF EXISTS "team_strike" CASCADE;
+DROP SEQUENCE IF EXISTS "team_strike_id_seq" CASCADE ;
+
+CREATE SEQUENCE "team_strike_id_seq"  START WITH 734 ;
+
+CREATE TABLE  "team_strike" (
+   "id" integer DEFAULT nextval('"team_strike_id_seq"') NOT NULL,
+   "team_id" int CHECK ("team_id" >= 0) NOT NULL,
+   "adjudicator_id" int CHECK ("adjudicator_id" >= 0) NOT NULL,
+   "tournament_id" int CHECK ("tournament_id" >= 0) NOT NULL,
+   "user_clash_id"   int DEFAULT NULL,
+   "accepted"    smallint NOT NULL DEFAULT '1',
+   primary key ("id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `tournament`
---
-
-DROP TABLE IF EXISTS `tournament`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tournament` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `url_slug` varchar(100) NOT NULL,
-  `status` int(11) NOT NULL DEFAULT '0',
-  `hosted_by_id` int(10) unsigned NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `start_date` datetime NOT NULL,
-  `end_date` datetime NOT NULL,
-  `timezone` varchar(100) NOT NULL,
-  `logo` varchar(255) DEFAULT NULL,
-  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `tabAlgorithmClass` varchar(100) NOT NULL DEFAULT 'StrictWUDCRules',
-  `expected_rounds` int(11) NOT NULL DEFAULT '6',
-  `has_esl` tinyint(1) NOT NULL DEFAULT '0',
-  `has_final` tinyint(1) NOT NULL DEFAULT '1',
-  `has_semifinal` tinyint(1) NOT NULL DEFAULT '1',
-  `has_quarterfinal` tinyint(1) NOT NULL DEFAULT '0',
-  `has_octofinal` tinyint(1) NOT NULL DEFAULT '0',
-  `accessToken` varchar(255) DEFAULT NULL,
-  `badge` varchar(255) DEFAULT NULL,
-  `has_efl` tinyint(1) DEFAULT '0',
-  `has_novice` tinyint(1) DEFAULT '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `slug_UNIQUE` (`url_slug`),
-  KEY `fk_tournament_society1_idx` (`hosted_by_id`),
-  CONSTRAINT `fk_tournament_society1` FOREIGN KEY (`hosted_by_id`) REFERENCES `society` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=318 DEFAULT CHARSET=utf8;
+CREATE INDEX "team_strike_team_id_idx" ON "team_strike" USING btree ("team_id");
+CREATE INDEX "team_strike_adjudicator_id_idx" ON "team_strike" USING btree ("adjudicator_id");
+CREATE INDEX "team_strike_tournament_id_idx" ON "team_strike" USING btree ("tournament_id");
+CREATE INDEX "team_strike_user_clash_id_idx" ON "team_strike" USING btree ("user_clash_id");
+ALTER TABLE "team_strike" ADD FOREIGN KEY ("adjudicator_id") REFERENCES "adjudicator" ("id");
+ALTER TABLE "team_strike" ADD FOREIGN KEY ("team_id") REFERENCES "team" ("id");
+ALTER TABLE "team_strike" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "team_strike" ADD FOREIGN KEY ("user_clash_id") REFERENCES "user_clash" ("id");
+
+--
+-- Table structure for table tournament
+--
+
+DROP TABLE IF EXISTS "tournament" CASCADE;
+DROP SEQUENCE IF EXISTS "tournament_id_seq" CASCADE ;
+
+CREATE SEQUENCE "tournament_id_seq"  START WITH 318 ;
+
+CREATE TABLE  "tournament" (
+   "id" integer DEFAULT nextval('"tournament_id_seq"') NOT NULL,
+   "url_slug"   varchar(100) NOT NULL,
+   "status"   int NOT NULL DEFAULT '0',
+   "hosted_by_id" int CHECK ("hosted_by_id" >= 0) NOT NULL,
+   "name"   varchar(100) NOT NULL,
+   "start_date"   timestamp without time zone NOT NULL,
+   "end_date"   timestamp without time zone NOT NULL,
+   "timezone"   varchar(100) NOT NULL,
+   "logo"   varchar(255) DEFAULT NULL,
+   "time"   timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   "tabalgorithmclass"   varchar(100) NOT NULL DEFAULT 'StrictWUDCRules',
+   "expected_rounds"   int NOT NULL DEFAULT '6',
+   "has_esl"    smallint NOT NULL DEFAULT '0',
+   "has_final"    smallint NOT NULL DEFAULT '1',
+   "has_semifinal"    smallint NOT NULL DEFAULT '1',
+   "has_quarterfinal"    smallint NOT NULL DEFAULT '0',
+   "has_octofinal"    smallint NOT NULL DEFAULT '0',
+   "accesstoken"   varchar(255) DEFAULT NULL,
+   "badge"   varchar(255) DEFAULT NULL,
+   "has_efl"    smallint DEFAULT '0',
+   "has_novice"    smallint DEFAULT '0',
+   primary key ("id"),
+ unique ("url_slug")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `tournament_has_question`
---
-
-DROP TABLE IF EXISTS `tournament_has_question`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tournament_has_question` (
-  `tournament_id` int(10) unsigned NOT NULL,
-  `questions_id` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`tournament_id`,`questions_id`),
-  KEY `fk_tournament_has_questions_questions1_idx` (`questions_id`),
-  KEY `fk_tournament_has_questions_tournament1_idx` (`tournament_id`),
-  CONSTRAINT `fk_tournament_has_questions_questions1` FOREIGN KEY (`questions_id`) REFERENCES `question` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_tournament_has_questions_tournament1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE INDEX "tournament_hosted_by_id_idx" ON "tournament" USING btree ("hosted_by_id");
+ALTER TABLE "tournament" ADD FOREIGN KEY ("hosted_by_id") REFERENCES "society" ("id");
+
+--
+-- Table structure for table tournament_has_question
+--
+
+DROP TABLE IF EXISTS "tournament_has_question" CASCADE;
+CREATE TABLE  "tournament_has_question" (
+   "tournament_id" int CHECK ("tournament_id" >= 0) NOT NULL,
+   "questions_id" int CHECK ("questions_id" >= 0) NOT NULL,
+   primary key ("tournament_id", "questions_id")
+)  ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `user`
---
-
-DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `user` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `url_slug` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `auth_key` varchar(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `password_hash` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `password_reset_token` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
-  `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `role` smallint(6) NOT NULL DEFAULT '10',
-  `status` smallint(6) NOT NULL DEFAULT '10',
-  `givenname` varchar(255) DEFAULT NULL,
-  `surename` varchar(255) DEFAULT NULL,
-  `gender` int(11) NOT NULL DEFAULT '0',
-  `language_status` int(11) NOT NULL DEFAULT '0',
-  `language_status_by_id` int(11) unsigned DEFAULT NULL,
-  `language_status_update` datetime DEFAULT NULL,
-  `picture` varchar(255) DEFAULT NULL,
-  `last_change` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `time` datetime NOT NULL,
-  `language` varchar(10) NOT NULL DEFAULT 'en-UK',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `email_UNIQUE` (`email`),
-  KEY `fk_user_user1_idx` (`language_status_by_id`),
-  CONSTRAINT `fk_user_user1` FOREIGN KEY (`language_status_by_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=8042 DEFAULT CHARSET=utf8;
+CREATE INDEX "tournament_has_question_questions_id_idx" ON "tournament_has_question" USING btree ("questions_id");
+CREATE INDEX "tournament_has_question_tournament_id_idx" ON "tournament_has_question" USING btree ("tournament_id");
+ALTER TABLE "tournament_has_question" ADD FOREIGN KEY ("questions_id") REFERENCES "question" ("id");
+ALTER TABLE "tournament_has_question" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+
+--
+-- Table structure for table user
+--
+
+DROP TABLE IF EXISTS "user" CASCADE;
+DROP SEQUENCE IF EXISTS "user_id_seq" CASCADE ;
+
+CREATE SEQUENCE "user_id_seq"  START WITH 8042 ;
+
+CREATE TABLE  "user" (
+   "id" integer DEFAULT nextval('"user_id_seq"') NOT NULL,
+   "url_slug"   varchar(255) NOT NULL,
+   "auth_key"   varchar(32) NOT NULL,
+   "password_hash"   varchar(255) NOT NULL,
+   "password_reset_token"   varchar(255) DEFAULT NULL,
+   "email"   varchar(255) NOT NULL,
+   "role"   smallint NOT NULL DEFAULT '10',
+   "status"   smallint NOT NULL DEFAULT '10',
+   "givenname"   varchar(255) DEFAULT NULL,
+   "surename"   varchar(255) DEFAULT NULL,
+   "gender"   int NOT NULL DEFAULT '0',
+   "language_status"   int NOT NULL DEFAULT '0',
+   "language_status_by_id" int CHECK ("language_status_by_id" >= 0) DEFAULT NULL,
+   "language_status_update"   timestamp without time zone DEFAULT NULL,
+   "picture"   varchar(255) DEFAULT NULL,
+   "last_change"   timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+   "time"   timestamp without time zone NOT NULL,
+   "language"   varchar(10) NOT NULL DEFAULT 'en-UK',
+   primary key ("id"),
+ unique ("email")
+)   ;
+ CREATE OR REPLACE FUNCTION update_user() RETURNS trigger AS '
+BEGIN
+    NEW.last_change := CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+' LANGUAGE 'plpgsql';
+
+-- before INSERT is handled by 'default CURRENT_TIMESTAMP'
+CREATE TRIGGER add_current_date_to_user BEFORE UPDATE ON "user" FOR EACH ROW EXECUTE PROCEDURE
+update_user();
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `user_attr`
---
-
-DROP TABLE IF EXISTS `user_attr`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `user_attr` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `tournament_id` int(10) unsigned NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `required` tinyint(1) NOT NULL DEFAULT '0',
-  `help` text,
-  PRIMARY KEY (`id`),
-  KEY `fk_user_attr_tournament1_idx` (`tournament_id`),
-  CONSTRAINT `fk_user_attr_tournament1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+CREATE INDEX "user_language_status_by_id_idx" ON "user" USING btree ("language_status_by_id");
+ALTER TABLE "user" ADD FOREIGN KEY ("language_status_by_id") REFERENCES "user" ("id");
+
+--
+-- Table structure for table user_attr
+--
+
+DROP TABLE IF EXISTS "user_attr" CASCADE;
+DROP SEQUENCE IF EXISTS "user_attr_id_seq" CASCADE ;
+
+CREATE SEQUENCE "user_attr_id_seq"  START WITH 3 ;
+
+CREATE TABLE  "user_attr" (
+   "id" integer DEFAULT nextval('"user_attr_id_seq"') NOT NULL,
+   "tournament_id" int CHECK ("tournament_id" >= 0) NOT NULL,
+   "name"   varchar(100) NOT NULL,
+   "required"    smallint NOT NULL DEFAULT '0',
+   "help"   text,
+   primary key ("id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `user_clash`
---
-
-DROP TABLE IF EXISTS `user_clash`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `user_clash` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) unsigned NOT NULL,
-  `clash_with` int(11) unsigned NOT NULL,
-  `reason` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `fk_user_has_user_user2_idx` (`clash_with`),
-  KEY `fk_user_has_user_user1_idx` (`user_id`),
-  CONSTRAINT `fk_user_has_user_user1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_user_has_user_user2` FOREIGN KEY (`clash_with`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1593 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+CREATE INDEX "user_attr_tournament_id_idx" ON "user_attr" USING btree ("tournament_id");
+ALTER TABLE "user_attr" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+
+--
+-- Table structure for table user_clash
+--
+
+DROP TABLE IF EXISTS "user_clash" CASCADE;
+DROP SEQUENCE IF EXISTS "user_clash_id_seq" CASCADE ;
+
+CREATE SEQUENCE "user_clash_id_seq"  START WITH 1593 ;
+
+CREATE TABLE  "user_clash" (
+   "id" integer DEFAULT nextval('"user_clash_id_seq"') NOT NULL,
+   "user_id" int CHECK ("user_id" >= 0) NOT NULL,
+   "clash_with" int CHECK ("clash_with" >= 0) NOT NULL,
+   "reason"   varchar(255) DEFAULT NULL,
+   "date"   timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+   primary key ("id")
+)    ;
+ CREATE OR REPLACE FUNCTION update_user_clash() RETURNS trigger AS '
+BEGIN
+    NEW.date := CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+' LANGUAGE 'plpgsql';
+
+-- before INSERT is handled by 'default CURRENT_TIMESTAMP'
+CREATE TRIGGER add_current_date_to_user_clash BEFORE UPDATE ON "user_clash" FOR EACH ROW EXECUTE PROCEDURE
+update_user_clash();
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `user_value`
---
-
-DROP TABLE IF EXISTS `user_value`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `user_value` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) unsigned NOT NULL,
-  `user_attr_id` int(11) NOT NULL,
-  `value` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_user_value_user_attr1_idx` (`user_attr_id`),
-  KEY `fk_user_value_user1_idx` (`user_id`),
-  CONSTRAINT `fk_user_value_user1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_user_value_user_attr1` FOREIGN KEY (`user_attr_id`) REFERENCES `user_attr` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1115 DEFAULT CHARSET=utf8;
+CREATE INDEX "user_clash_clash_with_idx" ON "user_clash" USING btree ("clash_with");
+CREATE INDEX "user_clash_user_id_idx" ON "user_clash" USING btree ("user_id");
+ALTER TABLE "user_clash" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
+ALTER TABLE "user_clash" ADD FOREIGN KEY ("clash_with") REFERENCES "user" ("id");
+
+--
+-- Table structure for table user_value
+--
+
+DROP TABLE IF EXISTS "user_value" CASCADE;
+DROP SEQUENCE IF EXISTS "user_value_id_seq" CASCADE ;
+
+CREATE SEQUENCE "user_value_id_seq"  START WITH 1115 ;
+
+CREATE TABLE  "user_value" (
+   "id" integer DEFAULT nextval('"user_value_id_seq"') NOT NULL,
+   "user_id" int CHECK ("user_id" >= 0) NOT NULL,
+   "user_attr_id"   int NOT NULL,
+   "value"   varchar(45) DEFAULT NULL,
+   primary key ("id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `username_has_special_needs`
---
-
-DROP TABLE IF EXISTS `username_has_special_needs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `username_has_special_needs` (
-  `username_id` int(10) unsigned NOT NULL,
-  `special_needs_id` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`username_id`,`special_needs_id`),
-  KEY `fk_username_has_special_needs_special_needs1_idx` (`special_needs_id`),
-  KEY `fk_username_has_special_needs_username1_idx` (`username_id`),
-  CONSTRAINT `fk_username_has_special_needs_special_needs1` FOREIGN KEY (`special_needs_id`) REFERENCES `special_needs` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_username_has_special_needs_username1` FOREIGN KEY (`username_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE INDEX "user_value_user_attr_id_idx" ON "user_value" USING btree ("user_attr_id");
+CREATE INDEX "user_value_user_id_idx" ON "user_value" USING btree ("user_id");
+ALTER TABLE "user_value" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
+ALTER TABLE "user_value" ADD FOREIGN KEY ("user_attr_id") REFERENCES "user_attr" ("id");
+
+--
+-- Table structure for table username_has_special_needs
+--
+
+DROP TABLE IF EXISTS "username_has_special_needs" CASCADE;
+CREATE TABLE  "username_has_special_needs" (
+   "username_id" int CHECK ("username_id" >= 0) NOT NULL,
+   "special_needs_id" int CHECK ("special_needs_id" >= 0) NOT NULL,
+   primary key ("username_id", "special_needs_id")
+)  ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `venue`
---
-
-DROP TABLE IF EXISTS `venue`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `venue` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `tournament_id` int(10) unsigned NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT '1',
-  `group` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_venue_tournament1_idx` (`tournament_id`),
-  KEY `order` (`group`),
-  CONSTRAINT `fk_venue_tournament1` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2102 DEFAULT CHARSET=utf8;
+CREATE INDEX "username_has_special_needs_special_needs_id_idx" ON "username_has_special_needs" USING btree ("special_needs_id");
+CREATE INDEX "username_has_special_needs_username_id_idx" ON "username_has_special_needs" USING btree ("username_id");
+ALTER TABLE "username_has_special_needs" ADD FOREIGN KEY ("special_needs_id") REFERENCES "special_needs" ("id");
+ALTER TABLE "username_has_special_needs" ADD FOREIGN KEY ("username_id") REFERENCES "user" ("id");
+
+--
+-- Table structure for table venue
+--
+
+DROP TABLE IF EXISTS "venue" CASCADE;
+DROP SEQUENCE IF EXISTS "venue_id_seq" CASCADE ;
+
+CREATE SEQUENCE "venue_id_seq"  START WITH 2102 ;
+
+CREATE TABLE  "venue" (
+   "id" integer DEFAULT nextval('"venue_id_seq"') NOT NULL,
+   "tournament_id" int CHECK ("tournament_id" >= 0) NOT NULL,
+   "name"   varchar(100) NOT NULL,
+   "active"    smallint NOT NULL DEFAULT '1',
+   "group"   varchar(100) DEFAULT NULL,
+   primary key ("id")
+)   ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `venue_provides_special_needs`
---
-
-DROP TABLE IF EXISTS `venue_provides_special_needs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `venue_provides_special_needs` (
-  `venue_id` int(10) unsigned NOT NULL,
-  `special_needs_id` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`venue_id`,`special_needs_id`),
-  KEY `fk_venue_has_special_needs_special_needs1_idx` (`special_needs_id`),
-  KEY `fk_venue_has_special_needs_venue1_idx` (`venue_id`),
-  CONSTRAINT `fk_venue_has_special_needs_special_needs1` FOREIGN KEY (`special_needs_id`) REFERENCES `special_needs` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_venue_has_special_needs_venue1` FOREIGN KEY (`venue_id`) REFERENCES `venue` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE INDEX "venue_tournament_id_idx" ON "venue" USING btree ("tournament_id");
+CREATE INDEX "venue_group_idx" ON "venue" USING btree ("group");
+ALTER TABLE "venue" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+
+--
+-- Table structure for table venue_provides_special_needs
+--
+
+DROP TABLE IF EXISTS "venue_provides_special_needs" CASCADE;
+CREATE TABLE  "venue_provides_special_needs" (
+   "venue_id" int CHECK ("venue_id" >= 0) NOT NULL,
+   "special_needs_id" int CHECK ("special_needs_id" >= 0) NOT NULL,
+   primary key ("venue_id", "special_needs_id")
+)  ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping events for database 'tabbie'
---
-
---
--- Dumping routines for database 'tabbie'
---
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
@@ -952,5 +5143,7 @@ CREATE TABLE `venue_provides_special_needs` (
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2016-05-15 11:15:34
+CREATE INDEX "venue_provides_special_needs_special_needs_id_idx" ON "venue_provides_special_needs" USING btree ("special_needs_id");
+CREATE INDEX "venue_provides_special_needs_venue_id_idx" ON "venue_provides_special_needs" USING btree ("venue_id");
+ALTER TABLE "venue_provides_special_needs" ADD FOREIGN KEY ("special_needs_id") REFERENCES "special_needs" ("id");
+ALTER TABLE "venue_provides_special_needs" ADD FOREIGN KEY ("venue_id") REFERENCES "venue" ("id");
