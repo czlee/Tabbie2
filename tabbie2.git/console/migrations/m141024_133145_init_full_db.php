@@ -12,7 +12,7 @@ class m141024_133145_init_full_db extends Migration
 		if (file_exists($filename)) {
 			$sql = file_get_contents($filename, "r");
 			$dbname = substr(strstr($this->db->dsn, "dbname="), 7);
-			$this->execute("USE $dbname;");
+			// $this->execute("USE $dbname;");
 			$this->execute($sql);
 
 			return true;

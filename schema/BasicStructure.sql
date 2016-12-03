@@ -55,9 +55,6 @@ CREATE TABLE  "adjudicator" (
 CREATE INDEX "adjudicator_user_id_idx" ON "adjudicator" USING btree ("user_id");
 CREATE INDEX "adjudicator_tournament_id_idx" ON "adjudicator" USING btree ("tournament_id");
 CREATE INDEX "adjudicator_society_id_idx" ON "adjudicator" USING btree ("society_id");
-ALTER TABLE "adjudicator" ADD FOREIGN KEY ("society_id") REFERENCES "society" ("id");
-ALTER TABLE "adjudicator" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
-ALTER TABLE "adjudicator" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
 
 --
 -- Table structure for table adjudicator_in_panel
@@ -76,8 +73,6 @@ CREATE TABLE  "adjudicator_in_panel" (
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "adjudicator_in_panel_panel_id_idx" ON "adjudicator_in_panel" USING btree ("panel_id");
 CREATE INDEX "adjudicator_in_panel_adjudicator_id_idx" ON "adjudicator_in_panel" USING btree ("adjudicator_id");
-ALTER TABLE "adjudicator_in_panel" ADD FOREIGN KEY ("adjudicator_id") REFERENCES "adjudicator" ("id");
-ALTER TABLE "adjudicator_in_panel" ADD FOREIGN KEY ("panel_id") REFERENCES "panel" ("id");
 
 --
 -- Table structure for table adjudicator_strike
@@ -99,10 +94,6 @@ CREATE INDEX "adjudicator_strike_adjudicator_to_id_idx" ON "adjudicator_strike" 
 CREATE INDEX "adjudicator_strike_adjudicator_from_id_idx" ON "adjudicator_strike" USING btree ("adjudicator_from_id");
 CREATE INDEX "adjudicator_strike_tournament_id_idx" ON "adjudicator_strike" USING btree ("tournament_id");
 CREATE INDEX "adjudicator_strike_user_clash_id_idx" ON "adjudicator_strike" USING btree ("user_clash_id");
-ALTER TABLE "adjudicator_strike" ADD FOREIGN KEY ("adjudicator_from_id") REFERENCES "adjudicator" ("id");
-ALTER TABLE "adjudicator_strike" ADD FOREIGN KEY ("adjudicator_to_id") REFERENCES "adjudicator" ("id");
-ALTER TABLE "adjudicator_strike" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
-ALTER TABLE "adjudicator_strike" ADD FOREIGN KEY ("user_clash_id") REFERENCES "user_clash" ("id");
 
 --
 -- Table structure for table answer
@@ -125,8 +116,6 @@ CREATE TABLE  "answer" (
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "answer_question_id_idx" ON "answer" USING btree ("question_id");
 CREATE INDEX "answer_feedback_id_idx" ON "answer" USING btree ("feedback_id");
-ALTER TABLE "answer" ADD FOREIGN KEY ("feedback_id") REFERENCES "feedback" ("id");
-ALTER TABLE "answer" ADD FOREIGN KEY ("question_id") REFERENCES "question" ("id");
 
 --
 -- Table structure for table ca
@@ -143,8 +132,6 @@ CREATE TABLE  "ca" (
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "ca_tournament_id_idx" ON "ca" USING btree ("tournament_id");
 CREATE INDEX "ca_user_id_idx" ON "ca" USING btree ("user_id");
-ALTER TABLE "ca" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
-ALTER TABLE "ca" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
 
 --
 -- Table structure for table convenor
@@ -161,8 +148,6 @@ CREATE TABLE  "convenor" (
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "convenor_user_id_idx" ON "convenor" USING btree ("user_id");
 CREATE INDEX "convenor_tournament_id_idx" ON "convenor" USING btree ("tournament_id");
-ALTER TABLE "convenor" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
-ALTER TABLE "convenor" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
 
 --
 -- Table structure for table country
@@ -482,8 +467,6 @@ CREATE INDEX "debate_og_team_id_idx" ON "debate" USING btree ("og_team_id");
 CREATE INDEX "debate_oo_team_id_idx" ON "debate" USING btree ("oo_team_id");
 CREATE INDEX "debate_cg_team_id_idx" ON "debate" USING btree ("cg_team_id");
 CREATE INDEX "debate_co_team_id_idx" ON "debate" USING btree ("co_team_id");
-ALTER TABLE "debate" ADD FOREIGN KEY ("panel_id") REFERENCES "panel" ("id");
-ALTER TABLE "debate" ADD FOREIGN KEY ("venue_id") REFERENCES "venue" ("id");
 
 --
 -- Table structure for table energy_config
@@ -504,9 +487,7 @@ CREATE TABLE  "energy_config" (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE INDEX "energy_config_100_idx" ON "energy_config" USING btree ("100");
 CREATE INDEX "energy_config_tournament_id_idx" ON "energy_config" USING btree ("tournament_id");
-ALTER TABLE "energy_config" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
 
 --
 -- Table structure for table feedback
@@ -530,7 +511,6 @@ CREATE TABLE  "feedback" (
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "feedback_debate_id_idx" ON "feedback" USING btree ("debate_id");
-ALTER TABLE "feedback" ADD FOREIGN KEY ("debate_id") REFERENCES "debate" ("id");
 
 --
 -- Table structure for table in_society
@@ -549,8 +529,6 @@ CREATE TABLE  "in_society" (
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "in_society_society_id_idx" ON "in_society" USING btree ("society_id");
 CREATE INDEX "in_society_user_id_idx" ON "in_society" USING btree ("user_id");
-ALTER TABLE "in_society" ADD FOREIGN KEY ("society_id") REFERENCES "society" ("id");
-ALTER TABLE "in_society" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
 
 --
 -- Table structure for table language
@@ -594,8 +572,6 @@ CREATE TABLE  "language_maintainer" (
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "language_maintainer_language_language_idx" ON "language_maintainer" USING btree ("language_language");
 CREATE INDEX "language_maintainer_user_id_idx" ON "language_maintainer" USING btree ("user_id");
-ALTER TABLE "language_maintainer" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
-ALTER TABLE "language_maintainer" ADD FOREIGN KEY ("language_language") REFERENCES "language" ("language");
 
 --
 -- Table structure for table language_officer
@@ -612,8 +588,6 @@ CREATE TABLE  "language_officer" (
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "language_officer_tournament_id_idx" ON "language_officer" USING btree ("tournament_id");
 CREATE INDEX "language_officer_user_id_idx" ON "language_officer" USING btree ("user_id");
-ALTER TABLE "language_officer" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
-ALTER TABLE "language_officer" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
 
 --
 -- Table structure for table legacy_motion
@@ -640,7 +614,6 @@ CREATE TABLE  "legacy_motion" (
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "legacy_motion_by_user_id_idx" ON "legacy_motion" USING btree ("by_user_id");
-ALTER TABLE "legacy_motion" ADD FOREIGN KEY ("by_user_id") REFERENCES "user" ("id");
 
 --
 -- Table structure for table legacy_tag
@@ -657,8 +630,6 @@ CREATE TABLE  "legacy_tag" (
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "legacy_tag_legacy_motion_id_idx" ON "legacy_tag" USING btree ("legacy_motion_id");
 CREATE INDEX "legacy_tag_motion_tag_id_idx" ON "legacy_tag" USING btree ("motion_tag_id");
-ALTER TABLE "legacy_tag" ADD FOREIGN KEY ("legacy_motion_id") REFERENCES "legacy_motion" ("id");
-ALTER TABLE "legacy_tag" ADD FOREIGN KEY ("motion_tag_id") REFERENCES "motion_tag" ("id");
 
 --
 -- Table structure for table message
@@ -3744,7 +3715,6 @@ INSERT INTO "message" VALUES (793,E'{lang}',NULL);
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "message_id_idx" ON "message" USING btree ("id");
-ALTER TABLE "message" ADD FOREIGN KEY ("id") REFERENCES "source_message" ("id");
 
 --
 -- Table structure for table migration
@@ -3801,7 +3771,6 @@ CREATE TABLE  "panel" (
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "panel_tournament_id_idx" ON "panel" USING btree ("tournament_id");
-ALTER TABLE "panel" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
 
 --
 -- Table structure for table publish_tab_speaker
@@ -3827,8 +3796,6 @@ CREATE TABLE  "publish_tab_speaker" (
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "publish_tab_speaker_user_id_idx" ON "publish_tab_speaker" USING btree ("user_id");
 CREATE INDEX "publish_tab_speaker_tournament_id_idx" ON "publish_tab_speaker" USING btree ("tournament_id");
-ALTER TABLE "publish_tab_speaker" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
-ALTER TABLE "publish_tab_speaker" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
 
 --
 -- Table structure for table publish_tab_team
@@ -3854,8 +3821,6 @@ CREATE TABLE  "publish_tab_team" (
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "publish_tab_team_team_id_idx" ON "publish_tab_team" USING btree ("team_id");
 CREATE INDEX "publish_tab_team_tournament_id_idx" ON "publish_tab_team" USING btree ("tournament_id");
-ALTER TABLE "publish_tab_team" ADD FOREIGN KEY ("team_id") REFERENCES "team" ("id");
-ALTER TABLE "publish_tab_team" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
 
 --
 -- Table structure for table question
@@ -3920,8 +3885,6 @@ CREATE TABLE  "result" (
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "result_debate_id_idx" ON "result" USING btree ("debate_id");
 CREATE INDEX "result_entered_by_id_idx" ON "result" USING btree ("entered_by_id");
-ALTER TABLE "result" ADD FOREIGN KEY ("debate_id") REFERENCES "debate" ("id");
-ALTER TABLE "result" ADD FOREIGN KEY ("entered_by_id") REFERENCES "user" ("id");
 
 --
 -- Table structure for table round
@@ -3954,7 +3917,6 @@ CREATE TABLE  "round" (
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "round_tournament_id_idx" ON "round" USING btree ("tournament_id");
-ALTER TABLE "round" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
 
 --
 -- Table structure for table society
@@ -3978,7 +3940,6 @@ CREATE TABLE  "society" (
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "society_country_id_idx" ON "society" USING btree ("country_id");
-ALTER TABLE "society" ADD FOREIGN KEY ("country_id") REFERENCES "country" ("id");
 
 --
 -- Table structure for table source_message
@@ -4806,8 +4767,6 @@ CREATE TABLE  "tabmaster" (
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "tabmaster_tournament_id_idx" ON "tabmaster" USING btree ("tournament_id");
 CREATE INDEX "tabmaster_user_id_idx" ON "tabmaster" USING btree ("user_id");
-ALTER TABLE "tabmaster" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
-ALTER TABLE "tabmaster" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
 
 --
 -- Table structure for table tag
@@ -4824,8 +4783,6 @@ CREATE TABLE  "tag" (
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "tag_round_id_idx" ON "tag" USING btree ("round_id");
 CREATE INDEX "tag_motion_tag_id_idx" ON "tag" USING btree ("motion_tag_id");
-ALTER TABLE "tag" ADD FOREIGN KEY ("motion_tag_id") REFERENCES "motion_tag" ("id");
-ALTER TABLE "tag" ADD FOREIGN KEY ("round_id") REFERENCES "round" ("id");
 
 --
 -- Table structure for table team
@@ -4860,10 +4817,6 @@ CREATE INDEX "team_speakera_id_idx" ON "team" USING btree ("speakera_id");
 CREATE INDEX "team_speakerb_id_idx" ON "team" USING btree ("speakerb_id");
 CREATE INDEX "team_tournament_id_idx" ON "team" USING btree ("tournament_id");
 CREATE INDEX "team_society_id_idx" ON "team" USING btree ("society_id");
-ALTER TABLE "team" ADD FOREIGN KEY ("society_id") REFERENCES "society" ("id");
-ALTER TABLE "team" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
-ALTER TABLE "team" ADD FOREIGN KEY ("speakera_id") REFERENCES "user" ("id");
-ALTER TABLE "team" ADD FOREIGN KEY ("speakerb_id") REFERENCES "user" ("id");
 
 --
 -- Table structure for table team_strike
@@ -4890,10 +4843,6 @@ CREATE INDEX "team_strike_team_id_idx" ON "team_strike" USING btree ("team_id");
 CREATE INDEX "team_strike_adjudicator_id_idx" ON "team_strike" USING btree ("adjudicator_id");
 CREATE INDEX "team_strike_tournament_id_idx" ON "team_strike" USING btree ("tournament_id");
 CREATE INDEX "team_strike_user_clash_id_idx" ON "team_strike" USING btree ("user_clash_id");
-ALTER TABLE "team_strike" ADD FOREIGN KEY ("adjudicator_id") REFERENCES "adjudicator" ("id");
-ALTER TABLE "team_strike" ADD FOREIGN KEY ("team_id") REFERENCES "team" ("id");
-ALTER TABLE "team_strike" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
-ALTER TABLE "team_strike" ADD FOREIGN KEY ("user_clash_id") REFERENCES "user_clash" ("id");
 
 --
 -- Table structure for table tournament
@@ -4933,7 +4882,6 @@ CREATE TABLE  "tournament" (
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "tournament_hosted_by_id_idx" ON "tournament" USING btree ("hosted_by_id");
-ALTER TABLE "tournament" ADD FOREIGN KEY ("hosted_by_id") REFERENCES "society" ("id");
 
 --
 -- Table structure for table tournament_has_question
@@ -4950,8 +4898,6 @@ CREATE TABLE  "tournament_has_question" (
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "tournament_has_question_questions_id_idx" ON "tournament_has_question" USING btree ("questions_id");
 CREATE INDEX "tournament_has_question_tournament_id_idx" ON "tournament_has_question" USING btree ("tournament_id");
-ALTER TABLE "tournament_has_question" ADD FOREIGN KEY ("questions_id") REFERENCES "question" ("id");
-ALTER TABLE "tournament_has_question" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
 
 --
 -- Table structure for table user
@@ -4998,7 +4944,6 @@ update_user();
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "user_language_status_by_id_idx" ON "user" USING btree ("language_status_by_id");
-ALTER TABLE "user" ADD FOREIGN KEY ("language_status_by_id") REFERENCES "user" ("id");
 
 --
 -- Table structure for table user_attr
@@ -5021,7 +4966,6 @@ CREATE TABLE  "user_attr" (
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "user_attr_tournament_id_idx" ON "user_attr" USING btree ("tournament_id");
-ALTER TABLE "user_attr" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
 
 --
 -- Table structure for table user_clash
@@ -5055,8 +4999,6 @@ update_user_clash();
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "user_clash_clash_with_idx" ON "user_clash" USING btree ("clash_with");
 CREATE INDEX "user_clash_user_id_idx" ON "user_clash" USING btree ("user_id");
-ALTER TABLE "user_clash" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
-ALTER TABLE "user_clash" ADD FOREIGN KEY ("clash_with") REFERENCES "user" ("id");
 
 --
 -- Table structure for table user_value
@@ -5079,8 +5021,6 @@ CREATE TABLE  "user_value" (
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "user_value_user_attr_id_idx" ON "user_value" USING btree ("user_attr_id");
 CREATE INDEX "user_value_user_id_idx" ON "user_value" USING btree ("user_id");
-ALTER TABLE "user_value" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
-ALTER TABLE "user_value" ADD FOREIGN KEY ("user_attr_id") REFERENCES "user_attr" ("id");
 
 --
 -- Table structure for table username_has_special_needs
@@ -5097,8 +5037,6 @@ CREATE TABLE  "username_has_special_needs" (
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "username_has_special_needs_special_needs_id_idx" ON "username_has_special_needs" USING btree ("special_needs_id");
 CREATE INDEX "username_has_special_needs_username_id_idx" ON "username_has_special_needs" USING btree ("username_id");
-ALTER TABLE "username_has_special_needs" ADD FOREIGN KEY ("special_needs_id") REFERENCES "special_needs" ("id");
-ALTER TABLE "username_has_special_needs" ADD FOREIGN KEY ("username_id") REFERENCES "user" ("id");
 
 --
 -- Table structure for table venue
@@ -5122,7 +5060,6 @@ CREATE TABLE  "venue" (
 /*!40101 SET character_set_client = utf8 */;
 CREATE INDEX "venue_tournament_id_idx" ON "venue" USING btree ("tournament_id");
 CREATE INDEX "venue_group_idx" ON "venue" USING btree ("group");
-ALTER TABLE "venue" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
 
 --
 -- Table structure for table venue_provides_special_needs
@@ -5145,5 +5082,69 @@ CREATE TABLE  "venue_provides_special_needs" (
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 CREATE INDEX "venue_provides_special_needs_special_needs_id_idx" ON "venue_provides_special_needs" USING btree ("special_needs_id");
 CREATE INDEX "venue_provides_special_needs_venue_id_idx" ON "venue_provides_special_needs" USING btree ("venue_id");
+
+
+ALTER TABLE "adjudicator" ADD FOREIGN KEY ("society_id") REFERENCES "society" ("id");
+ALTER TABLE "adjudicator" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "adjudicator" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
+ALTER TABLE "adjudicator_in_panel" ADD FOREIGN KEY ("adjudicator_id") REFERENCES "adjudicator" ("id");
+ALTER TABLE "adjudicator_in_panel" ADD FOREIGN KEY ("panel_id") REFERENCES "panel" ("id");
+ALTER TABLE "adjudicator_strike" ADD FOREIGN KEY ("adjudicator_from_id") REFERENCES "adjudicator" ("id");
+ALTER TABLE "adjudicator_strike" ADD FOREIGN KEY ("adjudicator_to_id") REFERENCES "adjudicator" ("id");
+ALTER TABLE "adjudicator_strike" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "adjudicator_strike" ADD FOREIGN KEY ("user_clash_id") REFERENCES "user_clash" ("id");
+ALTER TABLE "answer" ADD FOREIGN KEY ("feedback_id") REFERENCES "feedback" ("id");
+ALTER TABLE "answer" ADD FOREIGN KEY ("question_id") REFERENCES "question" ("id");
+ALTER TABLE "ca" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "ca" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
+ALTER TABLE "convenor" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "convenor" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
+ALTER TABLE "debate" ADD FOREIGN KEY ("panel_id") REFERENCES "panel" ("id");
+ALTER TABLE "debate" ADD FOREIGN KEY ("venue_id") REFERENCES "venue" ("id");
+ALTER TABLE "energy_config" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "feedback" ADD FOREIGN KEY ("debate_id") REFERENCES "debate" ("id");
+ALTER TABLE "in_society" ADD FOREIGN KEY ("society_id") REFERENCES "society" ("id");
+ALTER TABLE "in_society" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
+ALTER TABLE "language_maintainer" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
+ALTER TABLE "language_maintainer" ADD FOREIGN KEY ("language_language") REFERENCES "language" ("language");
+ALTER TABLE "language_officer" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "language_officer" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
+ALTER TABLE "legacy_motion" ADD FOREIGN KEY ("by_user_id") REFERENCES "user" ("id");
+ALTER TABLE "legacy_tag" ADD FOREIGN KEY ("legacy_motion_id") REFERENCES "legacy_motion" ("id");
+ALTER TABLE "legacy_tag" ADD FOREIGN KEY ("motion_tag_id") REFERENCES "motion_tag" ("id");
+ALTER TABLE "message" ADD FOREIGN KEY ("id") REFERENCES "source_message" ("id");
+ALTER TABLE "panel" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "publish_tab_speaker" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "publish_tab_speaker" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
+ALTER TABLE "publish_tab_team" ADD FOREIGN KEY ("team_id") REFERENCES "team" ("id");
+ALTER TABLE "publish_tab_team" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "result" ADD FOREIGN KEY ("debate_id") REFERENCES "debate" ("id");
+ALTER TABLE "result" ADD FOREIGN KEY ("entered_by_id") REFERENCES "user" ("id");
+ALTER TABLE "round" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "society" ADD FOREIGN KEY ("country_id") REFERENCES "country" ("id");
+ALTER TABLE "tabmaster" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "tabmaster" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
+ALTER TABLE "tag" ADD FOREIGN KEY ("motion_tag_id") REFERENCES "motion_tag" ("id");
+ALTER TABLE "tag" ADD FOREIGN KEY ("round_id") REFERENCES "round" ("id");
+ALTER TABLE "team" ADD FOREIGN KEY ("society_id") REFERENCES "society" ("id");
+ALTER TABLE "team" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "team" ADD FOREIGN KEY ("speakera_id") REFERENCES "user" ("id");
+ALTER TABLE "team" ADD FOREIGN KEY ("speakerb_id") REFERENCES "user" ("id");
+ALTER TABLE "team_strike" ADD FOREIGN KEY ("adjudicator_id") REFERENCES "adjudicator" ("id");
+ALTER TABLE "team_strike" ADD FOREIGN KEY ("team_id") REFERENCES "team" ("id");
+ALTER TABLE "team_strike" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "team_strike" ADD FOREIGN KEY ("user_clash_id") REFERENCES "user_clash" ("id");
+ALTER TABLE "tournament" ADD FOREIGN KEY ("hosted_by_id") REFERENCES "society" ("id");
+ALTER TABLE "tournament_has_question" ADD FOREIGN KEY ("questions_id") REFERENCES "question" ("id");
+ALTER TABLE "tournament_has_question" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "user" ADD FOREIGN KEY ("language_status_by_id") REFERENCES "user" ("id");
+ALTER TABLE "user_attr" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
+ALTER TABLE "user_clash" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
+ALTER TABLE "user_clash" ADD FOREIGN KEY ("clash_with") REFERENCES "user" ("id");
+ALTER TABLE "user_value" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
+ALTER TABLE "user_value" ADD FOREIGN KEY ("user_attr_id") REFERENCES "user_attr" ("id");
+ALTER TABLE "username_has_special_needs" ADD FOREIGN KEY ("special_needs_id") REFERENCES "special_needs" ("id");
+ALTER TABLE "username_has_special_needs" ADD FOREIGN KEY ("username_id") REFERENCES "user" ("id");
+ALTER TABLE "venue" ADD FOREIGN KEY ("tournament_id") REFERENCES "tournament" ("id");
 ALTER TABLE "venue_provides_special_needs" ADD FOREIGN KEY ("special_needs_id") REFERENCES "special_needs" ("id");
 ALTER TABLE "venue_provides_special_needs" ADD FOREIGN KEY ("venue_id") REFERENCES "venue" ("id");
